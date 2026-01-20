@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>COLLECTION ARCHIVE v3.5 Pro</title>
+    <title>COLLECTION ARCHIVE v3.8 Pro</title>
     <style>
         :root {
             --bg-color: #fefaf9;
@@ -24,7 +24,7 @@
         /* キャラクターチップ */
         .char-chip { font-size: 0.75rem; padding: 4px 10px; border-radius: 8px; margin-right: 6px; margin-bottom: 6px; display: inline-block; font-weight: bold; border: 1px solid rgba(0,0,0,0.03); }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
-        .c-是国 { background: #4a4a4a !important; color: #fff !important; }
+        .c-是国 { background: #000000 !important; color: #ffffff !important; }
         .c-金城 { background: #9e9e9e !important; color: #fff !important; }
         .c-阿修 { background: #fce4ec !important; color: #ad1457 !important; }
         .c-愛染 { background: #e1f5fe !important; color: #0288d1 !important; }
@@ -32,12 +32,22 @@
         .c-音済 { background: #ffe0b2 !important; color: #e65100 !important; }
         .c-王茶利 { background: #e8f5e9 !important; color: #2e7d32 !important; }
         .c-野目 { background: #f3e5f5 !important; color: #7b1fa2 !important; }
-        .c-釈村 { background: #fffde7 !important; color: #afb42b !important; }
+        /* 修正点1: 釈村と遙日のカラーを逆に設定 */
+        .c-釈村 { background: #fff9c4 !important; color: #fbc02d !important; border: 1px solid #f0f0ed; }
         .c-唯月 { background: #eeeeee !important; color: #616161 !important; }
-        .c-遙日 { background: #fff9c4 !important; color: #fbc02d !important; border: 1px solid #f0f0ed; }
+        .c-遙日 { background: #fffde7 !important; color: #afb42b !important; }
         .c-不動 { background: #ffe082 !important; color: #ff8f00 !important; }
         .c-殿 { background: #dcedc8 !important; color: #558b2f !important; }
 
+        /* タグチップの統一スタイル */
+        .tag-chip {
+            font-size: 0.65rem; background: var(--gold-light); color: var(--text-main);
+            padding: 4px 10px; border-radius: 8px; margin-right: 6px; font-weight: bold;
+            cursor: pointer; display: inline-block; border: none; transition: 0.2s;
+        }
+        .tag-chip:active { opacity: 0.6; }
+
+        /* レイアウト基本 */
         html, body { overflow-x: hidden; width: 100%; position: relative; overscroll-behavior-y: none; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif;
@@ -60,7 +70,7 @@
         .card { 
             background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; 
             box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.1); 
-            position: relative; overflow: hidden; transition: transform 0.1s;
+            position: relative; overflow: hidden;
         }
 
         #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; }
@@ -80,6 +90,33 @@
         .btn-qty { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gold-light); background: #fff; font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; justify-content: center; }
         .qty-display { min-width: 30px; font-weight: bold; text-align: center; font-size: 1rem; text-decoration: underline; text-underline-offset: 4px; color: var(--text-main); }
 
+        .unboxing-panel { 
+            display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 16px; position: relative; 
+            font-weight: bold; font-size: 1rem; text-align: center; box-shadow: 0 4px 0 rgba(0,0,0,0.1); 
+            user-select: none; -webkit-user-select: none; touch-action: none;
+            height: 75px; overflow: visible; margin-bottom: 10px;
+        }
+        .ub-area { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transition: background 0.1s; }
+        .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 16px 0 0 16px; }
+        .ub-area-right { border-radius: 0 16px 16px 0; }
+        .ub-area:active { background: rgba(0,0,0,0.05); }
+
+        .ub-char-label {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            background: white; padding: 2px 10px; border-radius: 10px; font-size: 0.7rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 5; white-space: nowrap; color: var(--text-main);
+        }
+
+        .unboxing-count-badge {
+            min-width: 20px; height: 20px; padding: 2px 4px; border-radius: 10px; font-size: 0.75rem; 
+            display: flex; align-items: center; justify-content: center; 
+            background: #fce4ec; color: #ad1457; 
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08); border: 1px solid rgba(173, 20, 87, 0.1);
+            margin-bottom: 4px; font-weight: 600;
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .pop-anim { transform: scale(1.3); }
+
         .fab { 
             position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px; width: 64px; height: 64px; border-radius: 50%; 
             background: var(--gold); color: white; border: none; font-size: 2rem; 
@@ -94,16 +131,16 @@
         .primary-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--gold); color: white; font-weight: bold; font-size: 1rem; margin-top: 10px; }
         .danger-btn { color: var(--danger); background: none; border: none; font-size: 0.8rem; }
 
-        .unboxing-panel { padding: 20px 10px; border-radius: 12px; position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: 0.1s; }
-
-        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;}
+        #dateFilterPanel { transition: 0.3s ease; }
+        .btn-filter-active { background: var(--dark-pink) !important; color: white !important; border-color: var(--dark-pink) !important; box-shadow: 0 0 10px rgba(216, 27, 96, 0.3); }
     </style>
 </head>
 <body onload="init()">
 
 <header>
     <button onclick="toggleSettings(true)" style="position:absolute; right:15px; top:calc(15px + env(safe-area-inset-top)); background:none; border:none; font-size:1.4rem; color:var(--gold);">⚙</button>
-    <h1>COLLECTION ARCHIVE v3.5</h1>
+    <h1>COLLECTION ARCHIVE v3.8</h1>
 </header>
 
 <div class="nav-tabs">
@@ -112,9 +149,21 @@
 </div>
 
 <div id="seriesView" class="container">
-    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
-        <input type="text" id="searchBar" placeholder="シリーズ名を検索..." oninput="renderSeriesList()" style="flex:1;">
+    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+        <input type="text" id="searchBar" placeholder="シリーズ・タグを検索..." oninput="renderSeriesList()" style="flex:1;">
+        <button id="btnToggleDate" onclick="toggleDateFilter()" style="background:var(--card-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold); transition:0.3s;">📅</button>
     </div>
+
+    <div id="dateFilterPanel" style="display:none; background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+        <p style="font-size:0.7rem; font-weight:bold; color:var(--gold); margin:0 0 10px;">表示期間を指定</p>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <input type="month" id="filterStart" onchange="renderSeriesList()" style="padding:8px; font-size:0.85rem;">
+            <span style="color:var(--text-sub)">〜</span>
+            <input type="month" id="filterEnd" onchange="renderSeriesList()" style="padding:8px; font-size:0.85rem;">
+            <button onclick="clearDateFilter()" style="background:none; border:none; color:var(--danger); font-size:0.75rem; min-width:50px;">クリア</button>
+        </div>
+    </div>
+
     <div id="seriesListContainer"></div>
 </div>
 
@@ -151,18 +200,6 @@
     </div>
 </div>
 
-<div id="unboxingModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3 id="unboxingTitle" style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center;"></h3>
-        <p style="text-align: center; font-size: 0.75rem; color: var(--text-sub); margin: -5px 0 15px;">タップ:＋ / 長押し:ー</p>
-        <div id="unboxingGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;"></div>
-        <div style="text-align:center; margin-top:20px; font-size:0.9rem; color:var(--gold); font-weight:bold;">
-            合計数量: <span id="unboxingTotalCount" style="font-size:1.3rem;">0</span>
-        </div>
-        <button onclick="closeUnboxing()" class="primary-btn">完了</button>
-    </div>
-</div>
-
 <div id="seriesModal" class="modal-overlay">
     <div class="modal-content">
         <h3 style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center;">NEW SERIES</h3>
@@ -176,6 +213,18 @@
         </label>
         <button class="primary-btn" onclick="saveSeriesModal()">登録する</button>
         <button onclick="closeSeriesModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--text-sub); font-size:0.9rem;">キャンセル</button>
+    </div>
+</div>
+
+<div id="unboxingModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="unboxingTitle" style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center;"></h3>
+        <p style="text-align: center; font-size: 0.75rem; color: var(--text-sub); margin: -5px 0 15px;">左:保管＋ / 右:譲渡＋<br>長押しでマイナス</p>
+        <div id="unboxingGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px 10px;"></div>
+        <div style="text-align:center; margin-top:20px; font-size:0.9rem; color:var(--gold); font-weight:bold; background:var(--bg-color); padding:12px; border-radius:18px; border:1px solid var(--gold-light);">
+            <div id="unboxingTotalCount"></div>
+        </div>
+        <button onclick="closeUnboxing()" class="primary-btn">完了</button>
     </div>
 </div>
 
@@ -202,11 +251,6 @@
     let currentItemIdx = null;
     let tempStocks = {};
 
-    window.onpopstate = function() {
-        if (document.getElementById('editorView').style.display === 'block') { closeEditor(true); } 
-        else if (document.getElementById('detailView').style.display === 'block') { closeDetail(true); }
-    };
-
     function init() { renderSeriesList(); }
     function save() { 
         localStorage.setItem('gap_db', JSON.stringify(DB)); 
@@ -220,33 +264,80 @@
         setTimeout(() => t.style.display = 'none', 2000);
     }
 
+    window.onpopstate = function(e) {
+        if (document.getElementById('editorView').style.display === 'block') closeEditor(true);
+        else if (document.getElementById('detailView').style.display === 'block') closeDetail(true);
+    };
+
+    function switchMainTab(tab) {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
+        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
+        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+        if(tab === 'missing') renderMissingList();
+    }
+
+    function toggleDateFilter() {
+        const panel = document.getElementById('dateFilterPanel');
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function clearDateFilter() {
+        document.getElementById('filterStart').value = "";
+        document.getElementById('filterEnd').value = "";
+        renderSeriesList();
+    }
+
+    function filterByTag(tagName) {
+        document.getElementById('searchBar').value = tagName;
+        renderSeriesList();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function renderSeriesList() {
         const container = document.getElementById('seriesListContainer');
         container.innerHTML = "";
         const term = document.getElementById('searchBar').value.toLowerCase();
-        
-        if (ORDER.length === 0) {
-            container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px; font-size:0.9rem;">シリーズが登録されていません。<br>右下の＋ボタンから追加してください。</div>`;
-            return;
-        }
+        const start = document.getElementById('filterStart').value;
+        const end = document.getElementById('filterEnd').value;
+        const btnToggleDate = document.getElementById('btnToggleDate');
+
+        if(start || end) btnToggleDate.classList.add('btn-filter-active');
+        else btnToggleDate.classList.remove('btn-filter-active');
 
         ORDER.forEach((id) => {
             const s = DB[id];
-            if(!s || !s.title.toLowerCase().includes(term)) return;
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.onclick = () => openDetail(id);
-            const tagsHtml = s.tags ? s.tags.split(/[、, ]/).filter(t => t).map(t => `<span style="font-size:0.65rem; background:#f8f4f0; padding:3px 8px; border-radius:6px; margin-right:5px; color:var(--gold); border:1px solid rgba(197,160,89,0.2);">#${t}</span>`).join('') : '';
-            div.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <b style="color:var(--text-main); font-size:1rem; flex:1; line-height:1.4;">${s.title}</b>
-                    <span style="font-size:0.75rem; color:var(--gold); margin-left:10px; font-weight:bold;">${s.date || ''}</span>
-                </div>
-                <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:4px;">${tagsHtml}</div>
-                <div style="font-size:0.7rem; color:var(--text-sub); margin-top:15px;">
-                    <span style="background:var(--bg-color); padding:4px 12px; border-radius:20px; font-weight:bold; border:1px solid var(--border-color);">${s.items ? s.items.length : 0} ITEMS</span>
-                </div>`;
-            container.appendChild(div);
+            if(!s) return;
+
+            const titleMatch = s.title.toLowerCase().includes(term);
+            const tagsMatch = s.tags ? s.tags.toLowerCase().includes(term) : false;
+
+            let dateMatch = true;
+            if (start || end) {
+                if (!s.date) dateMatch = false;
+                else {
+                    if (start && s.date < start) dateMatch = false;
+                    if (end && s.date > end) dateMatch = false;
+                }
+            }
+
+            if((titleMatch || tagsMatch) && dateMatch) {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.onclick = (e) => { if(e.target.tagName !== 'SPAN') openDetail(id); };
+                const tagsHtml = s.tags ? s.tags.split(/[、, ]/).filter(t => t).map(t => 
+                    `<span onclick="filterByTag('${t.trim()}')" class="tag-chip">#${t.trim()}</span>`
+                ).join('') : '';
+
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <b style="color:var(--text-main); font-size:1rem; flex:1;">${s.title}</b>
+                        <span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date || ''}</span>
+                    </div>
+                    <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:4px;">${tagsHtml}</div>`;
+                container.appendChild(div);
+            }
         });
     }
 
@@ -272,7 +363,6 @@
             const div = document.createElement('div');
             div.className = 'card';
             const statusLabel = { "comp": "COMPLETED", "not": "INCOMPLETE", "none": "予定なし" }[item.status || "not"];
-            
             let ownChips = [], tradeText = [], missChips = [], tradeArr = [];
             CHARS.forEach(c => {
                 const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0};
@@ -285,20 +375,18 @@
                 }
                 if(isTarget && s.own === 0 && s.trade === 0) missChips.push(`<span class="char-chip ${colorClass}">${c}</span>`);
             });
-
             const copyStr = `${item.type}　譲：${tradeArr.join('・') || 'なし'}　求：${(item.targets || []).join('・')}`;
-
             div.innerHTML = `
                 <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
-                <div style="margin-bottom:15px; padding-right:60px; border-bottom:1.5px solid var(--bg-color); padding-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="margin-bottom:15px; border-bottom:1.5px solid var(--bg-color); padding-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
                     <b style="color:var(--text-main); font-size:1.1rem;">${item.type}</b>
-                    <button onclick="copyTradeText('${copyStr}')" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.65rem; padding:4px 10px; border-radius:8px; font-weight:bold;">コピー</button>
+                    <button onclick="copyTradeText('${copyStr}')" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.65rem; padding:6px 12px; border-radius:8px; font-weight:bold;">コピー</button>
                 </div>
                 <div class="info-row"><span class="info-label">保有</span><div class="info-content">${ownChips.join('') || '－'}</div></div>
-                <div class="info-row"><span class="info-label">譲渡</span><div class="info-content"><span style="font-size:0.85rem; color:var(--trade-text); font-weight:bold;">${tradeText.join(' / ') || 'なし'}</span></div></div>
+                <div class="info-row"><span class="info-label">譲渡</span><div class="info-content"><span style="color:var(--trade-text); font-weight:bold;">${tradeText.join(' / ') || 'なし'}</span></div></div>
                 <div class="info-row"><span class="info-label">不足</span><div class="info-content">${missChips.join('') || '－'}</div></div>
                 <div style="margin-top:25px; display:flex; justify-content:space-between; align-items:center;">
-                    <span onclick="openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.75rem; font-weight:bold; background:#fff0f5; padding:10px 18px; border-radius:14px; border:1px solid rgba(216,27,96,0.1);">✨ 開封モード</span>
+                    <span onclick="openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.75rem; font-weight:bold; background:#fff0f5; padding:10px 18px; border-radius:14px;">✨ 開封モード</span>
                     <div style="display:flex; align-items:center; gap:20px;">
                         <span onclick="deleteItem(${idx})" style="color:var(--text-sub); font-size:0.8rem;">削除</span>
                         <span onclick="openItemEditor(${idx})" style="color:var(--gold); font-size:0.85rem; font-weight:bold; border-bottom:2px solid var(--gold-light);">編集</span>
@@ -308,9 +396,7 @@
         });
     }
 
-    function copyTradeText(text) {
-        navigator.clipboard.writeText(text).then(() => showToast("交換用テキストをコピーしました"));
-    }
+    function copyTradeText(text) { navigator.clipboard.writeText(text).then(() => showToast("コピーしました")); }
 
     function openItemEditor(idx = null) {
         currentItemIdx = idx;
@@ -336,9 +422,9 @@
                 <div class="c-${c.trim()}" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem;">
                     <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
                 </div>
-                <div style="display:flex; justify-content:space-around; align-items:center;">
+                <div style="display:flex; justify-content:space-around;">
                     <div style="text-align:center;">
-                        <span style="font-size:0.6rem; color:var(--text-sub); display:block; margin-bottom:4px;">保有</span>
+                        <span style="font-size:0.6rem; color:var(--text-sub);">保有</span>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <button class="btn-qty" onclick="updateQty('${c}','own',-1)">-</button>
                             <span class="qty-display" onclick="promptQty('${c}','own')">${tempStocks[c].own}</span>
@@ -346,7 +432,7 @@
                         </div>
                     </div>
                     <div style="text-align:center;">
-                        <span style="font-size:0.6rem; color:var(--text-sub); display:block; margin-bottom:4px;">譲渡</span>
+                        <span style="font-size:0.6rem; color:var(--text-sub);">譲渡</span>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <button class="btn-qty" onclick="updateQty('${c}','trade',-1)">-</button>
                             <span class="qty-display" onclick="promptQty('${c}','trade')">${tempStocks[c].trade}</span>
@@ -358,28 +444,28 @@
         });
     }
 
+    /* 修正点2: 数量の直接入力機能 (半角数字をデフォルトで入力しやすくする処理) */
     function promptQty(char, key) {
-        const val = prompt(`${char}の${key === 'own' ? '保有' : '譲渡'}数を入力`, tempStocks[char][key]);
-        if (val !== null && !isNaN(val)) {
-            tempStocks[char][key] = Math.max(0, parseInt(val));
-            renderEditorGrid(getSelectedTargets());
+        const currentVal = tempStocks[char][key];
+        const res = prompt(`${char}の${key === 'own' ? '保有' : '譲渡'}数を半角数字で入力`, currentVal);
+        if (res !== null) {
+            // 全角数字を半角に置換し、数値以外を除去
+            const sanitized = res.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)).replace(/[^0-9]/g, '');
+            const num = parseInt(sanitized);
+            if (!isNaN(num)) {
+                tempStocks[char][key] = Math.max(0, num);
+                renderEditorGrid(getSelectedTargets());
+            }
         }
     }
 
-    function updateQty(char, key, delta) {
-        tempStocks[char][key] = Math.max(0, tempStocks[char][key] + delta);
-        renderEditorGrid(getSelectedTargets());
-    }
-
+    function updateQty(char, key, delta) { tempStocks[char][key] = Math.max(0, tempStocks[char][key] + delta); renderEditorGrid(getSelectedTargets()); }
     function getSelectedTargets() {
-        const checkboxes = document.querySelectorAll('#editorGrid input[type="checkbox"]');
-        let selected = [];
-        checkboxes.forEach((cb, i) => { if(cb.checked) selected.push(CHARS[i]); });
-        return selected;
+        const cbs = document.querySelectorAll('#editorGrid input[type="checkbox"]');
+        let selected = []; cbs.forEach((cb, i) => { if(cb.checked) selected.push(CHARS[i]); }); return selected;
     }
-
     function refreshEditorTargets() { renderEditorGrid(getSelectedTargets()); }
-
+    
     function saveItem() {
         const type = document.getElementById('editItemType').value.trim();
         if(!type) return alert("名前を入力してください");
@@ -388,48 +474,89 @@
         else DB[currentSeriesId].items[currentItemIdx] = data;
         save(); closeEditor(); renderItemList(); showToast("保存しました");
     }
-
+    
     function closeEditor(isPopState = false) { 
         document.getElementById('editorView').style.display = 'none'; 
         if (!isPopState) history.back();
     }
-
     function deleteItem(idx) { if(confirm("アイテムを削除しますか？")) { DB[currentSeriesId].items.splice(idx,1); save(); renderItemList(); } }
-
-    function openUnboxing(idx) {
-        currentItemIdx = idx;
-        const item = DB[currentSeriesId].items[idx];
-        document.getElementById('unboxingTitle').textContent = item.type;
-        renderUnboxingGrid();
-        document.getElementById('unboxingModal').style.display = 'flex';
-    }
 
     function renderUnboxingGrid() {
         const grid = document.getElementById('unboxingGrid');
         grid.innerHTML = "";
         const item = DB[currentSeriesId].items[currentItemIdx];
-        let total = 0;
+        let tOwn = 0, tTrade = 0;
         CHARS.forEach(c => {
-            const count = (item.stocks[c] && item.stocks[c].own) ? item.stocks[c].own : 0;
-            total += count;
+            const s = item.stocks[c] || { own: 0, trade: 0 };
+            tOwn += s.own; tTrade += s.trade;
             const panel = document.createElement('div');
             panel.className = `unboxing-panel c-${c.trim()}`;
-            panel.innerHTML = `<span style="position:absolute; right:8px; top:4px; font-size:0.7rem; opacity:0.7;">${count}</span>${c}`;
-            let timer;
-            panel.onpointerdown = (e) => timer = setTimeout(() => { updateUnboxingCount(c, -1); timer = null; }, 500);
-            panel.onpointerup = (e) => { if(timer) { clearTimeout(timer); updateUnboxingCount(c, 1); } };
+            const createHandler = (type) => {
+                let timer;
+                return {
+                    onpointerdown: (e) => {
+                        e.preventDefault();
+                        const badge = panel.querySelector(`#ubc-${type}-${c}`);
+                        badge.classList.add('pop-anim');
+                        timer = setTimeout(() => { updateUnboxingCount(c, type, -1); timer = null; }, 500);
+                    },
+                    onpointerup: (e) => {
+                        e.preventDefault();
+                        const badge = panel.querySelector(`#ubc-${type}-${c}`);
+                        if(timer) { clearTimeout(timer); updateUnboxingCount(c, type, 1); }
+                        setTimeout(() => badge.classList.remove('pop-anim'), 100);
+                    },
+                    onpointerleave: (e) => {
+                        if(timer) { clearTimeout(timer); timer = null; }
+                        panel.querySelector(`#ubc-${type}-${c}`).classList.remove('pop-anim');
+                    }
+                };
+            };
+            panel.innerHTML = `
+                <div class="ub-char-label">${c}</div>
+                <div class="ub-area ub-area-left">
+                    <span id="ubc-own-${c}" class="unboxing-count-badge">${s.own}</span>
+                    <span style="font-size:0.5rem; opacity:0.7;">保管</span>
+                </div>
+                <div class="ub-area ub-area-right">
+                    <span id="ubc-trade-${c}" class="unboxing-count-badge" style="background:#f0f4f7; color:var(--trade-text); border:1px solid rgba(96,125,139,0.1);">${s.trade}</span>
+                    <span style="font-size:0.5rem; opacity:0.7;">譲渡</span>
+                </div>`;
+            Object.assign(panel.querySelector('.ub-area-left'), createHandler('own'));
+            Object.assign(panel.querySelector('.ub-area-right'), createHandler('trade'));
             grid.appendChild(panel);
         });
-        document.getElementById('unboxingTotalCount').textContent = total;
+        updateUnboxingFooter(tOwn, tTrade);
     }
 
-    function updateUnboxingCount(char, delta) {
+    function updateUnboxingCount(char, type, delta) {
         const item = DB[currentSeriesId].items[currentItemIdx];
         if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0 };
-        item.stocks[char].own = Math.max(0, item.stocks[char].own + delta);
-        save(); renderUnboxingGrid();
+        item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta);
+        save();
+        document.getElementById(`ubc-${type}-${char}`).textContent = item.stocks[char][type];
+        let to = 0, tt = 0;
+        CHARS.forEach(c => { to += (item.stocks[c]?.own || 0); tt += (item.stocks[c]?.trade || 0); });
+        updateUnboxingFooter(to, tt);
     }
 
+    function updateUnboxingFooter(own, trade) {
+        document.getElementById('unboxingTotalCount').innerHTML = `
+            <div style="display:flex; justify-content:center; gap:20px; font-size:0.85rem; margin-bottom:8px;">
+                <span style="color:var(--dark-pink)">保管: ${own}</span>
+                <span style="color:var(--trade-text)">譲渡: ${trade}</span>
+            </div>
+            <div style="border-top:1px dashed var(--gold-light); padding-top:8px;">
+                合計数量: <span style="font-size:1.4rem; color:var(--gold);">${own + trade}</span>
+            </div>`;
+    }
+
+    function openUnboxing(idx) {
+        currentItemIdx = idx;
+        document.getElementById('unboxingTitle').textContent = DB[currentSeriesId].items[idx].type;
+        renderUnboxingGrid();
+        document.getElementById('unboxingModal').style.display = 'flex';
+    }
     function closeUnboxing() { document.getElementById('unboxingModal').style.display = 'none'; renderItemList(); }
 
     function saveSeriesModal() {
@@ -437,22 +564,17 @@
         if(!title) return;
         const id = "s" + Date.now();
         const useTemp = document.getElementById('msUseTemplate').checked;
-        let initialItems = [];
-        if(useTemp) TEMPLATES.forEach(t => initialItems.push({ type: t, stocks: {}, targets: [...CHARS], status: "not" }));
-        DB[id] = { title, date: document.getElementById('msDate').value, tags: document.getElementById('msTags').value, items: initialItems };
-        ORDER.unshift(id);
-        save(); closeSeriesModal(); openDetail(id); showToast("シリーズを作成しました");
+        let items = [];
+        if(useTemp) TEMPLATES.forEach(t => items.push({ type: t, stocks: {}, targets: [...CHARS], status: "not" }));
+        DB[id] = { title, date: document.getElementById('msDate').value, tags: document.getElementById('msTags').value, items: items };
+        ORDER.unshift(id); save(); closeSeriesModal(); openDetail(id); showToast("作成しました");
     }
 
     function toggleSettings(s) { 
         document.getElementById('settingsOverlay').style.display=s?'block':'none'; 
         document.getElementById('settingsPanel').style.right=s?'0':'-85%'; 
-        if(s) {
-            document.getElementById('charSettingsInput').value=CHARS.join('\n');
-            document.getElementById('tempSettingsInput').value=TEMPLATES.join('\n');
-        }
+        if(s) { document.getElementById('charSettingsInput').value=CHARS.join('\n'); document.getElementById('tempSettingsInput').value=TEMPLATES.join('\n'); }
     }
-
     function saveSettings() { 
         CHARS = document.getElementById('charSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
         TEMPLATES = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
@@ -460,49 +582,37 @@
         localStorage.setItem('gap_temps', JSON.stringify(TEMPLATES));
         location.reload(); 
     }
-
-    function switchMainTab(tab) {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(`tab-${tab}`).classList.add('active');
-        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
-        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
-        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
-        if(tab === 'missing') renderMissingList();
-    }
-
     function closeSeriesModal() { document.getElementById('seriesModal').style.display='none'; }
     function openSeriesModal() { document.getElementById('msTitle').value=""; document.getElementById('seriesModal').style.display='flex'; }
-    function deleteSeries() { if(confirm("シリーズ全体を完全に削除しますか？")) { delete DB[currentSeriesId]; ORDER=ORDER.filter(id=>id!==currentSeriesId); save(); closeDetail(); showToast("削除しました"); } }
+    function deleteSeries() { if(confirm("シリーズ全体を削除しますか？")) { delete DB[currentSeriesId]; ORDER=ORDER.filter(id=>id!==currentSeriesId); save(); closeDetail(); } }
 
     function renderMissingList() {
         const container = document.getElementById('missingListContainer');
         container.innerHTML = "";
-        let foundAny = false;
+        let found = false;
         CHARS.forEach((char) => {
             let list = [];
             ORDER.forEach(sId => {
-                if(!DB[sId]) return;
                 (DB[sId].items || []).forEach(item => {
                     if(!(item.targets || CHARS).includes(char)) return;
-                    const s = (item.stocks && item.stocks[char]) ? item.stocks[char] : {own: 0, trade: 0};
+                    const s = item.stocks[char] || {own: 0, trade: 0};
                     if (item.status === 'not' && s.own === 0 && s.trade === 0) list.push({ series: DB[sId].title, type: item.type });
                 });
             });
             if (list.length > 0) {
-                foundAny = true;
+                found = true;
                 const group = document.createElement('div');
                 group.className = 'card';
-                let listHtml = list.map(li => `<div style="font-size:0.75rem; padding:8px 0; border-top:1px solid #eee;"><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type}</div>`).join('');
+                let html = list.map(li => `<div style="font-size:0.75rem; padding:8px 0; border-top:1px solid #eee;"><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type}</div>`).join('');
                 group.innerHTML = `
                     <div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub); margin-left:10px;">Missing: ${list.length}</span></div>
+                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div>
                         <span style="color:var(--gold-light); font-size:0.8rem;">▼</span>
-                    </div>
-                    <div style="display:none; margin-top:10px;">${listHtml}</div>`;
+                    </div><div style="display:none; margin-top:10px;">${html}</div>`;
                 container.appendChild(group);
             }
         });
-        if(!foundAny) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px; font-size:0.9rem;">不足しているアイテムはありません。</div>`;
+        if(!found) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px; font-size:0.9rem;">不足はありません。</div>`;
     }
 </script>
 </body>
