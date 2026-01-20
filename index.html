@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>COLLECTION ARCHIVE v3.1 Deluxe</title>
+    <style>
+        :root {
+            --bg-color: #fefaf9;       /* 柔らかな生成り色 */
+            --card-bg: #ffffff;
+            --accent-pink: #f8bbd0;    /* くすみピンク（メイン） */
+            --dark-pink: #d81b60;      /* 濃いピンク（アクセント） */
+            --gold: #c5a059;           /* 落ち着いたゴールド */
+            --gold-light: #eaddc0;     /* 薄いゴールド */
+            --text-main: #5a544e;      /* 柔らかいチャコール */
+            --text-sub: #a69f98;       /* グレーベージュ */
+            --border-color: #f0e6e6;   /* 繊細な境界線 */
+            --trade-bg: #f4f6fb;
+            --trade-text: #607d8b;
+        }
+
+        /* キャラクターチップ（色味を微調整） */
+        .char-chip { font-size: 0.7rem; padding: 2px 8px; border-radius: 6px; margin-right: 4px; display: inline-block; font-weight: bold; border: 1px solid rgba(0,0,0,0.03); }
+        .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
+        .c-是国 { background: #4a4a4a !important; color: #fff !important; }
+        .c-金城 { background: #9e9e9e !important; color: #fff !important; }
+        .c-阿修 { background: #fce4ec !important; color: #ad1457 !important; }
+        .c-愛染 { background: #e1f5fe !important; color: #0288d1 !important; }
+        .c-増長 { background: #bbdefb !important; color: #1565c0 !important; }
+        .c-音済 { background: #ffe0b2 !important; color: #e65100 !important; }
+        .c-王茶利 { background: #e8f5e9 !important; color: #2e7d32 !important; }
+        .c-野目 { background: #f3e5f5 !important; color: #7b1fa2 !important; }
+        .c-釈村 { background: #fffde7 !important; color: #afb42b !important; }
+        .c-唯月 { background: #eeeeee !important; color: #616161 !important; }
+        .c-遙日 { background: #fff9c4 !important; color: #fbc02d !important; border: 1px solid #f0f0ed; }
+        .c-不動 { background: #ffe082 !important; color: #ff8f00 !important; }
+        .c-殿 { background: #dcedc8 !important; color: #558b2f !important; }
+
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+            background-color: var(--bg-color); color: var(--text-main); margin: 0; padding-bottom: 80px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header & Navigation */
+        header { 
+            background: var(--card-bg); padding: 20px 15px; text-align: center; 
+            border-bottom: 1px solid var(--gold-light); position: sticky; top: 0; z-index: 100;
+        }
+        header h1 { margin: 0; font-size: 0.85rem; letter-spacing: 4px; color: var(--gold); font-weight: 600; text-indent: 4px; }
+
+        .nav-tabs { display: flex; background: var(--card-bg); position: sticky; top: 59px; z-index: 90; border-bottom: 1px solid var(--border-color); }
+        .nav-tab { flex: 1; padding: 15px; text-align: center; font-size: 0.7rem; color: var(--text-sub); cursor: pointer; letter-spacing: 2px; transition: 0.3s; }
+        .nav-tab.active { color: var(--gold); border-bottom: 2px solid var(--gold); font-weight: bold; }
+
+        /* Container & Cards */
+        .container { padding: 15px; max-width: 600px; margin: auto; }
+        .card { 
+            background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 15px; 
+            box-shadow: 0 6px 16px rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.1); 
+            position: relative; transition: 0.3s;
+        }
+
+        /* Search & Controls */
+        #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 0.9rem; }
+        #sortToggleBtn { 
+            font-size: 0.7rem; padding: 10px; border-radius: 12px; border: 1px solid var(--gold-light); 
+            background: #fff; min-width: 65px; color: var(--gold); font-weight: bold;
+        }
+
+        /* Status Tags */
+        .status-tag { position: absolute; top: 20px; right: 20px; font-size: 0.6rem; padding: 3px 12px; border-radius: 20px; font-weight: bold; }
+        .st-comp { background: #fce4ec; color: var(--dark-pink); }
+        .st-not { background: #f5f5f5; color: #999; }
+        .st-none { background: transparent; color: #ddd; border: 1px solid #eee; }
+
+        /* Detail Rows */
+        .info-row { margin-top: 12px; font-size: 0.8rem; line-height: 1.8; }
+        .info-label { font-weight: bold; font-size: 0.65rem; color: var(--gold); min-width: 55px; display: inline-block; }
+
+        /* Drag Style */
+        .dragging { opacity: 0.5; transform: scale(0.98); }
+        .drag-handle { width: 40px; height: 100%; position: absolute; right: 0; top: 0; display: flex; align-items: center; justify-content: center; cursor: grab; color: var(--gold-light); font-size: 1.2rem; }
+
+        /* Editor & Unboxing Styles */
+        .full-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; padding-bottom: 100px; }
+        .view-header { background: var(--card-bg); padding: 15px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 210; }
+        
+        .editor-row { 
+            display: grid; grid-template-columns: 90px 1fr; align-items: center; padding: 15px; 
+            border-radius: 16px; margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color);
+        }
+        .btn-qty { width: 34px; height: 34px; border-radius: 12px; border: 1px solid var(--gold-light); background: #fff; font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; justify-content: center; }
+        .qty-box { min-width: 32px; text-align: center; font-weight: bold; padding: 5px; border-radius: 8px; margin: 0 4px; }
+
+        /* FAB */
+        .fab { 
+            position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; border-radius: 50%; 
+            background: var(--gold); color: white; border: none; font-size: 1.8rem; 
+            box-shadow: 0 8px 20px rgba(197, 160, 89, 0.3); z-index: 150; 
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .fab:active { transform: scale(0.9); }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(90, 84, 78, 0.4); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: white; width: 88%; max-width: 400px; padding: 30px 20px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+
+        /* Buttons & Inputs */
+        input, select, textarea { border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; font-size: 16px; background: #fff; color: var(--text-main); }
+        .primary-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--gold); color: white; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; }
+
+        .unboxing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
+        .unboxing-panel { padding: 18px 10px; border-radius: 16px; position: relative; font-weight: bold; font-size: 0.8rem; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .unboxing-panel span.count { position: absolute; right: 10px; top: 5px; font-size: 0.65rem; opacity: 0.6; }
+    </style>
+</head>
+<body onload="init()">
+
+<header>
+    <h1>COLLECTION ARCHIVE v3.1</h1>
+    <button onclick="toggleSettings(true)" style="position:absolute; right:18px; top:20px; background:none; border:none; font-size:1.2rem; color:var(--gold-light);">⚙</button>
+</header>
+
+<div class="nav-tabs">
+    <div class="nav-tab active" id="tab-list" onclick="switchMainTab('list')">SERIES</div>
+    <div class="nav-tab" id="tab-missing" onclick="switchMainTab('missing')">MISSING</div>
+</div>
+
+<div id="seriesView" class="container">
+    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
+        <input type="text" id="searchBar" placeholder="シリーズ名を検索..." oninput="renderSeriesList()" style="flex:1; margin:0;">
+        <button id="sortToggleBtn" onclick="toggleSortMode()">並替</button>
+    </div>
+    <div id="seriesListContainer"></div>
+</div>
+
+<div id="missingView" class="container" style="display:none;">
+    <div id="missingListContainer"></div>
+</div>
+
+<div id="detailView" class="full-view">
+    <div class="view-header">
+        <button onclick="closeDetail()" style="background:none; border:none; font-size:1.4rem; color:var(--gold);">✕</button>
+        <div id="detailHeaderTitle" style="flex:1; text-align:center; font-weight:bold; color:var(--text-main); font-size:0.9rem; letter-spacing:1px;"></div>
+        <button onclick="deleteSeries()" style="color:var(--text-sub); background:none; border:none; font-size:0.7rem;">削除</button>
+    </div>
+    <div id="itemListContainer" class="container"></div>
+    <button class="fab" onclick="openItemEditor()" style="background:var(--dark-pink); font-size:1.5rem;">＋</button>
+</div>
+
+<div id="unboxingModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="unboxingTitle" style="margin-top:0; color:var(--gold); font-size:1rem; text-align:center;">開封モード</h3>
+        <p style="text-align: center; font-size: 0.65rem; color: var(--text-sub); margin: -10px 0 15px;">タップで ＋ / 長押しで ー</p>
+        <div id="unboxingGrid" class="unboxing-grid"></div>
+        <div style="text-align:center; margin-top:20px; font-size:0.8rem; color:var(--gold); font-weight:bold;">
+            合計数量: <span id="unboxingTotalCount" style="font-size:1.1rem;">0</span>
+        </div>
+        <button onclick="closeUnboxing()" class="primary-btn" style="background:var(--gold); margin-top:20px;">完了</button>
+    </div>
+</div>
+
+<div id="editorView" class="full-view" style="z-index:300;">
+    <div class="view-header">
+        <button onclick="closeEditor()" style="background:none; border:none; color:var(--text-sub);">戻る</button>
+        <div style="flex:1; text-align:center; font-weight:bold; font-size:0.9rem;">アイテム編集</div>
+        <button onclick="saveItem()" style="background:none; border:none; color:var(--dark-pink); font-weight:bold;">保存</button>
+    </div>
+    <div class="container">
+        <input type="text" id="editItemType" placeholder="アイテム名 (例: 缶バッジ)" style="width:100%; margin-bottom:10px;">
+        <select id="editItemStatus" style="width:100%; margin-bottom:15px;">
+            <option value="not">未コンプ</option>
+            <option value="comp">コンプ済</option>
+            <option value="none">予定なし</option>
+        </select>
+        <div id="editorGrid"></div>
+    </div>
+</div>
+
+<div id="seriesModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center; letter-spacing:1px;">NEW SERIES</h3>
+        <input type="text" id="msTitle" placeholder="シリーズ名" style="width:100%;">
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <input type="month" id="msDate" style="flex:1.2;">
+            <input type="text" id="msTags" placeholder="タグ" style="flex:1;">
+        </div>
+        <label style="font-size: 0.75rem; color: var(--text-sub); display:block; margin: 15px 0;">
+            <input type="checkbox" id="msUseTemplate" checked> テンプレートを適用する
+        </label>
+        <button class="primary-btn" onclick="saveSeriesModal()">登録する</button>
+        <button onclick="closeSeriesModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--text-sub); font-size:0.8rem;">キャンセル</button>
+    </div>
+</div>
+
+<div id="settingsOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:500;" onclick="toggleSettings(false)"></div>
+<div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box; overflow-y: auto;">
+    <h3 style="color:var(--gold); font-size:1rem; border-bottom:1px solid var(--gold-light); padding-bottom:10px;">SETTINGS</h3>
+    <label style="font-size:0.7rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">キャラクター構成 (改行区切り)</label>
+    <textarea id="charSettingsInput" rows="10" style="width:100%; font-size:0.85rem; margin-top:5px;"></textarea>
+    <label style="font-size:0.7rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">新規登録テンプレート</label>
+    <textarea id="tempSettingsInput" rows="5" style="width:100%; font-size:0.85rem; margin-top:5px;"></textarea>
+    <button class="primary-btn" onclick="saveSettings()" style="margin-top:30px;">設定を保存して更新</button>
+</div>
+
+<button class="fab" id="mainFab" onclick="openSeriesModal()">＋</button>
+
+<script>
+    /* ロジック部分はご提示いただいたコードを完全に引き継いでいます。
+       (変数名、関数構造、localStorageキー、イベント処理など変更なし)
+    */
+    let CHARS = JSON.parse(localStorage.getItem('gap_chars')) || ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
+    let TEMPLATES = JSON.parse(localStorage.getItem('gap_temps')) || ["缶バッジ", "アクスタ", "ブロマイド"];
+    let DB = JSON.parse(localStorage.getItem('gap_db')) || {};
+    let ORDER = JSON.parse(localStorage.getItem('gap_order')) || [];
+    
+    let currentSeriesId = null;
+    let currentItemIdx = null;
+    let tempStocks = {};
+    let isSortMode = false;
+    let dragSourceIndex = null;
+
+    function init() { renderSeriesList(); }
+    function save() { 
+        localStorage.setItem('gap_db', JSON.stringify(DB)); 
+        localStorage.setItem('gap_order', JSON.stringify(ORDER)); 
+    }
+
+    function renderSeriesList() {
+        const container = document.getElementById('seriesListContainer');
+        container.innerHTML = "";
+        const term = document.getElementById('searchBar').value.toLowerCase();
+        
+        ORDER.forEach((id, index) => {
+            const s = DB[id];
+            if(!s || !s.title.toLowerCase().includes(term)) return;
+
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.draggable = isSortMode;
+            div.dataset.index = index;
+            
+            if(isSortMode) {
+                div.ondragstart = (e) => { dragSourceIndex = index; e.target.classList.add('dragging'); };
+                div.ondragend = (e) => e.target.classList.remove('dragging');
+                div.ondragover = (e) => e.preventDefault();
+                div.ondrop = (e) => {
+                    e.preventDefault();
+                    const targetIndex = index;
+                    const [removed] = ORDER.splice(dragSourceIndex, 1);
+                    ORDER.splice(targetIndex, 0, removed);
+                    save(); renderSeriesList();
+                };
+            }
+
+            const tagsHtml = s.tags ? s.tags.split(/[、, ]/).map(t => `<span style="font-size:0.6rem; background:#f8f4f0; padding:2px 8px; border-radius:4px; margin-right:5px; color:var(--gold);">#${t}</span>`).join('') : '';
+            
+            div.innerHTML = `
+                <div onclick="${isSortMode ? '' : `openDetail('${id}')`}">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <b style="color:var(--text-main); font-size:0.95rem; flex:1;">${s.title}</b>
+                        <span style="font-size:0.7rem; color:var(--gold); margin-left:10px;">${s.date || ''}</span>
+                    </div>
+                    <div style="margin-top:8px;">${tagsHtml}</div>
+                    <div style="font-size:0.65rem; color:var(--text-sub); margin-top:12px; display:flex; align-items:center;">
+                        <span style="background:var(--bg-color); padding:2px 8px; border-radius:10px;">${s.items ? s.items.length : 0} ITEMS</span>
+                    </div>
+                </div>
+                ${isSortMode ? '<div class="drag-handle">≡</div>' : ''}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function toggleSortMode() {
+        isSortMode = !isSortMode;
+        document.getElementById('sortToggleBtn').style.background = isSortMode ? 'var(--gold)' : '#fff';
+        document.getElementById('sortToggleBtn').style.color = isSortMode ? '#fff' : 'var(--gold)';
+        renderSeriesList();
+    }
+
+    function renderItemList() {
+        const container = document.getElementById('itemListContainer');
+        container.innerHTML = "";
+        const items = DB[currentSeriesId].items || [];
+        items.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            const statusLabel = { "comp": "COMPLETED", "not": "INCOMPLETE", "none": "予定なし" }[item.status || "not"];
+            
+            const targetChars = item.targets || CHARS;
+            let ownChips = [], tradeText = [], missChips = [];
+
+            CHARS.forEach(c => {
+                const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0};
+                const colorClass = `c-${c.trim()}`;
+                const isTarget = targetChars.includes(c);
+
+                if(s.own > 0) ownChips.push(`<span class="char-chip ${colorClass}">${c}</span>`);
+                if(s.trade > 0) tradeText.push(`${c}×${s.trade}`);
+                if(isTarget && s.own === 0 && s.trade === 0) missChips.push(`<span class="char-chip ${colorClass}">${c}</span>`);
+            });
+
+            div.innerHTML = `
+                <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
+                <div style="margin-bottom:15px; padding-right:85px; border-bottom:1px solid var(--bg-color); padding-bottom:10px;"><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div>
+                <div class="info-row"><span class="info-label">保有</span>${ownChips.join('') || '<span style="color:#ddd">－</span>'}</div>
+                <div class="info-row"><span class="info-label">譲渡</span><span style="font-size:0.75rem; color:var(--trade-text); font-weight:bold;">${tradeText.join(' / ') || 'なし'}</span></div>
+                <div class="info-row"><span class="info-label">不足</span>${missChips.join('') || '<span style="color:#ddd">－</span>'}</div>
+                <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                    <span onclick="openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.65rem; font-weight:bold; background:#fff0f5; padding:8px 15px; border-radius:12px; border:1px solid rgba(216,27,96,0.1);">✨ 開封モード</span>
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <span onclick="deleteItem(${idx})" style="color:var(--text-sub); font-size:0.7rem;">削除</span>
+                        <span onclick="openItemEditor(${idx})" style="color:var(--gold); font-size:0.75rem; font-weight:bold; border-bottom:1.5px solid var(--gold-light);">編集</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function openUnboxing(idx) {
+        currentItemIdx = idx;
+        const item = DB[currentSeriesId].items[idx];
+        document.getElementById('unboxingTitle').textContent = item.type;
+        renderUnboxingGrid();
+        document.getElementById('unboxingModal').style.display = 'flex';
+    }
+
+    function renderUnboxingGrid() {
+        const grid = document.getElementById('unboxingGrid');
+        grid.innerHTML = "";
+        const item = DB[currentSeriesId].items[currentItemIdx];
+        let total = 0;
+
+        CHARS.forEach(c => {
+            const count = (item.stocks[c] && item.stocks[c].own) ? item.stocks[c].own : 0;
+            total += count;
+            const panel = document.createElement('div');
+            panel.className = `unboxing-panel c-${c.trim()}`;
+            panel.innerHTML = `<span class="count">${count}</span>${c}`;
+            
+            panel.onclick = (e) => { e.preventDefault(); updateUnboxingCount(c, 1); };
+            let timer;
+            panel.onmousedown = panel.ontouchstart = (e) => {
+                timer = setTimeout(() => { updateUnboxingCount(c, -1); timer = null; }, 600);
+            };
+            panel.onmouseup = panel.onmouseleave = panel.ontouchend = () => clearTimeout(timer);
+            panel.oncontextmenu = (e) => e.preventDefault();
+            grid.appendChild(panel);
+        });
+        document.getElementById('unboxingTotalCount').textContent = total;
+    }
+
+    function updateUnboxingCount(char, delta) {
+        const item = DB[currentSeriesId].items[currentItemIdx];
+        if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0 };
+        item.stocks[char].own = Math.max(0, item.stocks[char].own + delta);
+        save(); renderUnboxingGrid();
+    }
+
+    function closeUnboxing() { document.getElementById('unboxingModal').style.display = 'none'; renderItemList(); }
+
+    function openItemEditor(idx = null) {
+        currentItemIdx = idx;
+        const item = idx !== null ? DB[currentSeriesId].items[idx] : { type: "", stocks: {}, targets: [...CHARS], status: "not" };
+        if(!item.targets) item.targets = [...CHARS];
+
+        document.getElementById('editItemType').value = item.type;
+        document.getElementById('editItemStatus').value = item.status || "not";
+        tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
+        renderEditorGrid(item.targets);
+        document.getElementById('editorView').style.display = 'block';
+    }
+
+    function renderEditorGrid(targets) {
+        const grid = document.getElementById('editorGrid');
+        grid.innerHTML = "";
+        CHARS.forEach(c => {
+            if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0 };
+            const isTarget = targets.includes(c);
+            const row = document.createElement('div');
+            row.className = 'editor-row';
+            row.style.opacity = isTarget ? "1" : "0.5";
+            
+            const colorClass = `c-${c.trim()}`;
+            row.innerHTML = `
+                <div class="char-label-box ${colorClass}" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem;">
+                    <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="margin-bottom:5px;"><br>${c}
+                </div>
+                <div style="display:flex; justify-content:space-around; align-items:center;">
+                    <div style="text-align:center;">
+                        <span style="font-size:0.6rem; color:var(--text-sub); display:block; margin-bottom:5px;">保有</span>
+                        <div style="display:flex; align-items:center;">
+                            <button class="btn-qty" onclick="updateQty('${c}','own',-1)">-</button>
+                            <span class="qty-box" id="q-${c}-own" style="color:${tempStocks[c].own > 0 ? 'var(--dark-pink)' : '#ccc'}">${tempStocks[c].own}</span>
+                            <button class="btn-qty" onclick="updateQty('${c}','own',1)">+</button>
+                        </div>
+                    </div>
+                    <div style="text-align:center;">
+                        <span style="font-size:0.6rem; color:var(--text-sub); display:block; margin-bottom:5px;">譲渡</span>
+                        <div style="display:flex; align-items:center;">
+                            <button class="btn-qty" onclick="updateQty('${c}','trade',-1)">-</button>
+                            <span class="qty-box" id="q-${c}-trade" style="color:${tempStocks[c].trade > 0 ? 'var(--trade-text)' : '#ccc'}">${tempStocks[c].trade}</span>
+                            <button class="btn-qty" onclick="updateQty('${c}','trade',1)">+</button>
+                        </div>
+                    </div>
+                </div>`;
+            grid.appendChild(row);
+        });
+    }
+
+    function refreshEditorTargets() {
+        const targets = getSelectedTargets();
+        renderEditorGrid(targets);
+    }
+
+    function updateQty(char, key, delta) {
+        tempStocks[char][key] = Math.max(0, tempStocks[char][key] + delta);
+        document.getElementById(`q-${char}-${key}`).textContent = tempStocks[char][key];
+        document.getElementById(`q-${char}-${key}`).style.color = tempStocks[char][key] > 0 ? (key==='own'?'var(--dark-pink)':'var(--trade-text)') : '#ccc';
+    }
+
+    function getSelectedTargets() {
+        const checkboxes = document.querySelectorAll('#editorGrid input[type="checkbox"]');
+        let selected = [];
+        checkboxes.forEach((cb, i) => { if(cb.checked) selected.push(CHARS[i]); });
+        return selected;
+    }
+
+    function saveItem() {
+        const type = document.getElementById('editItemType').value.trim();
+        if(!type) return alert("名前を入力してください");
+        const data = { type, stocks: tempStocks, targets: getSelectedTargets(), status: document.getElementById('editItemStatus').value };
+        if(currentItemIdx === null) DB[currentSeriesId].items.push(data);
+        else DB[currentSeriesId].items[currentItemIdx] = data;
+        save(); closeEditor(); renderItemList();
+    }
+
+    function deleteItem(idx) { if(confirm("アイテムを削除しますか？")) { DB[currentSeriesId].items.splice(idx,1); save(); renderItemList(); } }
+    
+    function saveSeriesModal() {
+        const title = document.getElementById('msTitle').value.trim();
+        if(!title) return;
+        const id = "s" + Date.now();
+        const useTemp = document.getElementById('msUseTemplate').checked;
+        let initialItems = [];
+        if(useTemp) TEMPLATES.forEach(t => initialItems.push({ type: t, stocks: {}, targets: [...CHARS], status: "not" }));
+        DB[id] = { title, date: document.getElementById('msDate').value, tags: document.getElementById('msTags').value, items: initialItems };
+        ORDER.unshift(id);
+        save(); closeSeriesModal(); openDetail(id);
+    }
+
+    function toggleSettings(s) { 
+        document.getElementById('settingsOverlay').style.display=s?'block':'none'; 
+        document.getElementById('settingsPanel').style.right=s?'0':'-85%'; 
+        if(s) {
+            document.getElementById('charSettingsInput').value=CHARS.join('\n');
+            document.getElementById('tempSettingsInput').value=TEMPLATES.join('\n');
+        }
+    }
+
+    function saveSettings() { 
+        CHARS = document.getElementById('charSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
+        TEMPLATES = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
+        localStorage.setItem('gap_chars', JSON.stringify(CHARS));
+        localStorage.setItem('gap_temps', JSON.stringify(TEMPLATES));
+        location.reload(); 
+    }
+
+    function switchMainTab(tab) {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
+        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
+        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+        if(tab === 'missing') renderMissingList();
+    }
+
+    function openDetail(id) { currentSeriesId = id; document.getElementById('detailHeaderTitle').textContent = DB[id].title; document.getElementById('detailView').style.display = 'block'; renderItemList(); }
+    function closeDetail() { document.getElementById('detailView').style.display = 'none'; renderSeriesList(); }
+    function closeEditor() { document.getElementById('editorView').style.display = 'none'; }
+    function openSeriesModal() { document.getElementById('msTitle').value=""; document.getElementById('seriesModal').style.display='flex'; }
+    function closeSeriesModal() { document.getElementById('seriesModal').style.display='none'; }
+    function deleteSeries() { if(confirm("シリーズ全体を削除しますか？")) { delete DB[currentSeriesId]; ORDER=ORDER.filter(id=>id!==currentSeriesId); save(); closeDetail(); } }
+
+    function renderMissingList() {
+        const container = document.getElementById('missingListContainer');
+        container.innerHTML = "";
+        CHARS.forEach((char, cIdx) => {
+            let list = [];
+            ORDER.forEach(sId => {
+                (DB[sId].items || []).forEach(item => {
+                    if(!(item.targets || CHARS).includes(char)) return;
+                    const s = (item.stocks && item.stocks[char]) ? item.stocks[char] : {own: 0, trade: 0};
+                    if (item.status === 'not' && s.own === 0 && s.trade === 0) list.push({ series: DB[sId].title, type: item.type });
+                });
+            });
+            if (list.length > 0) {
+                const group = document.createElement('div');
+                group.className = 'card';
+                group.innerHTML = `
+                    <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.75rem; color:var(--text-sub); margin-left:10px;">Missing: ${list.length} items</span></div>
+                        <span style="color:var(--gold-light); font-size:0.7rem;">▼</span>
+                    </div>
+                    <div style="display:none; margin-top:15px; border-top:1px solid var(--border-color); padding-top:10px;">
+                        ${list.map(m => `<div style="font-size:0.75rem; padding:10px 0; border-bottom:1px solid #fcfcfc;">
+                            <div style="color:var(--gold); font-weight:bold; font-size:0.6rem;">${m.series}</div>
+                            <div style="margin-top:2px;">${m.type}</div>
+                        </div>`).join('')}
+                    </div>`;
+                container.appendChild(group);
+            }
+        });
+    }
+</script>
+</body>
+</html>
