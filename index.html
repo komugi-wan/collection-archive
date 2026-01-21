@@ -55,7 +55,7 @@
         .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box; }
         
         /* スワイプコンテナの最適化 */
-        .swipe-container { position: relative; margin-bottom: 15px; overflow: hidden; border-radius: 20px; touch-action: pan-y; }
+        .swipe-container { position: relative; margin-bottom: 15px; overflow: hidden; border-radius: 20px; touch-action: pan-y; background: transparent; }
         .swipe-container.dragging { opacity: 0.5; }
         
         .card { 
@@ -70,7 +70,9 @@
         
         .card.swiping { transition: none; }
 
-        .delete-btn-overlay { position: absolute; top: 0; right: 0; width: 100px; height: 100%; background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0; }
+        /* 初期状態で非表示、スワイプ時のみ見えるように変更 */
+        .delete-btn-overlay { position: absolute; top: 0; right: -100px; width: 100px; height: 100%; background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0; transition: right 0.3s cubic-bezier(0.2, 0, 0, 1); }
+        .swipe-container.active-swipe .delete-btn-overlay { right: 0; }
 
         #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; }
         .status-tag { position: absolute; top: 0; right: 0; font-size: 0.65rem; padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold; }
@@ -78,8 +80,8 @@
         .st-not { background: #f5f5f5; color: #999; }
         .st-none { background: transparent; color: #ddd; border: 1px solid #eee; }
 
-        .inventory-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
-        .inv-box { background: #fafafa; border: 1px solid #f0f0f0; border-radius: 12px; padding: 8px 4px; text-align: center; min-height: 70px; display: flex; flex-direction: column; }
+        .inventory-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; cursor: pointer; }
+        .inv-box { background: #fafafa; border: 1px solid #f0f0f0; border-radius: 12px; padding: 8px 4px; text-align: center; min-height: 70px; display: flex; flex-direction: column; pointer-events: none; }
         .inv-label { font-size: 0.6rem; font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block; }
         .inv-content { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; flex: 1; align-items: center; }
         .inv-content .char-chip { font-size: 0.6rem; padding: 2px 5px; margin-right: 2px; margin-bottom: 2px; }
@@ -90,8 +92,7 @@
         .summary-item span { color: var(--gold); font-size: 0.75rem; margin-left: 2px; }
 
         .trade-text-small { font-size: 0.65rem; color: var(--trade-text); word-break: break-all; font-weight: bold; line-height: 1.2; }
-        .item-card { cursor: pointer; transition: background 0.2s; }
-        .item-card:active { background-color: #f9f9f9; }
+        .item-card { transition: background 0.2s; }
 
         .full-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .view-header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 210; height: 50px; }
@@ -345,16 +346,29 @@
         let startX = 0;
         let currentX = 0;
         let isSwiping = false;
+        const wrapper = element.parentElement; // .swipe-container
+
         element.addEventListener('touchstart', (e) => {
             if (SORT_MODE === 'custom') return;
-            startX = e.touches[0].clientX;
+            // 画面の右側30%以内を触った時だけ反応するように制限
+            const rect = element.getBoundingClientRect();
+            const touchX = e.touches[0].clientX;
+            const threshold = rect.right - (rect.width * 0.3);
+
+            if (touchX < threshold) return;
+
+            startX = touchX;
             element.classList.add('swiping');
+            wrapper.classList.add('active-swipe'); // 赤い枠を表示
             isSwiping = true;
         }, {passive: true});
+
         element.addEventListener('touchmove', (e) => {
             if (!isSwiping || SORT_MODE === 'custom') return;
             currentX = e.touches[0].clientX - startX;
-            if (currentX < 0 && currentX > -150) {
+            
+            // 左スワイプのみ許容。最大-150pxまで。
+            if (currentX < 0) {
                 if (!isTicking) {
                     window.requestAnimationFrame(() => {
                         element.style.transform = `translateX(${currentX}px)`;
@@ -364,18 +378,27 @@
                 }
             }
         }, {passive: true});
+
         element.addEventListener('touchend', (e) => {
             if (!isSwiping || SORT_MODE === 'custom') return;
             isSwiping = false;
             element.classList.remove('swiping');
+            
             const finalX = e.changedTouches[0].clientX - startX;
-            if (finalX < -50) { element.style.transform = 'translateX(-100px)'; }
-            else { element.style.transform = 'translateX(0)'; }
+            // 50px以上引き出していたら固定、そうでなければ戻す
+            if (finalX < -50) { 
+                element.style.transform = 'translateX(-100px)'; 
+            } else { 
+                element.style.transform = 'translateX(0)'; 
+                wrapper.classList.remove('active-swipe'); // 赤い枠を非表示
+            }
         }, {passive: true});
+
         const originalOnClick = element.onclick;
         element.onclick = (e) => {
             if (element.style.transform === 'translateX(-100px)') {
                 element.style.transform = 'translateX(0)';
+                wrapper.classList.remove('active-swipe');
                 e.stopPropagation();
             } else if (originalOnClick) {
                 originalOnClick(e);
@@ -494,12 +517,13 @@
             const swipeWrapper = document.createElement('div'); swipeWrapper.className = 'swipe-container'; swipeWrapper.style.marginBottom = "15px";
             const deleteBtn = document.createElement('div'); deleteBtn.className = 'delete-btn-overlay'; deleteBtn.textContent = '削除'; deleteBtn.onclick = (e) => { e.stopPropagation(); deleteItem(idx); };
             const div = document.createElement('div'); div.className = 'card item-card'; 
-            div.onclick = (e) => { openItemEditor(idx); };
+            
+            // 全体クリックイベントを削除し、内部のグリッドのみに設定するように変更
             attachSwipeEvents(div, () => deleteItem(idx));
             const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
             
             let ownChips = [], tradeText = [], missChips = [], tradeArr = [];
-            let totalOwn = 0, totalTrade = 0; // 数量集計用
+            let totalOwn = 0, totalTrade = 0;
             
             const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
             list.forEach(c => {
@@ -522,7 +546,7 @@
                     <div><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div>
                     <button onclick="event.stopPropagation(); copyTradeText('${copyStr}')" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">コピー</button>
                 </div>
-                <div class="inventory-grid">
+                <div class="inventory-grid" onclick="openItemEditor(${idx})">
                     <div class="inv-box"><span class="inv-label">保管</span><div class="inv-content">${ownChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
                     <div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content"><span class="trade-text-small">${tradeText.join('<br>') || '<span style="color:#ccc;">－</span>'}</span></div></div>
                     <div class="inv-box"><span class="inv-label">不足</span><div class="inv-content">${missChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
