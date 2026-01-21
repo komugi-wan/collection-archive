@@ -30,14 +30,14 @@
         .c-阿修 { background: #fce4ec !important; color: #ad1457 !important; }
         .c-愛染 { background: #e1f5fe !important; color: #0288d1 !important; }
         .c-増長 { background: #bbdefb !important; color: #1565c0 !important; }
-        .c-音済 { background: #ffe0b2 !important; color: #e65100 !important; }
-        .c-王茶利 { background: #e8f5e9 !important; color: #2e7d32 !important; }
+        .c-音済 { background: #ffebee !important; color: #d32f2f !important; }
+        .c-王茶利 { background: #e8f5e9 !important; color: #2e7d32 !important; border: 1px solid #c8e6c9 !important; }
         .c-野目 { background: #f3e5f5 !important; color: #7b1fa2 !important; }
-        .c-釈村 { background: #fffde7 !important; color: #afb42b !important; }
-        .c-遙日 { background: #fff9c4 !important; color: #fbc02d !important; border: 1px solid #f0f0ed; }
+        .c-釈村 { background: #fff176 !important; color: #fbc02d !important; font-weight: 800 !important; }
+        .c-遙日 { background: #fffceb !important; color: #c5a059 !important; border: 1px solid #f0e6e6 !important; }
         .c-唯月 { background: #eeeeee !important; color: #616161 !important; }
         .c-不動 { background: #ffe082 !important; color: #ff8f00 !important; }
-        .c-殿 { background: #dcedc8 !important; color: #558b2f !important; }
+        .c-殿 { background: #f1f8e9 !important; color: #689f38 !important; border: 1px solid #dcedc8 !important; }
 
         .tag-chip { font-size: 0.65rem; background: var(--gold-light); color: var(--text-main); padding: 4px 10px; border-radius: 8px; margin-right: 6px; font-weight: bold; cursor: pointer; display: inline-block; border: none; transition: 0.2s; }
         .tag-chip:active { opacity: 0.6; }
@@ -53,9 +53,23 @@
         .nav-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold; }
 
         .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box; }
+        
+        /* スワイプコンテナの最適化 */
         .swipe-container { position: relative; margin-bottom: 15px; overflow: hidden; border-radius: 20px; touch-action: pan-y; }
         .swipe-container.dragging { opacity: 0.5; }
-        .card { background: var(--card-bg); padding: 20px; box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.1); position: relative; z-index: 2; transition: transform 0.3s ease; box-sizing: border-box; width: 100%; border-radius: 20px; }
+        
+        .card { 
+            background: var(--card-bg); padding: 20px; 
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); 
+            border: 1px solid rgba(197, 160, 89, 0.1); 
+            position: relative; z-index: 2; 
+            box-sizing: border-box; width: 100%; border-radius: 20px;
+            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+            will-change: transform;
+        }
+        
+        .card.swiping { transition: none; }
+
         .delete-btn-overlay { position: absolute; top: 0; right: 0; width: 100px; height: 100%; background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0; }
 
         #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; }
@@ -69,6 +83,12 @@
         .inv-label { font-size: 0.6rem; font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block; }
         .inv-content { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; flex: 1; align-items: center; }
         .inv-content .char-chip { font-size: 0.6rem; padding: 2px 5px; margin-right: 2px; margin-bottom: 2px; }
+        
+        /* 数量サマリーのスタイル */
+        .inv-summary-row { display: flex; justify-content: space-around; margin-top: 8px; padding: 6px 10px; background: #fdfaf5; border-radius: 10px; border: 1px dashed var(--gold-light); }
+        .summary-item { font-size: 0.65rem; color: var(--text-main); font-weight: bold; }
+        .summary-item span { color: var(--gold); font-size: 0.75rem; margin-left: 2px; }
+
         .trade-text-small { font-size: 0.65rem; color: var(--trade-text); word-break: break-all; font-weight: bold; line-height: 1.2; }
         .item-card { cursor: pointer; transition: background 0.2s; }
         .item-card:active { background-color: #f9f9f9; }
@@ -78,7 +98,10 @@
         
         .editor-row { display: grid; grid-template-columns: 80px 1fr; gap: 10px; align-items: center; padding: 15px; border-radius: 16px; margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color); }
         .btn-qty { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gold-light); background: #fff; font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; justify-content: center; }
-        .qty-display { width: 40px; border: none; border-bottom: 1px solid var(--gold-light); background: transparent; font-weight: bold; text-align: center; font-size: 1rem; color: var(--text-main); outline: none; padding: 2px 0; -moz-appearance: textfield; }
+        
+        .qty-display { width: 40px; border: none; border-bottom: 1px solid var(--gold-light); background: transparent; text-align: center; font-size: 1rem; outline: none; padding: 2px 0; -moz-appearance: textfield; transition: 0.2s; }
+        .qty-display.qty-zero { color: #ccc; font-weight: normal; border-bottom-color: #eee; }
+        .qty-display.qty-has { color: var(--gold); font-weight: 800; border-bottom-color: var(--gold); }
         .qty-display::-webkit-inner-spin-button, .qty-display::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
         .unboxing-panel { display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 12px; position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); user-select: none; -webkit-user-select: none; touch-action: none; height: 54px; overflow: visible; margin-bottom: 2px; }
@@ -103,12 +126,13 @@
         .secondary-btn { width: 100%; padding: 12px; border: 1px solid var(--gold); border-radius: 14px; background: white; color: var(--gold); font-weight: bold; font-size: 0.9rem; margin-top: 10px; cursor: pointer; }
 
         #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;}
-        .editor-bulk-actions { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 10px; padding: 0 5px; }
+        .editor-bulk-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 5px; }
+        .bulk-group-left { display: flex; gap: 8px; }
         .bulk-btn { background: none; border: 1px solid var(--gold-light); color: var(--gold); font-size: 0.65rem; padding: 5px 10px; border-radius: 8px; font-weight: bold; }
+        .bulk-btn-danger { color: var(--danger); border-color: #ffcdd2; }
         
         .series-comp-mark { color: var(--gold); font-size: 0.9rem; margin-left: 8px; vertical-align: middle; }
 
-        /* 追加スタイル: 並べ替えコントロールとお気に入り */
         .sort-controls { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
         .sort-btn { white-space: nowrap; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--gold-light); background: #fff; color: var(--gold); font-size: 0.7rem; font-weight: bold; }
         .sort-btn.active { background: var(--gold); color: #fff; }
@@ -188,8 +212,11 @@
             <option value="none">予定なし</option>
         </select>
         <div class="editor-bulk-actions">
-            <button class="bulk-btn" onclick="bulkToggleTargets(true)">ALL SELECT</button>
-            <button class="bulk-btn" onclick="bulkToggleTargets(false)">CANCEL</button>
+            <div class="bulk-group-left">
+                <button class="bulk-btn" onclick="bulkToggleTargets(true)">ALL SELECT</button>
+                <button class="bulk-btn" onclick="bulkToggleTargets(false)">CANCEL</button>
+            </div>
+            <button class="bulk-btn bulk-btn-danger" onclick="bulkResetCounts()">RESET ALL</button>
         </div>
         <div id="editorGrid"></div>
     </div>
@@ -255,6 +282,7 @@
     let tempStocks = {}; 
     let activeCharList = [];
     let dragSrcId = null;
+    let isTicking = false;
 
     function init() { renderSeriesList(); }
     function save() { 
@@ -294,7 +322,6 @@
         renderSeriesList();
     }
 
-    // ドラッグ＆ドロップ用関数
     function handleDragStart(e, id) {
         if(SORT_MODE !== 'custom') return;
         dragSrcId = id;
@@ -304,16 +331,56 @@
     function handleDrop(e, targetId) {
         e.preventDefault();
         if(!dragSrcId || dragSrcId === targetId) return;
-        
         let newOrder = [...ORDER];
         const srcIdx = newOrder.indexOf(dragSrcId);
         const targetIdx = newOrder.indexOf(targetId);
         newOrder.splice(srcIdx, 1);
         newOrder.splice(targetIdx, 0, dragSrcId);
-        
         ORDER = newOrder;
         save();
         renderSeriesList();
+    }
+
+    function attachSwipeEvents(element, onDelete) {
+        let startX = 0;
+        let currentX = 0;
+        let isSwiping = false;
+        element.addEventListener('touchstart', (e) => {
+            if (SORT_MODE === 'custom') return;
+            startX = e.touches[0].clientX;
+            element.classList.add('swiping');
+            isSwiping = true;
+        }, {passive: true});
+        element.addEventListener('touchmove', (e) => {
+            if (!isSwiping || SORT_MODE === 'custom') return;
+            currentX = e.touches[0].clientX - startX;
+            if (currentX < 0 && currentX > -150) {
+                if (!isTicking) {
+                    window.requestAnimationFrame(() => {
+                        element.style.transform = `translateX(${currentX}px)`;
+                        isTicking = false;
+                    });
+                    isTicking = true;
+                }
+            }
+        }, {passive: true});
+        element.addEventListener('touchend', (e) => {
+            if (!isSwiping || SORT_MODE === 'custom') return;
+            isSwiping = false;
+            element.classList.remove('swiping');
+            const finalX = e.changedTouches[0].clientX - startX;
+            if (finalX < -50) { element.style.transform = 'translateX(-100px)'; }
+            else { element.style.transform = 'translateX(0)'; }
+        }, {passive: true});
+        const originalOnClick = element.onclick;
+        element.onclick = (e) => {
+            if (element.style.transform === 'translateX(-100px)') {
+                element.style.transform = 'translateX(0)';
+                e.stopPropagation();
+            } else if (originalOnClick) {
+                originalOnClick(e);
+            }
+        };
     }
 
     function renderSeriesList() {
@@ -322,21 +389,10 @@
         const term = document.getElementById('searchBar').value.toLowerCase();
         const start = document.getElementById('filterStart').value;
         const end = document.getElementById('filterEnd').value;
-
-        // クラスの付け替え（ハンドル表示制御）
         container.className = SORT_MODE === 'custom' ? 'sort-custom' : '';
-
-        // 並べ替えロジック
         let displayOrder = [...ORDER];
-        if (SORT_MODE === 'date') {
-            displayOrder.sort((a, b) => (DB[b].date || "").localeCompare(DB[a].date || ""));
-        } else if (SORT_MODE === 'new') {
-            displayOrder = [...ORDER]; // 登録順（ORDER配列そのまま）
-        }
-
-        // お気に入りをトップに
+        if (SORT_MODE === 'date') { displayOrder.sort((a, b) => (DB[b].date || "").localeCompare(DB[a].date || "")); }
         displayOrder.sort((a, b) => (DB[b].fav ? 1 : 0) - (DB[a].fav ? 1 : 0));
-
         displayOrder.forEach((id) => {
             const s = DB[id];
             if(!s) return;
@@ -355,19 +411,16 @@
                 const isSeriesComp = items.length > 0 && items.every(it => it.status === 'comp' || it.status === 'none');
                 const compMark = isSeriesComp ? '<span class="series-comp-mark">✦</span>' : '';
                 const favActive = s.fav ? 'active' : '';
-
                 const swipeWrapper = document.createElement('div');
                 swipeWrapper.className = 'swipe-container';
                 swipeWrapper.draggable = SORT_MODE === 'custom';
                 swipeWrapper.ondragstart = (e) => handleDragStart(e, id);
                 swipeWrapper.ondragover = handleDragOver;
                 swipeWrapper.ondrop = (e) => handleDrop(e, id);
-
                 const deleteBtn = document.createElement('div');
                 deleteBtn.className = 'delete-btn-overlay';
                 deleteBtn.textContent = '削除';
-                deleteBtn.onclick = () => deleteSeries(id);
-
+                deleteBtn.onclick = (e) => { e.stopPropagation(); deleteSeries(id); };
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
@@ -386,24 +439,8 @@
                             </div>
                         </div>
                     </div>`;
-
-                card.ontouchstart = (e) => { if(SORT_MODE==='custom') return; touchStartX = e.touches[0].clientX; };
-                card.ontouchmove = (e) => {
-                    if(SORT_MODE==='custom') return;
-                    let moveX = e.touches[0].clientX - touchStartX;
-                    if (moveX < 0 && moveX > -100) card.style.transform = `translateX(${moveX}px)`;
-                };
-                card.ontouchend = (e) => {
-                    if(SORT_MODE==='custom') return;
-                    let moveX = e.changedTouches[0].clientX - touchStartX;
-                    if (moveX < -50) card.style.transform = 'translateX(-100px)';
-                    else card.style.transform = 'translateX(0)';
-                };
-                card.onclick = (e) => {
-                    if (card.style.transform === 'translateX(-100px)') card.style.transform = 'translateX(0)';
-                    else if (e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') openDetail(id);
-                };
-
+                card.onclick = (e) => { if (e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') openDetail(id); };
+                attachSwipeEvents(card, () => deleteSeries(id));
                 swipeWrapper.appendChild(deleteBtn);
                 swipeWrapper.appendChild(card);
                 container.appendChild(swipeWrapper);
@@ -411,7 +448,6 @@
         });
     }
 
-    /* 既存の補助関数群 (openDetail, saveItem, deleteSeries等) は既存コードのまま */
     window.onpopstate = function(e) {
         const state = e.state || {};
         const editor = document.getElementById('editorView');
@@ -425,6 +461,7 @@
     function openDetail(id) { currentSeriesId = id; document.getElementById('detailHeaderTitle').textContent = DB[id].title; document.getElementById('detailView').style.display = 'block'; history.pushState({view: 'detail', seriesId: id}, ''); renderItemList(); }
     function closeDetail() { document.getElementById('detailView').style.display = 'none'; if (history.state && history.state.view === 'detail') history.back(); renderSeriesList(); }
     function autoDetermineStatus(item) { if (item.status === "none") return "none"; const targets = item.targets || []; if (targets.length === 0) return item.status; const isAllCollected = targets.every(char => { const s = item.stocks[char] || { own: 0, trade: 0 }; return (s.own + s.trade) >= 1; }); return isAllCollected ? "comp" : "not"; }
+    
     function openItemEditor(idx = null) {
         currentItemIdx = idx;
         const setSelect = document.getElementById('editCharSetName');
@@ -439,6 +476,7 @@
         document.getElementById('editorView').style.display = 'block';
         history.pushState({view: 'editor'}, '');
     }
+    
     function saveItem() {
         const type = document.getElementById('editItemType').value.trim(); if(!type) return alert("名前を入力してください");
         let data = { type, stocks: tempStocks, targets: getSelectedTargets(), status: document.getElementById('editItemStatus').value, charSetName: document.getElementById('editCharSetName').value };
@@ -448,6 +486,7 @@
         save(); showToast("保存しました"); history.back(); document.getElementById('editorView').style.display = 'none'; renderItemList(); 
     }
     function closeEditor() { document.getElementById('editorView').style.display = 'none'; if (history.state && history.state.view === 'editor') history.back(); }
+    
     function renderItemList() {
         const container = document.getElementById('itemListContainer'); container.innerHTML = "";
         const items = DB[currentSeriesId].items || [];
@@ -455,33 +494,98 @@
             const swipeWrapper = document.createElement('div'); swipeWrapper.className = 'swipe-container'; swipeWrapper.style.marginBottom = "15px";
             const deleteBtn = document.createElement('div'); deleteBtn.className = 'delete-btn-overlay'; deleteBtn.textContent = '削除'; deleteBtn.onclick = (e) => { e.stopPropagation(); deleteItem(idx); };
             const div = document.createElement('div'); div.className = 'card item-card'; 
-            let touchStartXLocal = 0;
-            div.ontouchstart = (e) => { touchStartXLocal = e.touches[0].clientX; };
-            div.ontouchmove = (e) => { let moveX = e.touches[0].clientX - touchStartXLocal; if (moveX < 0 && moveX > -100) div.style.transform = `translateX(${moveX}px)`; };
-            div.ontouchend = (e) => { let moveX = e.changedTouches[0].clientX - touchStartXLocal; if (moveX < -50) div.style.transform = 'translateX(-100px)'; else div.style.transform = 'translateX(0)'; };
-            div.onclick = (e) => { if (div.style.transform === 'translateX(-100px)') div.style.transform = 'translateX(0)'; else openItemEditor(idx); };
+            div.onclick = (e) => { openItemEditor(idx); };
+            attachSwipeEvents(div, () => deleteItem(idx));
             const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
+            
             let ownChips = [], tradeText = [], missChips = [], tradeArr = [];
+            let totalOwn = 0, totalTrade = 0; // 数量集計用
+            
             const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
             list.forEach(c => {
                 const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0};
                 const isTarget = (item.targets || list).includes(c);
+                
+                totalOwn += s.own;
+                totalTrade += s.trade;
+                
                 if(s.own > 0) ownChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
                 if(s.trade > 0) { tradeText.push(`${c}${s.trade}`); tradeArr.push(`${c}${s.trade}`); }
                 if(isTarget && s.own === 0 && s.trade === 0) missChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
             });
+            const totalStock = totalOwn + totalTrade;
             const copyStr = `${item.type} 譲：${tradeArr.join('・') || 'なし'} 求：${(item.targets || []).join('・')}`;
-            div.innerHTML = `<span class="status-tag st-${item.status || 'not'}">${statusLabel}</span><div style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; padding-right:60px;"><div><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div><button onclick="event.stopPropagation(); copyTradeText('${copyStr}')" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">コピー</button></div><div class="inventory-grid"><div class="inv-box"><span class="inv-label">所有</span><div class="inv-content">${ownChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div><div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content"><span class="trade-text-small">${tradeText.join('<br>') || '<span style="color:#ccc;">－</span>'}</span></div></div><div class="inv-box"><span class="inv-label">不足</span><div class="inv-content">${missChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div></div><div style="margin-top:12px; display:flex; justify-content:flex-start;"><span onclick="event.stopPropagation(); openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px;">✨ 開封モード</span></div>`;
+            
+            div.innerHTML = `
+                <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
+                <div style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; padding-right:60px;">
+                    <div><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div>
+                    <button onclick="event.stopPropagation(); copyTradeText('${copyStr}')" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">コピー</button>
+                </div>
+                <div class="inventory-grid">
+                    <div class="inv-box"><span class="inv-label">保管</span><div class="inv-content">${ownChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
+                    <div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content"><span class="trade-text-small">${tradeText.join('<br>') || '<span style="color:#ccc;">－</span>'}</span></div></div>
+                    <div class="inv-box"><span class="inv-label">不足</span><div class="inv-content">${missChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
+                </div>
+                <div class="inv-summary-row">
+                    <div class="summary-item">保管合計<span>${totalOwn}</span></div>
+                    <div class="summary-item">譲渡合計<span>${totalTrade}</span></div>
+                    <div class="summary-item">総所有数<span>${totalStock}</span></div>
+                </div>
+                <div style="margin-top:12px; display:flex; justify-content:flex-start;">
+                    <span onclick="event.stopPropagation(); openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px;">✨ 開封モード</span>
+                </div>`;
             swipeWrapper.appendChild(deleteBtn); swipeWrapper.appendChild(div); container.appendChild(swipeWrapper);
         });
     }
-    function renderEditorGrid(targets) { const grid = document.getElementById('editorGrid'); grid.innerHTML = ""; activeCharList.forEach(c => { if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0 }; const isTarget = targets.includes(c); const row = document.createElement('div'); row.className = 'editor-row'; row.style.opacity = isTarget ? "1" : "0.5"; row.innerHTML = `<div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem;"><input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}</div><div style="display:flex; justify-content:space-around;"><div style="text-align:center;"><span style="font-size:0.6rem; color:var(--text-sub);">保有</span><div style="display:flex; align-items:center; gap:8px;"><button class="btn-qty" onclick="updateQty('${c}','own',-1)">-</button><input type="number" inputmode="numeric" class="qty-display" value="${tempStocks[c].own}" onchange="directInputQty('${c}','own',this.value)" onclick="this.select()"><button class="btn-qty" onclick="updateQty('${c}','own',1)">+</button></div></div><div style="text-align:center;"><span style="font-size:0.6rem; color:var(--text-sub);">譲渡</span><div style="display:flex; align-items:center; gap:8px;"><button class="btn-qty" onclick="updateQty('${c}','trade',-1)">-</button><input type="number" inputmode="numeric" class="qty-display" value="${tempStocks[c].trade}" onchange="directInputQty('${c}','trade',this.value)" onclick="this.select()"><button class="btn-qty" onclick="updateQty('${c}','trade',1)">+</button></div></div></div>`; grid.appendChild(row); }); }
+
+    function renderEditorGrid(targets) { 
+        const grid = document.getElementById('editorGrid'); 
+        grid.innerHTML = ""; 
+        activeCharList.forEach(c => { 
+            if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0 }; 
+            const isTarget = targets.includes(c); 
+            const ownVal = tempStocks[c].own;
+            const tradeVal = tempStocks[c].trade;
+            const ownClass = ownVal > 0 ? 'qty-has' : 'qty-zero';
+            const tradeClass = tradeVal > 0 ? 'qty-has' : 'qty-zero';
+            
+            const row = document.createElement('div'); 
+            row.className = 'editor-row'; 
+            row.style.opacity = isTarget ? "1" : "0.5"; 
+            row.innerHTML = `
+                <div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem;">
+                    <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
+                </div>
+                <div style="display:flex; justify-content:space-around;">
+                    <div style="text-align:center;">
+                        <span style="font-size:0.6rem; color:var(--text-sub);">保管</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button class="btn-qty" onclick="updateQty('${c}','own',-1)">-</button>
+                            <input type="number" inputmode="numeric" class="qty-display ${ownClass}" value="${ownVal}" onchange="directInputQty('${c}','own',this.value)" onclick="this.select()">
+                            <button class="btn-qty" onclick="updateQty('${c}','own',1)">+</button>
+                        </div>
+                    </div>
+                    <div style="text-align:center;">
+                        <span style="font-size:0.6rem; color:var(--text-sub);">譲渡</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button class="btn-qty" onclick="updateQty('${c}','trade',-1)">-</button>
+                            <input type="number" inputmode="numeric" class="qty-display ${tradeClass}" value="${tradeVal}" onchange="directInputQty('${c}','trade',this.value)" onclick="this.select()">
+                            <button class="btn-qty" onclick="updateQty('${c}','trade',1)">+</button>
+                        </div>
+                    </div>
+                </div>`; 
+            grid.appendChild(row); 
+        }); 
+    }
+
     function updateQty(char, key, delta) { tempStocks[char][key] = Math.max(0, tempStocks[char][key] + delta); renderEditorGrid(getSelectedTargets()); }
     function directInputQty(char, key, val) { let n = parseInt(val); if(isNaN(n) || n < 0) n = 0; tempStocks[char][key] = n; renderEditorGrid(getSelectedTargets()); }
     function getSelectedTargets() { const cbs = document.querySelectorAll('#editorGrid input[type="checkbox"]'); let selected = []; cbs.forEach((cb, i) => { if(cb.checked) selected.push(activeCharList[i]); }); return selected; }
     function refreshEditorTargets() { renderEditorGrid(getSelectedTargets()); }
     function changeCharSet(setName) { activeCharList = CHAR_SETS[setName] || DEFAULT_CHARS; renderEditorGrid([...activeCharList]); }
     function bulkToggleTargets(s) { renderEditorGrid(s ? [...activeCharList] : []); }
+    function bulkResetCounts() { if(confirm("カウントをすべて削除しますがよろしいですか？")) { Object.keys(tempStocks).forEach(c => { tempStocks[c].own = 0; tempStocks[c].trade = 0; }); renderEditorGrid(getSelectedTargets()); showToast("リセットしました"); } }
     function copyTradeText(text) { navigator.clipboard.writeText(text).then(() => showToast("コピーしました")); }
     function deleteItem(idx) { if(confirm("削除しますか？")) { DB[currentSeriesId].items.splice(idx,1); save(); renderItemList(); } }
     function deleteSeries(id) { if(confirm("削除しますか？")) { delete DB[id]; ORDER = ORDER.filter(oid => oid !== id); save(); renderSeriesList(); } }
