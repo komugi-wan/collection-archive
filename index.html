@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>COLLECTION ARCHIVE v3.8 Pro</title>
+    <title>COLLECTION ARCHIVE v3.9.2 Pro</title>
     <style>
         :root {
             --bg-color: #fefaf9;
@@ -21,8 +21,9 @@
             --safe-bottom: env(safe-area-inset-bottom);
         }
 
-        /* キャラクターチップ */
+        /* キャラクターチップ & 開封モード用カラー定義 */
         .char-chip { font-size: 0.75rem; padding: 4px 10px; border-radius: 8px; margin-right: 6px; margin-bottom: 6px; display: inline-block; font-weight: bold; border: 1px solid rgba(0,0,0,0.03); }
+        .c-default { background: #eee; color: #666; }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
         .c-是国 { background: #000000 !important; color: #ffffff !important; }
         .c-金城 { background: #9e9e9e !important; color: #fff !important; }
@@ -38,27 +39,13 @@
         .c-不動 { background: #ffe082 !important; color: #ff8f00 !important; }
         .c-殿 { background: #dcedc8 !important; color: #558b2f !important; }
 
-        /* タグチップの統一スタイル */
-        .tag-chip {
-            font-size: 0.65rem; background: var(--gold-light); color: var(--text-main);
-            padding: 4px 10px; border-radius: 8px; margin-right: 6px; font-weight: bold;
-            cursor: pointer; display: inline-block; border: none; transition: 0.2s;
-        }
+        .tag-chip { font-size: 0.65rem; background: var(--gold-light); color: var(--text-main); padding: 4px 10px; border-radius: 8px; margin-right: 6px; font-weight: bold; cursor: pointer; display: inline-block; border: none; transition: 0.2s; }
         .tag-chip:active { opacity: 0.6; }
 
-        /* レイアウト基本 */
         html, body { overflow-x: hidden; width: 100%; position: relative; overscroll-behavior-y: none; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif;
-            background-color: var(--bg-color); color: var(--text-main); margin: 0; 
-            padding-bottom: calc(120px + var(--safe-bottom)); 
-            -webkit-font-smoothing: antialiased; touch-action: manipulation;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding-bottom: calc(120px + var(--safe-bottom)); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
 
-        header { 
-            background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; text-align: center; 
-            border-bottom: 1px solid var(--gold-light); position: sticky; top: 0; z-index: 100;
-        }
+        header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; text-align: center; border-bottom: 1px solid var(--gold-light); position: sticky; top: 0; z-index: 100; }
         header h1 { margin: 15px 0 0; font-size: 0.85rem; letter-spacing: 4px; color: var(--gold); font-weight: 600; }
 
         .nav-tabs { display: flex; background: var(--card-bg); position: sticky; top: 58px; z-index: 90; border-bottom: 1px solid var(--border-color); }
@@ -66,32 +53,11 @@
         .nav-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold; }
 
         .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box; }
-        
-        /* スワイプ削除用スタイル */
-        .swipe-container {
-            position: relative;
-            margin-bottom: 15px;
-            overflow: hidden;
-            border-radius: 20px;
-            touch-action: pan-y;
-        }
-        .card { 
-            background: var(--card-bg); padding: 20px;
-            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.1); 
-            position: relative; z-index: 2; transition: transform 0.3s ease;
-            box-sizing: border-box;
-            width: 100%;
-            border-radius: 20px;
-        }
-        .delete-btn-overlay {
-            position: absolute; top: 0; right: 0; width: 100px; height: 100%;
-            background: var(--danger); color: white; display: flex; align-items: center;
-            justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1;
-            border-radius: 0 20px 20px 0;
-        }
+        .swipe-container { position: relative; margin-bottom: 15px; overflow: hidden; border-radius: 20px; touch-action: pan-y; }
+        .card { background: var(--card-bg); padding: 20px; box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.1); position: relative; z-index: 2; transition: transform 0.3s ease; box-sizing: border-box; width: 100%; border-radius: 20px; }
+        .delete-btn-overlay { position: absolute; top: 0; right: 0; width: 100px; height: 100%; background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0; }
 
         #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; }
-        
         .status-tag { position: absolute; top: 0; right: 0; font-size: 0.65rem; padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold; }
         .st-comp { background: #fce4ec; color: var(--dark-pink); }
         .st-not { background: #f5f5f5; color: #999; }
@@ -105,44 +71,41 @@
         
         .editor-row { display: grid; grid-template-columns: 80px 1fr; gap: 10px; align-items: center; padding: 15px; border-radius: 16px; margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color); }
         .btn-qty { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gold-light); background: #fff; font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; justify-content: center; }
-        .qty-display { min-width: 30px; font-weight: bold; text-align: center; font-size: 1rem; text-decoration: underline; text-underline-offset: 4px; color: var(--text-main); }
-
-        .unboxing-panel { 
-            display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 16px; position: relative; 
-            font-weight: bold; font-size: 1rem; text-align: center; box-shadow: 0 4px 0 rgba(0,0,0,0.1); 
-            user-select: none; -webkit-user-select: none; touch-action: none;
-            height: 75px; overflow: visible; margin-bottom: 10px;
+        /* input type="number" 用のスタイル調整 */
+        .qty-display { 
+            width: 40px; 
+            border: none;
+            border-bottom: 1px solid var(--gold-light);
+            background: transparent;
+            font-weight: bold; 
+            text-align: center; 
+            font-size: 1rem; 
+            color: var(--text-main);
+            outline: none;
+            padding: 2px 0;
+            -moz-appearance: textfield;
         }
+        .qty-display::-webkit-inner-spin-button, 
+        .qty-display::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+
+        .unboxing-panel { display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 12px; position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); user-select: none; -webkit-user-select: none; touch-action: none; height: 54px; overflow: visible; margin-bottom: 2px; }
         .ub-area { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transition: background 0.1s; }
-        .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 16px 0 0 16px; }
-        .ub-area-right { border-radius: 0 16px 16px 0; }
-        .ub-area:active { background: rgba(0,0,0,0.05); }
+        .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px; }
+        .ub-area-right { border-radius: 0 12px 12px 0; }
+        .ub-area:active { background: rgba(255,255,255,0.25); }
+        .ub-char-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 1px 6px; border-radius: 6px; font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 5; white-space: nowrap; color: var(--text-main); pointer-events: none; }
 
-        .ub-char-label {
-            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-            background: white; padding: 2px 10px; border-radius: 10px; font-size: 0.7rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 5; white-space: nowrap; color: var(--text-main);
-        }
+        .unboxing-count-badge { min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; font-weight: 800; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none; }
+        .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
 
-        .unboxing-count-badge {
-            min-width: 20px; height: 20px; padding: 2px 4px; border-radius: 10px; font-size: 0.75rem; 
-            display: flex; align-items: center; justify-content: center; 
-            background: #fce4ec; color: #ad1457; 
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08); border: 1px solid rgba(173, 20, 87, 0.1);
-            margin-bottom: 4px; font-weight: 600;
-            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .pop-anim { transform: scale(1.3); }
-
-        .fab { 
-            position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px; width: 64px; height: 64px; border-radius: 50%; 
-            background: var(--gold); color: white; border: none; font-size: 2rem; 
-            box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4); z-index: 150; 
-            display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
+        .fab { position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px; width: 64px; height: 64px; border-radius: 50%; background: var(--gold); color: white; border: none; font-size: 2rem; box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4); z-index: 150; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 92%; max-width: 400px; padding: 25px; border-radius: 28px; box-sizing: border-box; max-height: 85vh; overflow-y: auto; }
+        .modal-content { background: white; width: 95%; max-width: 450px; padding: 15px; border-radius: 20px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
 
         input, select, textarea { border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; font-size: 16px !important; background: #fff; color: var(--text-main); width: 100%; box-sizing: border-box; }
         .primary-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--gold); color: white; font-weight: bold; font-size: 1rem; margin-top: 10px; }
@@ -150,13 +113,15 @@
         .secondary-btn { width: 100%; padding: 12px; border: 1px solid var(--gold); border-radius: 14px; background: white; color: var(--gold); font-weight: bold; font-size: 0.9rem; margin-top: 10px; cursor: pointer; }
 
         #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;}
+        .editor-bulk-actions { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 10px; padding: 0 5px; }
+        .bulk-btn { background: none; border: 1px solid var(--gold-light); color: var(--gold); font-size: 0.65rem; padding: 5px 10px; border-radius: 8px; font-weight: bold; }
     </style>
 </head>
 <body onload="init()">
 
 <header>
     <button onclick="toggleSettings(true)" style="position:absolute; right:15px; top:calc(15px + env(safe-area-inset-top)); background:none; border:none; font-size:1.4rem; color:var(--gold);">⚙</button>
-    <h1>COLLECTION ARCHIVE v3.8</h1>
+    <h1>COLLECTION ARCHIVE v3.9.2</h1>
 </header>
 
 <div class="nav-tabs">
@@ -167,10 +132,9 @@
 <div id="seriesView" class="container">
     <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
         <input type="text" id="searchBar" placeholder="シリーズ・タグを検索..." oninput="renderSeriesList()" style="flex:1;">
-        <button id="btnToggleDate" onclick="toggleDateFilter()" style="background:var(--card-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold); transition:0.3s;">📅</button>
+        <button id="btnToggleDate" onclick="toggleDateFilter()" style="background:var(--card-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold);">📅</button>
     </div>
-
-    <div id="dateFilterPanel" style="display:none; background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+    <div id="dateFilterPanel" style="display:none; background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light);">
         <p style="font-size:0.7rem; font-weight:bold; color:var(--gold); margin:0 0 10px;">表示期間を指定</p>
         <div style="display:flex; align-items:center; gap:10px;">
             <input type="month" id="filterStart" onchange="renderSeriesList()" style="padding:8px; font-size:0.85rem;">
@@ -179,7 +143,6 @@
             <button onclick="clearDateFilter()" style="background:none; border:none; color:var(--danger); font-size:0.75rem; min-width:50px;">クリア</button>
         </div>
     </div>
-
     <div id="seriesListContainer"></div>
 </div>
 
@@ -194,7 +157,7 @@
         <button onclick="deleteAllItems()" class="danger-btn">全削除</button>
     </div>
     <div id="itemListContainer" class="container"></div>
-    <button class="fab" onclick="openItemEditor()" style="background:var(--dark-pink); bottom: calc(30px + var(--safe-bottom));">＋</button>
+    <button class="fab" onclick="openItemEditor()" style="background:var(--dark-pink);">＋</button>
 </div>
 
 <div id="editorView" class="full-view" style="z-index:300;">
@@ -206,12 +169,18 @@
     <div class="container">
         <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">アイテム名</p>
         <input type="text" id="editItemType" placeholder="例: 缶バッジ" style="margin-bottom:15px;">
+        <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">キャラセット</p>
+        <select id="editCharSetName" onchange="changeCharSet(this.value)" style="margin-bottom:15px;"></select>
         <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">ステータス</p>
         <select id="editItemStatus" style="margin-bottom:20px;">
             <option value="not">未コンプ</option>
             <option value="comp">コンプ済</option>
             <option value="none">予定なし</option>
         </select>
+        <div class="editor-bulk-actions">
+            <button class="bulk-btn" onclick="bulkToggleTargets(true)">ALL SELECT</button>
+            <button class="bulk-btn" onclick="bulkToggleTargets(false)">CANCEL</button>
+        </div>
         <div id="editorGrid"></div>
     </div>
 </div>
@@ -228,18 +197,18 @@
             <input type="checkbox" id="msUseTemplate" checked style="width:20px; height:20px;"> テンプレートを適用
         </label>
         <button class="primary-btn" onclick="saveSeriesModal()">登録する</button>
-        <button onclick="closeSeriesModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--text-sub); font-size:0.9rem;">キャンセル</button>
+        <button onclick="closeSeriesModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--text-sub);">キャンセル</button>
     </div>
 </div>
 
 <div id="unboxingModal" class="modal-overlay">
     <div class="modal-content">
-        <h3 id="unboxingTitle" style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center;"></h3>
-        <p style="text-align: center; font-size: 0.75rem; color: var(--text-sub); margin: -5px 0 15px;">左:保管＋ / 右:譲渡＋<br>長押しでマイナス</p>
-        <div id="unboxingGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px 10px;"></div>
-        <div style="text-align:center; margin-top:20px; font-size:0.9rem; color:var(--gold); font-weight:bold; background:var(--bg-color); padding:12px; border-radius:18px; border:1px solid var(--gold-light);">
-            <div id="unboxingTotalCount"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div id="unboxingTitle" style="color:var(--gold); font-size:0.95rem; font-weight:bold;"></div>
+            <p style="font-size: 0.6rem; color: var(--text-sub); margin: 0;">左:保管 / 右:譲渡<br>長押しでマイナス</p>
         </div>
+        <div id="unboxingGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;"></div>
+        <div id="unboxingTotalCount" style="text-align:center; margin-top:12px; font-size:0.8rem; color:var(--gold); background:var(--bg-color); padding:8px; border-radius:12px; border:1px solid var(--gold-light);"></div>
         <button onclick="closeUnboxing()" class="primary-btn">完了</button>
     </div>
 </div>
@@ -247,8 +216,8 @@
 <div id="settingsOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:500;" onclick="toggleSettings(false)"></div>
 <div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box; overflow-y: auto; padding-top: env(safe-area-inset-top);">
     <h3 style="color:var(--gold); font-size:1.1rem; border-bottom:1px solid var(--gold-light); padding-bottom:10px;">SETTINGS</h3>
-    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">キャラクター構成</label>
-    <textarea id="charSettingsInput" rows="8" style="margin-top:5px;"></textarea>
+    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">キャラクターセット（セット名:名,名...）</label>
+    <textarea id="charSettingsInput" rows="8" style="margin-top:5px; font-size: 0.75rem !important;"></textarea>
     <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">新規登録テンプレート</label>
     <textarea id="tempSettingsInput" rows="4" style="margin-top:5px;"></textarea>
     <button class="primary-btn" onclick="saveSettings()" style="margin-top:30px;">設定を保存して更新</button>
@@ -263,7 +232,8 @@
 <button class="fab" id="mainFab" onclick="openSeriesModal()">＋</button>
 
 <script>
-    let CHARS = JSON.parse(localStorage.getItem('gap_chars')) || ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
+    const DEFAULT_CHARS = ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
+    let CHAR_SETS = JSON.parse(localStorage.getItem('gap_char_sets')) || { "デフォルト": DEFAULT_CHARS };
     let TEMPLATES = JSON.parse(localStorage.getItem('gap_temps')) || ["缶バッジ", "アクスタ", "ブロマイド"];
     let DB = JSON.parse(localStorage.getItem('gap_db')) || {};
     let ORDER = JSON.parse(localStorage.getItem('gap_order')) || [];
@@ -271,17 +241,19 @@
     let currentSeriesId = null;
     let currentItemIdx = null;
     let touchStartX = 0;
+    let tempStocks = {}; 
+    let activeCharList = [];
 
     function init() { renderSeriesList(); }
     function save() { 
         localStorage.setItem('gap_db', JSON.stringify(DB)); 
         localStorage.setItem('gap_order', JSON.stringify(ORDER)); 
+        localStorage.setItem('gap_char_sets', JSON.stringify(CHAR_SETS));
     }
 
     function showToast(msg) {
         const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.style.display = 'block';
+        t.textContent = msg; t.style.display = 'block';
         setTimeout(() => t.style.display = 'none', 2000);
     }
 
@@ -294,27 +266,87 @@
         if(tab === 'missing') renderMissingList();
     }
 
-    // シリーズ全アイテム削除機能
-    function deleteAllItems() {
-        if(confirm("このシリーズ内のすべてのアイテムを削除しますか？（シリーズ自体は残り、中身が空になります）")) {
-            DB[currentSeriesId].items = [];
-            save();
-            renderItemList();
-            showToast("全アイテムを削除しました");
-        }
-    }
+    // --- 履歴管理と画面制御 (根本改善部分) ---
+    window.onpopstate = function(e) {
+        const state = e.state || {};
+        const editor = document.getElementById('editorView');
+        const detail = document.getElementById('detailView');
 
-    // シリーズ自体の削除機能
-    function deleteSeries(id) {
-        if(confirm("シリーズ全体を削除しますか？")) {
-            delete DB[id];
-            ORDER = ORDER.filter(oid => oid !== id);
-            save();
+        // エディタが表示されているなら閉じる
+        if (editor.style.display === 'block') {
+            editor.style.display = 'none';
+        } 
+        // 詳細が表示されているが履歴がトップなら詳細を閉じる
+        else if (detail.style.display === 'block' && state.view !== 'detail') {
+            detail.style.display = 'none';
             renderSeriesList();
-            showToast("シリーズを削除しました");
         }
+    };
+
+    function openDetail(id) { 
+        currentSeriesId = id; 
+        document.getElementById('detailHeaderTitle').textContent = DB[id].title; 
+        document.getElementById('detailView').style.display = 'block'; 
+        history.pushState({view: 'detail', seriesId: id}, '');
+        renderItemList(); 
+    }
+    
+    function closeDetail() { 
+        document.getElementById('detailView').style.display = 'none'; 
+        // 履歴スタックが 'detail' なら戻る
+        if (history.state && history.state.view === 'detail') history.back();
+        renderSeriesList(); 
     }
 
+    function openItemEditor(idx = null) {
+        currentItemIdx = idx;
+        const setSelect = document.getElementById('editCharSetName');
+        setSelect.innerHTML = Object.keys(CHAR_SETS).map(n => `<option value="${n}">${n}</option>`).join('');
+        
+        const item = idx !== null ? DB[currentSeriesId].items[idx] : { type: "", stocks: {}, targets: [], status: "not", charSetName: "デフォルト" };
+        document.getElementById('editItemType').value = item.type;
+        document.getElementById('editItemStatus').value = item.status || "not";
+        document.getElementById('editCharSetName').value = item.charSetName || "デフォルト";
+        
+        tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
+        activeCharList = CHAR_SETS[document.getElementById('editCharSetName').value] || DEFAULT_CHARS;
+        renderEditorGrid(item.targets && item.targets.length > 0 ? item.targets : [...activeCharList]);
+        
+        document.getElementById('editorView').style.display = 'block';
+        history.pushState({view: 'editor'}, '');
+    }
+
+    function saveItem() {
+        const type = document.getElementById('editItemType').value.trim();
+        if(!type) return alert("名前を入力してください");
+        
+        const data = { 
+            type, 
+            stocks: tempStocks, 
+            targets: getSelectedTargets(), 
+            status: document.getElementById('editItemStatus').value, 
+            charSetName: document.getElementById('editCharSetName').value 
+        };
+        
+        if(currentItemIdx === null) DB[currentSeriesId].items.push(data);
+        else DB[currentSeriesId].items[currentItemIdx] = data;
+        
+        save(); 
+        showToast("保存しました");
+
+        // 【改善】履歴を1つ戻す（editorViewのpush分）ことで詳細画面の状態に戻す
+        history.back(); 
+        // 画面上の表示も即座に切り替える
+        document.getElementById('editorView').style.display = 'none';
+        renderItemList(); 
+    }
+
+    function closeEditor() {
+        document.getElementById('editorView').style.display = 'none';
+        if (history.state && history.state.view === 'editor') history.back();
+    }
+
+    // --- 以降、既存機能の描画ロジック (保持) ---
     function renderSeriesList() {
         const container = document.getElementById('seriesListContainer');
         container.innerHTML = "";
@@ -325,8 +357,6 @@
         ORDER.forEach((id) => {
             const s = DB[id];
             if(!s) return;
-
-            // 検索・フィルタリング処理
             const titleMatch = s.title.toLowerCase().includes(term);
             const tagsMatch = s.tags ? s.tags.toLowerCase().includes(term) : false;
             let dateMatch = true;
@@ -337,20 +367,15 @@
                     if (end && s.date > end) dateMatch = false;
                 }
             }
-
             if((titleMatch || tagsMatch) && dateMatch) {
                 const swipeWrapper = document.createElement('div');
                 swipeWrapper.className = 'swipe-container';
-                
                 const deleteBtn = document.createElement('div');
                 deleteBtn.className = 'delete-btn-overlay';
                 deleteBtn.textContent = '削除';
                 deleteBtn.onclick = () => deleteSeries(id);
-
                 const card = document.createElement('div');
                 card.className = 'card';
-                
-                // スワイプイベント実装
                 card.ontouchstart = (e) => { touchStartX = e.touches[0].clientX; };
                 card.ontouchmove = (e) => {
                     let moveX = e.touches[0].clientX - touchStartX;
@@ -362,58 +387,17 @@
                     else card.style.transform = 'translateX(0)';
                 };
                 card.onclick = (e) => {
-                    if (card.style.transform === 'translateX(-100px)') {
-                        card.style.transform = 'translateX(0)';
-                    } else if (e.target.tagName !== 'SPAN') {
-                        openDetail(id);
-                    }
+                    if (card.style.transform === 'translateX(-100px)') card.style.transform = 'translateX(0)';
+                    else if (e.target.tagName !== 'SPAN') openDetail(id);
                 };
-
-                const tagsHtml = s.tags ? s.tags.split(/[、, ]/).filter(t => t).map(t => 
-                    `<span onclick="event.stopPropagation(); filterByTag('${t.trim()}')" class="tag-chip">#${t.trim()}</span>`
-                ).join('') : '';
-
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <b style="color:var(--text-main); font-size:1rem; flex:1;">${s.title}</b>
-                        <span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date || ''}</span>
-                    </div>
-                    <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:4px;">${tagsHtml}</div>`;
-                
-                swipeWrapper.appendChild(deleteBtn);
-                swipeWrapper.appendChild(card);
+                const tagsHtml = s.tags ? s.tags.split(/[、, ]/).filter(t => t).map(t => `<span onclick="event.stopPropagation(); filterByTag('${t.trim()}')" class="tag-chip">#${t.trim()}</span>`).join('') : '';
+                card.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:flex-start;"><b style="color:var(--text-main); font-size:1rem; flex:1;">${s.title}</b><span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date || ''}</span></div><div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:4px;">${tagsHtml}</div>`;
+                swipeWrapper.appendChild(deleteBtn); swipeWrapper.appendChild(card);
                 container.appendChild(swipeWrapper);
             }
         });
     }
 
-    // --- 以下、既存の機能関数 (保持) ---
-    function openDetail(id) { 
-        currentSeriesId = id; 
-        document.getElementById('detailHeaderTitle').textContent = DB[id].title; 
-        document.getElementById('detailView').style.display = 'block'; 
-        history.pushState({view: 'detail'}, '');
-        renderItemList(); 
-    }
-    function closeDetail(isPopState = false) { 
-        document.getElementById('detailView').style.display = 'none'; 
-        if (!isPopState) history.back();
-        renderSeriesList(); 
-    }
-    window.onpopstate = function(e) {
-        if (document.getElementById('editorView').style.display === 'block') closeEditor(true);
-        else if (document.getElementById('detailView').style.display === 'block') closeDetail(true);
-    };
-    function toggleDateFilter() {
-        const panel = document.getElementById('dateFilterPanel');
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-    }
-    function clearDateFilter() {
-        document.getElementById('filterStart').value = ""; document.getElementById('filterEnd').value = ""; renderSeriesList();
-    }
-    function filterByTag(tagName) {
-        document.getElementById('searchBar').value = tagName; renderSeriesList(); window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
     function renderItemList() {
         const container = document.getElementById('itemListContainer');
         container.innerHTML = "";
@@ -424,22 +408,19 @@
             div.style.marginBottom = "15px";
             const statusLabel = { "comp": "COMPLETED", "not": "INCOMPLETE", "none": "予定なし" }[item.status || "not"];
             let ownChips = [], tradeText = [], missChips = [], tradeArr = [];
-            CHARS.forEach(c => {
+            const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
+            list.forEach(c => {
                 const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0};
-                const colorClass = `c-${c.trim()}`;
-                const isTarget = (item.targets || CHARS).includes(c);
-                if(s.own > 0) ownChips.push(`<span class="char-chip ${colorClass}">${c}</span>`);
-                if(s.trade > 0) {
-                    tradeText.push(`${c}×${s.trade}`);
-                    tradeArr.push(`${c}${s.trade}`);
-                }
-                if(isTarget && s.own === 0 && s.trade === 0) missChips.push(`<span class="char-chip ${colorClass}">${c}</span>`);
+                const isTarget = (item.targets || list).includes(c);
+                if(s.own > 0) ownChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
+                if(s.trade > 0) { tradeText.push(`${c}×${s.trade}`); tradeArr.push(`${c}${s.trade}`); }
+                if(isTarget && s.own === 0 && s.trade === 0) missChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
             });
-            const copyStr = `${item.type}　譲：${tradeArr.join('・') || 'なし'}　求：${(item.targets || []).join('・')}`;
+            const copyStr = `${item.type} 譲：${tradeArr.join('・') || 'なし'} 求：${(item.targets || []).join('・')}`;
             div.innerHTML = `
                 <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
                 <div style="margin-bottom:15px; border-bottom:1.5px solid var(--bg-color); padding-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <b style="color:var(--text-main); font-size:1.1rem;">${item.type}</b>
+                    <div><b style="color:var(--text-main); font-size:1.1rem;">${item.type}</b><div style="font-size:0.6rem; color:var(--text-sub);">セット: ${item.charSetName || "デフォルト"}</div></div>
                     <button onclick="copyTradeText('${copyStr}')" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.65rem; padding:6px 12px; border-radius:8px; font-weight:bold;">コピー</button>
                 </div>
                 <div class="info-row"><span class="info-label">保有</span><div class="info-content">${ownChips.join('') || '－'}</div></div>
@@ -455,42 +436,32 @@
             container.appendChild(div);
         });
     }
-    function copyTradeText(text) { navigator.clipboard.writeText(text).then(() => showToast("コピーしました")); }
-    function openItemEditor(idx = null) {
-        currentItemIdx = idx;
-        const item = idx !== null ? DB[currentSeriesId].items[idx] : { type: "", stocks: {}, targets: [...CHARS], status: "not" };
-        document.getElementById('editItemType').value = item.type;
-        document.getElementById('editItemStatus').value = item.status || "not";
-        tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
-        renderEditorGrid(item.targets || [...CHARS]);
-        document.getElementById('editorView').style.display = 'block';
-        history.pushState({view: 'editor'}, '');
-    }
+
     function renderEditorGrid(targets) {
         const grid = document.getElementById('editorGrid');
         grid.innerHTML = "";
-        CHARS.forEach(c => {
+        activeCharList.forEach(c => {
             if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0 };
             const isTarget = targets.includes(c);
             const row = document.createElement('div');
             row.className = 'editor-row';
             row.style.opacity = isTarget ? "1" : "0.5";
             row.innerHTML = `
-                <div class="c-${c.trim()}" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem;">
+                <div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem;">
                     <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
                 </div>
                 <div style="display:flex; justify-content:space-around;">
                     <div style="text-align:center;"><span style="font-size:0.6rem; color:var(--text-sub);">保有</span>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <button class="btn-qty" onclick="updateQty('${c}','own',-1)">-</button>
-                            <span class="qty-display">${tempStocks[c].own}</span>
+                            <input type="number" inputmode="numeric" class="qty-display" value="${tempStocks[c].own}" onchange="directInputQty('${c}','own',this.value)" onclick="this.select()">
                             <button class="btn-qty" onclick="updateQty('${c}','own',1)">+</button>
                         </div>
                     </div>
                     <div style="text-align:center;"><span style="font-size:0.6rem; color:var(--text-sub);">譲渡</span>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <button class="btn-qty" onclick="updateQty('${c}','trade',-1)">-</button>
-                            <span class="qty-display">${tempStocks[c].trade}</span>
+                            <input type="number" inputmode="numeric" class="qty-display" value="${tempStocks[c].trade}" onchange="directInputQty('${c}','trade',this.value)" onclick="this.select()">
                             <button class="btn-qty" onclick="updateQty('${c}','trade',1)">+</button>
                         </div>
                     </div>
@@ -498,25 +469,29 @@
             grid.appendChild(row);
         });
     }
+
     function updateQty(char, key, delta) { tempStocks[char][key] = Math.max(0, tempStocks[char][key] + delta); renderEditorGrid(getSelectedTargets()); }
+    
+    // 直接入力用の関数を追加
+    function directInputQty(char, key, val) {
+        let n = parseInt(val);
+        if(isNaN(n) || n < 0) n = 0;
+        tempStocks[char][key] = n;
+        renderEditorGrid(getSelectedTargets());
+    }
+
     function getSelectedTargets() {
         const cbs = document.querySelectorAll('#editorGrid input[type="checkbox"]');
-        let selected = []; cbs.forEach((cb, i) => { if(cb.checked) selected.push(CHARS[i]); }); return selected;
+        let selected = []; cbs.forEach((cb, i) => { if(cb.checked) selected.push(activeCharList[i]); }); return selected;
     }
     function refreshEditorTargets() { renderEditorGrid(getSelectedTargets()); }
-    function saveItem() {
-        const type = document.getElementById('editItemType').value.trim();
-        if(!type) return alert("名前を入力してください");
-        const data = { type, stocks: tempStocks, targets: getSelectedTargets(), status: document.getElementById('editItemStatus').value };
-        if(currentItemIdx === null) DB[currentSeriesId].items.push(data);
-        else DB[currentSeriesId].items[currentItemIdx] = data;
-        save(); closeEditor(); renderItemList(); showToast("保存しました");
-    }
-    function closeEditor(isPopState = false) { 
-        document.getElementById('editorView').style.display = 'none'; 
-        if (!isPopState) history.back();
-    }
-    function deleteItem(idx) { if(confirm("アイテムを削除しますか？")) { DB[currentSeriesId].items.splice(idx,1); save(); renderItemList(); } }
+    function changeCharSet(setName) { activeCharList = CHAR_SETS[setName] || DEFAULT_CHARS; renderEditorGrid([...activeCharList]); }
+    function bulkToggleTargets(s) { renderEditorGrid(s ? [...activeCharList] : []); }
+    function copyTradeText(text) { navigator.clipboard.writeText(text).then(() => showToast("コピーしました")); }
+    function deleteItem(idx) { if(confirm("削除しますか？")) { DB[currentSeriesId].items.splice(idx,1); save(); renderItemList(); } }
+    function deleteSeries(id) { if(confirm("削除しますか？")) { delete DB[id]; ORDER = ORDER.filter(oid => oid !== id); save(); renderSeriesList(); } }
+    function deleteAllItems() { if(confirm("全削除しますか？")) { DB[currentSeriesId].items = []; save(); renderItemList(); } }
+
     function openUnboxing(idx) {
         currentItemIdx = idx;
         document.getElementById('unboxingTitle').textContent = DB[currentSeriesId].items[idx].type;
@@ -526,8 +501,9 @@
     function renderUnboxingGrid() {
         const grid = document.getElementById('unboxingGrid'); grid.innerHTML = "";
         const item = DB[currentSeriesId].items[currentItemIdx];
+        const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
         let tOwn = 0, tTrade = 0;
-        CHARS.forEach(c => {
+        list.forEach(c => {
             const s = item.stocks[c] || { own: 0, trade: 0 };
             tOwn += s.own; tTrade += s.trade;
             const panel = document.createElement('div');
@@ -535,23 +511,11 @@
             const createHandler = (type) => {
                 let timer;
                 return {
-                    onpointerdown: (e) => {
-                        e.preventDefault();
-                        const badge = panel.querySelector(`#ubc-${type}-${c}`);
-                        badge.classList.add('pop-anim');
-                        timer = setTimeout(() => { updateUnboxingCount(c, type, -1); timer = null; }, 500);
-                    },
-                    onpointerup: (e) => {
-                        e.preventDefault();
-                        const badge = panel.querySelector(`#ubc-${type}-${c}`);
-                        if(timer) { clearTimeout(timer); updateUnboxingCount(c, type, 1); }
-                        setTimeout(() => badge.classList.remove('pop-anim'), 100);
-                    }
+                    onpointerdown: (e) => { e.preventDefault(); timer = setTimeout(() => { updateUnboxingCount(c, type, -1); timer = null; }, 500); },
+                    onpointerup: (e) => { e.preventDefault(); if(timer) { clearTimeout(timer); updateUnboxingCount(c, type, 1); } }
                 };
             };
-            panel.innerHTML = `<div class="ub-char-label">${c}</div>
-                <div class="ub-area ub-area-left"><span id="ubc-own-${c}" class="unboxing-count-badge">${s.own}</span><span style="font-size:0.5rem; opacity:0.7;">保管</span></div>
-                <div class="ub-area ub-area-right"><span id="ubc-trade-${c}" class="unboxing-count-badge" style="background:#f0f4f7; color:var(--trade-text);">${s.trade}</span><span style="font-size:0.5rem; opacity:0.7;">譲渡</span></div>`;
+            panel.innerHTML = `<div class="ub-char-label">${c}</div><div class="ub-area ub-area-left"><span id="ubc-own-${c}" class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div><div class="ub-area ub-area-right"><span id="ubc-trade-${c}" class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`;
             Object.assign(panel.querySelector('.ub-area-left'), createHandler('own'));
             Object.assign(panel.querySelector('.ub-area-right'), createHandler('trade'));
             grid.appendChild(panel);
@@ -563,65 +527,73 @@
         if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0 };
         item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta);
         save();
-        document.getElementById(`ubc-${type}-${char}`).textContent = item.stocks[char][type];
-        let to = 0, tt = 0;
-        CHARS.forEach(c => { to += (item.stocks[c]?.own || 0); tt += (item.stocks[c]?.trade || 0); });
-        updateUnboxingFooter(to, tt);
+        renderUnboxingGrid();
     }
     function updateUnboxingFooter(own, trade) {
-        document.getElementById('unboxingTotalCount').innerHTML = `
-            <div style="display:flex; justify-content:center; gap:20px; font-size:0.85rem; margin-bottom:8px;">
-                <span style="color:var(--dark-pink)">保管: ${own}</span><span style="color:var(--trade-text)">譲渡: ${trade}</span>
-            </div>
-            <div>合計数量: <span style="font-size:1.4rem; color:var(--gold);">${own + trade}</span></div>`;
+        document.getElementById('unboxingTotalCount').innerHTML = `保管: ${own} / 譲渡: ${trade} / 合計: ${own+trade}`;
     }
     function closeUnboxing() { document.getElementById('unboxingModal').style.display = 'none'; renderItemList(); }
+
     function openSeriesModal() { document.getElementById('msTitle').value=""; document.getElementById('seriesModal').style.display='flex'; }
     function closeSeriesModal() { document.getElementById('seriesModal').style.display='none'; }
     function saveSeriesModal() {
         const title = document.getElementById('msTitle').value.trim(); if(!title) return;
         const id = "s" + Date.now();
         const useTemp = document.getElementById('msUseTemplate').checked;
-        let items = []; if(useTemp) TEMPLATES.forEach(t => items.push({ type: t, stocks: {}, targets: [...CHARS], status: "not" }));
+        let items = []; if(useTemp) TEMPLATES.forEach(t => items.push({ type: t, stocks: {}, targets: [...DEFAULT_CHARS], status: "not", charSetName: "デフォルト" }));
         DB[id] = { title, date: document.getElementById('msDate').value, tags: document.getElementById('msTags').value, items: items };
         ORDER.unshift(id); save(); closeSeriesModal(); openDetail(id);
     }
+
     function toggleSettings(s) { 
         document.getElementById('settingsOverlay').style.display=s?'block':'none'; 
         document.getElementById('settingsPanel').style.right=s?'0':'-85%'; 
-        if(s) { document.getElementById('charSettingsInput').value=CHARS.join('\n'); document.getElementById('tempSettingsInput').value=TEMPLATES.join('\n'); }
+        if(s) { 
+            document.getElementById('charSettingsInput').value = Object.keys(CHAR_SETS).map(n => `${n}:${CHAR_SETS[n].join(',')}`).join('\n');
+            document.getElementById('tempSettingsInput').value = TEMPLATES.join('\n'); 
+        }
     }
     function saveSettings() { 
-        CHARS = document.getElementById('charSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
+        const lines = document.getElementById('charSettingsInput').value.split('\n');
+        let newSets = {};
+        lines.forEach(line => {
+            const p = line.split(':');
+            if(p.length >= 2) newSets[p[0].trim()] = p[1].split(',').map(c => c.trim()).filter(c => c);
+        });
+        CHAR_SETS = Object.keys(newSets).length ? newSets : { "デフォルト": DEFAULT_CHARS };
         TEMPLATES = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
-        localStorage.setItem('gap_chars', JSON.stringify(CHARS)); localStorage.setItem('gap_temps', JSON.stringify(TEMPLATES));
-        location.reload(); 
+        save(); location.reload(); 
     }
     function exportBackup() {
-        const data = { gap_db: DB, gap_order: ORDER, gap_chars: CHARS, gap_temps: TEMPLATES };
-        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup.json`; a.click();
+        const data = { gap_db: DB, gap_order: ORDER, gap_char_sets: CHAR_SETS, gap_temps: TEMPLATES };
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'})); a.download=`backup.json`; a.click();
     }
-    function importBackup(event) {
+    function importBackup(e) {
         const reader = new FileReader();
-        reader.onload = (e) => {
-            const data = JSON.parse(e.target.result);
-            if (confirm("上書きしますか？")) {
+        reader.onload = (ev) => {
+            const data = JSON.parse(ev.target.result);
+            if(confirm("上書きしますか？")) {
                 localStorage.setItem('gap_db', JSON.stringify(data.gap_db));
                 localStorage.setItem('gap_order', JSON.stringify(data.gap_order));
+                localStorage.setItem('gap_char_sets', JSON.stringify(data.gap_char_sets || { "デフォルト": DEFAULT_CHARS }));
                 location.reload();
             }
         };
-        reader.readAsText(event.target.files[0]);
+        reader.readAsText(e.target.files[0]);
     }
+
     function renderMissingList() {
         const container = document.getElementById('missingListContainer'); container.innerHTML = "";
         let found = false;
-        CHARS.forEach((char) => {
+        let allChars = new Set();
+        Object.values(CHAR_SETS).forEach(list => list.forEach(c => allChars.add(c)));
+        Array.from(allChars).forEach(char => {
             let list = [];
             ORDER.forEach(sId => {
                 (DB[sId].items || []).forEach(item => {
-                    if(!(item.targets || CHARS).includes(char)) return;
+                    const charList = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
+                    if(!charList.includes(char)) return;
+                    if(!(item.targets || charList).includes(char)) return;
                     const s = item.stocks[char] || {own: 0, trade: 0};
                     if (item.status === 'not' && s.own === 0 && s.trade === 0) list.push({ series: DB[sId].title, type: item.type });
                 });
@@ -629,15 +601,15 @@
             if (list.length > 0) {
                 found = true;
                 const group = document.createElement('div'); group.className = 'card'; group.style.marginBottom = "15px";
-                let html = list.map(li => `<div style="font-size:0.75rem; padding:8px 0; border-top:1px solid #eee;"><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type}</div>`).join('');
-                group.innerHTML = `<div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div><span style="color:var(--gold-light);">▼</span>
-                    </div><div style="display:none; margin-top:10px;">${html}</div>`;
+                group.innerHTML = `<div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;"><div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div><span style="color:var(--gold-light);">▼</span></div><div style="display:none; margin-top:10px;">${list.map(li => `<div style="font-size:0.75rem; padding:8px 0; border-top:1px solid #eee;"><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type}</div>`).join('')}</div>`;
                 container.appendChild(group);
             }
         });
         if(!found) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px;">不足はありません。</div>`;
     }
+    function toggleDateFilter() { const p = document.getElementById('dateFilterPanel'); p.style.display = p.style.display==='none'?'block':'none'; }
+    function clearDateFilter() { document.getElementById('filterStart').value=""; document.getElementById('filterEnd').value=""; renderSeriesList(); }
+    function filterByTag(t) { document.getElementById('searchBar').value=t; renderSeriesList(); window.scrollTo({top:0, behavior:'smooth'}); }
 </script>
 </body>
 </html>
