@@ -31,7 +31,7 @@
         
         .c-default { background: #eee; color: #666; }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
-        .c-是国 { background: #000000 !important; color: #ffffff !important; }
+        .c-<td>是国</td> { background: #000000 !important; color: #ffffff !important; }
         .c-金城 { background: #9e9e9e !important; color: #fff !important; }
         .c-阿修 { background: #fce4ec !important; color: #ad1457 !important; }
         .c-愛染 { background: #e1f5fe !important; color: #0288d1 !important; }
@@ -156,9 +156,17 @@
 
         .fav-btn { background: none; border: none; font-size: 1.2rem; color: #ddd; padding: 0 5px; transition: 0.2s; }
         .fav-btn.active { color: #fbc02d; }
+
+        /* スプラッシュ用アニメーション追加 */
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body onload="init()">
+
+<div id="splash-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color:var(--bg-color); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition: opacity 0.5s ease;">
+    <div style="color:var(--gold); font-size:1rem; letter-spacing:4px; font-weight:600; margin-bottom:25px;">COLLECTION ARCHIVE</div>
+    <div style="width:24px; height:24px; border:2px solid var(--gold-light); border-top:2px solid var(--gold); border-radius:50%; animation: spin 0.8s linear infinite;"></div>
+</div>
 
 <header>
     <button onclick="toggleSettings(true)" style="position:absolute; right:15px; top:calc(15px + env(safe-area-inset-top)); background:none; border:none; font-size:1.4rem; color:var(--gold);">⚙</button>
@@ -294,7 +302,7 @@
 <button class="fab" id="mainFab" onclick="openSeriesModal()">＋</button>
 
 <script>
-    const DEFAULT_CHARS = ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
+    const DEFAULT_CHARS = ["北門", "<td>是国</td>", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
     let CHAR_SETS = JSON.parse(localStorage.getItem('gap_char_sets')) || { "デフォルト": DEFAULT_CHARS };
     let TEMPLATES = JSON.parse(localStorage.getItem('gap_temps')) || ["缶バッジ", "アクスタ", "ブロマイド"];
     let TRADE_CONFIG = JSON.parse(localStorage.getItem('gap_trade_config')) || { prefix: "", suffix: "", showInf: true };
@@ -311,7 +319,20 @@
     let isTicking = false;
     let editorFromMissing = false;
 
-    function init() { renderSeriesList(); }
+    // init関数の修正: スプラッシュ削除を追加
+    function init() { 
+        renderSeriesList(); 
+        
+        // 追加: 少し時間をおいてスプラッシュをフェードアウト
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => splash.remove(), 500);
+            }
+        }, 600);
+    }
+
     function save() { 
         localStorage.setItem('gap_db', JSON.stringify(DB)); 
         localStorage.setItem('gap_order', JSON.stringify(ORDER)); 
@@ -787,6 +808,17 @@
     function toggleDateFilter() { const p = document.getElementById('dateFilterPanel'); p.style.display = p.style.display==='none'?'block':'none'; }
     function clearDateFilter() { document.getElementById('filterStart').value=""; document.getElementById('filterEnd').value=""; renderSeriesList(); }
     function filterByTag(t) { document.getElementById('searchBar').value=t; renderSeriesList(); window.scrollTo({top:0, behavior:'smooth'}); }
+
+    // Service Worker登録
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                console.log('SW registered', reg);
+            }).catch(err => {
+                console.log('SW registration failed', err);
+            });
+        });
+    }
 </script>
 </body>
 </html>
