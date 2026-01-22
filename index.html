@@ -31,7 +31,7 @@
         
         .c-default { background: #eee; color: #666; }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
-        .c-<td>是国</td> { background: #000000 !important; color: #ffffff !important; }
+        .c-是国 { background: #000000 !important; color: #ffffff !important; }
         .c-金城 { background: #9e9e9e !important; color: #fff !important; }
         .c-阿修 { background: #fce4ec !important; color: #ad1457 !important; }
         .c-愛染 { background: #e1f5fe !important; color: #0288d1 !important; }
@@ -157,7 +157,12 @@
         .fav-btn { background: none; border: none; font-size: 1.2rem; color: #ddd; padding: 0 5px; transition: 0.2s; }
         .fav-btn.active { color: #fbc02d; }
 
-        /* スプラッシュ用アニメーション追加 */
+        /* 追加デザイン: 無限回収リスト表示用 */
+        .inf-status-container { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex: 1; margin-right: 10px; }
+        .inf-status-chip { font-size: 0.6rem; padding: 2px 6px; border-radius: 6px; font-weight: bold; display: flex; align-items: center; gap: 3px; }
+        .inf-status-chip span { font-size: 0.7rem; opacity: 0.8; }
+
+        /* スプラッシュ用アニメーション */
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -302,7 +307,7 @@
 <button class="fab" id="mainFab" onclick="openSeriesModal()">＋</button>
 
 <script>
-    const DEFAULT_CHARS = ["北門", "<td>是国</td>", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
+    const DEFAULT_CHARS = ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
     let CHAR_SETS = JSON.parse(localStorage.getItem('gap_char_sets')) || { "デフォルト": DEFAULT_CHARS };
     let TEMPLATES = JSON.parse(localStorage.getItem('gap_temps')) || ["缶バッジ", "アクスタ", "ブロマイド"];
     let TRADE_CONFIG = JSON.parse(localStorage.getItem('gap_trade_config')) || { prefix: "", suffix: "", showInf: true };
@@ -319,11 +324,8 @@
     let isTicking = false;
     let editorFromMissing = false;
 
-    // init関数の修正: スプラッシュ削除を追加
     function init() { 
         renderSeriesList(); 
-        
-        // 追加: 少し時間をおいてスプラッシュをフェードアウト
         setTimeout(() => {
             const splash = document.getElementById('splash-screen');
             if (splash) {
@@ -577,7 +579,7 @@
             attachSwipeEvents(div, () => deleteItem(idx));
             const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
             
-            let ownChips = [], tradeTextArr = [], tradeNamesArr = [], targetNamesArr = [];
+            let ownChips = [], tradeTextArr = [], tradeNamesArr = [], targetNamesArr = [], infiniteStatusChips = [];
             let totalOwn = 0, totalTrade = 0;
             const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
 
@@ -590,6 +592,11 @@
                 if(s.trade > 0) { 
                     tradeTextArr.push(`${c}${s.trade}`); 
                     tradeNamesArr.push(`${c}${s.trade > 1 ? s.trade : ''}`); 
+                }
+                
+                // 無限回収設定キャラの保管数を抽出
+                if(s.infinite) {
+                    infiniteStatusChips.push(`<span class="inf-status-chip c-${c.trim()}">${c}<span>:${s.own}</span></span>`);
                 }
                 
                 if(isTarget) {
@@ -624,8 +631,11 @@
                     <div class="summary-item">譲渡合計<span>${totalTrade}</span></div>
                     <div class="summary-item">総所有数<span>${totalOwn + totalTrade}</span></div>
                 </div>
-                <div style="margin-top:12px; display:flex; justify-content:flex-start;">
-                    <span onclick="event.stopPropagation(); openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px;">✨ 開封モード</span>
+                <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div class="inf-status-container">
+                        ${infiniteStatusChips.join('')}
+                    </div>
+                    <span onclick="event.stopPropagation(); openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px; white-space:nowrap;">✨ 開封モード</span>
                 </div>`;
             swipeWrapper.appendChild(deleteBtn); swipeWrapper.appendChild(div); container.appendChild(swipeWrapper);
         });
@@ -706,8 +716,9 @@
                     oncontextmenu: (e) => { e.preventDefault(); } 
                 }; 
             }; 
+            // 修正点①: キャラ名表示から(∞)を削除
             panel.innerHTML = `
-                <div class="ub-char-label">${c}${s.infinite?'(∞)':''}</div>
+                <div class="ub-char-label">${c}</div>
                 <div class="ub-area ub-area-left"><span id="ubc-own-${c}" class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div>
                 <div class="ub-area ub-area-right"><span id="ubc-trade-${c}" class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`; 
             Object.assign(panel.querySelector('.ub-area-left'), createHandler('own')); 
@@ -809,7 +820,6 @@
     function clearDateFilter() { document.getElementById('filterStart').value=""; document.getElementById('filterEnd').value=""; renderSeriesList(); }
     function filterByTag(t) { document.getElementById('searchBar').value=t; renderSeriesList(); window.scrollTo({top:0, behavior:'smooth'}); }
 
-    // Service Worker登録
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js').then(reg => {
