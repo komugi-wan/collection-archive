@@ -8,10 +8,6 @@
     <meta name="theme-color" content="#c5a059">
     <link rel="apple-touch-icon" href="icon-192.png">
     
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="CollArchive">
-
     <style>
         :root {
             --bg-color: #fefaf9;
@@ -29,229 +25,10 @@
             --safe-bottom: env(safe-area-inset-bottom);
         }
 
-        /* 起動時の真っ暗な時間を防ぐための最優先スタイル */
-        html, body { 
-            background-color: #fefaf9; /* テーマカラーを直書き */
-            overflow-x: hidden; 
-            width: 100%; 
-            position: relative; 
-            overscroll-behavior-y: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif;
-            color: var(--text-main); padding-bottom: calc(120px + var(--safe-bottom)); -webkit-font-smoothing: antialiased; touch-action: manipulation;
-        }
-
-        header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; text-align: center;
-            border-bottom: 1px solid var(--gold-light); position: sticky; top: 0; z-index: 100;
-        }
-        header h1 { margin: 15px 0 0; font-size: 0.85rem; letter-spacing: 4px;
-            color: var(--gold); font-weight: 600; }
-
-        .nav-tabs { display: flex; background: var(--card-bg); position: sticky;
-            top: 58px; z-index: 90; border-bottom: 1px solid var(--border-color); }
-        .nav-tab { flex: 1;
-            padding: 15px; text-align: center; font-size: 0.8rem; color: var(--text-sub); cursor: pointer; letter-spacing: 2px; transition: 0.2s;
-        }
-        .nav-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold;
-        }
-
-        .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box;
-        }
+        /* キャラクターチップ & 開封モード用カラー定義 */
+        .char-chip { font-size: 0.75rem; padding: 4px 10px; border-radius: 8px; margin-right: 6px; margin-bottom: 6px; display: inline-block; font-weight: bold; border: 1px solid rgba(0,0,0,0.03); }
+        .char-chip.is-infinite-collected { opacity: 0.4; transform: scale(0.9); }
         
-        .swipe-container { position: relative;
-            margin-bottom: 15px; overflow: hidden; border-radius: 20px; touch-action: pan-y; background: transparent;
-        }
-        .swipe-container.dragging { opacity: 0.5;
-        }
-        
-        .card { 
-            background: var(--card-bg);
-            padding: 20px; 
-            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); 
-            border: 1px solid rgba(197, 160, 89, 0.1); 
-            position: relative;
-            z-index: 2; 
-            box-sizing: border-box; width: 100%; border-radius: 20px;
-            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
-            will-change: transform;
-            touch-action: pan-y;
-        }
-        
-        .card.swiping { transition: none;
-        }
-
-        .delete-btn-overlay { position: absolute; top: 0; right: 0; width: 100px; height: 100%;
-            background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1;
-            border-radius: 0 20px 20px 0; }
-        
-        #searchBar { border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none;
-        }
-        .status-tag { position: absolute; top: 0; right: 0; font-size: 0.65rem;
-            padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold; }
-        .st-comp { background: #fce4ec;
-            color: var(--dark-pink); }
-        .st-not { background: #f5f5f5; color: #999;
-        }
-        .st-none { background: transparent; color: #ddd; border: 1px solid #eee;
-        }
-
-        .inventory-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px;
-            cursor: pointer; }
-        .inv-box { background: #fafafa; border: 1px solid #f0f0f0; border-radius: 12px;
-            padding: 8px 4px; text-align: center; min-height: 70px; display: flex; flex-direction: column; pointer-events: none;
-        }
-        .inv-label { font-size: 0.6rem; font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block;
-        }
-        .inv-content { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; flex: 1;
-            align-items: center; }
-        .inv-content .char-chip { font-size: 0.6rem; padding: 2px 5px; margin-right: 2px;
-            margin-bottom: 2px; }
-        
-        .inv-summary-row { display: flex;
-            justify-content: space-around; margin-top: 8px; padding: 6px 10px; background: #fdfaf5; border-radius: 10px; border: 1px dashed var(--gold-light);
-        }
-        .summary-item { font-size: 0.65rem; color: var(--text-main); font-weight: bold;
-        }
-        .summary-item span { color: var(--gold); font-size: 0.75rem; margin-left: 2px;
-        }
-
-        .trade-text-small { font-size: 0.65rem; color: var(--trade-text); word-break: break-all; font-weight: bold; line-height: 1.2;
-        }
-        .item-card { transition: background 0.2s;
-        }
-
-        .full-view { display: none; position: fixed; top: 0; left: 0; width: 100%;
-            height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; -webkit-overflow-scrolling: touch;
-        }
-        .view-header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; display: flex; align-items: center;
-            border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 210; height: 50px;
-        }
-        
-        .editor-row { display: grid;
-            grid-template-columns: 80px 1fr; gap: 10px; align-items: center; padding: 15px; border-radius: 16px; margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color);
-        }
-        .btn-qty { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gold-light);
-            background: #fff; font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; justify-content: center;
-        }
-        
-        .qty-display { width: 40px;
-            border: none; border-bottom: 1px solid var(--gold-light); background: transparent; text-align: center; font-size: 1rem; outline: none; padding: 2px 0; -moz-appearance: textfield;
-            transition: 0.2s; }
-        .qty-display.qty-zero { color: #ccc; font-weight: normal; border-bottom-color: #eee;
-        }
-        .qty-display.qty-has { color: var(--gold); font-weight: 800; border-bottom-color: var(--gold);
-        }
-        .qty-display::-webkit-inner-spin-button, .qty-display::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0;
-        }
-
-        .inf-btn { background: none; border: none; font-size: 1.1rem; color: #ddd; cursor: pointer;
-            padding: 0; line-height: 1; transition: 0.2s; }
-        .inf-btn.active { color: var(--gold);
-        }
-
-        .unboxing-panel { display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 12px;
-            position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); user-select: none; -webkit-user-select: none; touch-action: none;
-            height: 54px; overflow: visible; margin-bottom: 6px; background: #eee; }
-        .ub-area { display: flex;
-            flex-direction: column; justify-content: center; align-items: center; position: relative; transition: all 0.1s; touch-action: none; -webkit-touch-callout: none; z-index: 1;
-        }
-        .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px;
-        }
-        .ub-area-right { border-radius: 0 12px 12px 0;
-        }
-        
-        .ub-area:active { 
-            background: rgba(0,0,0,0.1);
-            transform: scale(0.96); 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); 
-            z-index: 2;
-        }
-        
-        .ub-char-label { position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 1px 6px; border-radius: 6px; font-size: 0.6rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none;
-        }
-
-        .unboxing-count-badge { min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px;
-            font-size: 0.85rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; font-weight: 800; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            pointer-events: none; }
-        .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none;
-        }
-        .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-        }
-
-        .fab { position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px; width: 64px;
-            height: 64px; border-radius: 50%; background: var(--gold); color: white; border: none; font-size: 2rem; box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4);
-            z-index: 150; display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%;
-            height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center;
-        }
-        .modal-content { background: white; width: 95%; max-width: 450px; padding: 15px; border-radius: 20px;
-            box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
-
-        input, select, textarea { border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 14px; font-size: 16px !important; background: #fff; color: var(--text-main); width: 100%; box-sizing: border-box;
-        }
-        .primary-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--gold);
-            color: white; font-weight: bold; font-size: 1rem; margin-top: 10px; }
-        .danger-btn { color: var(--danger);
-            background: none; border: none; font-size: 0.8rem; }
-        .secondary-btn { width: 100%; padding: 12px;
-            border: 1px solid var(--gold); border-radius: 14px; background: white; color: var(--gold); font-weight: bold; font-size: 0.9rem; margin-top: 10px; cursor: pointer;
-        }
-
-        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8);
-            color: white; padding: 12px 24px; border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            pointer-events: none;}
-        .editor-bulk-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-            padding: 0 5px; }
-        .bulk-group-left { display: flex; gap: 8px; flex-wrap: wrap;
-        }
-        .bulk-btn { background: none; border: 1px solid var(--gold-light); color: var(--gold); font-size: 0.65rem;
-            padding: 5px 10px; border-radius: 8px; font-weight: bold; }
-        .bulk-btn-danger { color: var(--danger);
-            border-color: #ffcdd2; }
-        
-        .series-comp-mark { color: var(--gold);
-            font-size: 0.9rem; margin-left: 8px; vertical-align: middle; }
-        .sort-controls { display: flex; gap: 8px;
-            margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
-        .sort-btn { white-space: nowrap;
-            padding: 6px 12px; border-radius: 20px; border: 1px solid var(--gold-light); background: #fff; color: var(--gold); font-size: 0.7rem; font-weight: bold;
-        }
-        .sort-btn.active { background: var(--gold); color: #fff;
-        }
-        .handle { color: var(--gold-light); cursor: grab; padding: 10px; font-size: 1.2rem; display: none;
-        }
-        .sort-custom .handle { display: block;
-        }
-        .fav-btn { background: none; border: none; font-size: 1.2rem; color: #ddd;
-            padding: 0 5px; transition: 0.2s; }
-        .fav-btn.active { color: #fbc02d;
-        }
-        .inf-status-container { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex: 1;
-            margin-right: 10px; }
-        .inf-status-chip { font-size: 0.6rem; padding: 2px 6px; border-radius: 6px;
-            font-weight: bold; display: flex; align-items: center; gap: 3px; }
-        .inf-status-chip span { font-size: 0.7rem;
-            opacity: 0.8; }
-
-        .preset-chip { display: inline-block;
-            background: var(--gold-light); color: var(--gold); padding: 8px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; margin: 4px; cursor: pointer;
-        }
-        .history-banner { background: #fff9f0; border: 1px dashed var(--gold); padding: 10px; border-radius: 12px;
-            margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-
-        @keyframes spin { 0% { transform: rotate(0deg);
-            } 100% { transform: rotate(360deg); } }
-
-        /* キャラクター別カラー */
         .c-default { background: #eee; color: #666; }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
         .c-是国 { background: #000000 !important; color: #ffffff !important; }
@@ -267,15 +44,131 @@
         .c-唯月 { background: #eeeeee !important; color: #616161 !important; }
         .c-不動 { background: #ffe082 !important; color: #ff8f00 !important; }
         .c-殿 { background: #f1f8e9 !important; color: #689f38 !important; border: 1px solid #dcedc8 !important; }
+
         .tag-chip { font-size: 0.65rem; background: var(--gold-light); color: var(--text-main); padding: 4px 10px; border-radius: 8px; margin-right: 6px; font-weight: bold; cursor: pointer; display: inline-block; border: none; transition: 0.2s; }
         .tag-chip:active { opacity: 0.6; }
+
+        html, body { overflow-x: hidden; width: 100%; position: relative; overscroll-behavior-y: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding-bottom: calc(120px + var(--safe-bottom)); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
+
+        header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; text-align: center; border-bottom: 1px solid var(--gold-light); position: sticky; top: 0; z-index: 100; }
+        header h1 { margin: 15px 0 0; font-size: 0.85rem; letter-spacing: 4px; color: var(--gold); font-weight: 600; }
+
+        .nav-tabs { display: flex; background: var(--card-bg); position: sticky; top: 58px; z-index: 90; border-bottom: 1px solid var(--border-color); }
+        .nav-tab { flex: 1; padding: 15px; text-align: center; font-size: 0.8rem; color: var(--text-sub); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .nav-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold; }
+
+        .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box; }
+        
+        .swipe-container { position: relative; margin-bottom: 15px; overflow: hidden; border-radius: 20px; touch-action: pan-y; background: transparent; }
+        .swipe-container.dragging { opacity: 0.5; }
+        
+        .card { 
+            background: var(--card-bg); padding: 20px; 
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); 
+            border: 1px solid rgba(197, 160, 89, 0.1); 
+            position: relative; z-index: 2; 
+            box-sizing: border-box; width: 100%; border-radius: 20px;
+            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+            will-change: transform;
+            touch-action: pan-y;
+        }
+        
+        .card.swiping { transition: none; }
+
+        .delete-btn-overlay { position: absolute; top: 0; right: 0; width: 100px; height: 100%; background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0; }
+        
+        #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; }
+        .status-tag { position: absolute; top: 0; right: 0; font-size: 0.65rem; padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold; }
+        .st-comp { background: #fce4ec; color: var(--dark-pink); }
+        .st-not { background: #f5f5f5; color: #999; }
+        .st-none { background: transparent; color: #ddd; border: 1px solid #eee; }
+
+        .inventory-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; cursor: pointer; }
+        .inv-box { background: #fafafa; border: 1px solid #f0f0f0; border-radius: 12px; padding: 8px 4px; text-align: center; min-height: 70px; display: flex; flex-direction: column; pointer-events: none; }
+        .inv-label { font-size: 0.6rem; font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block; }
+        .inv-content { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; flex: 1; align-items: center; }
+        .inv-content .char-chip { font-size: 0.6rem; padding: 2px 5px; margin-right: 2px; margin-bottom: 2px; }
+        
+        .inv-summary-row { display: flex; justify-content: space-around; margin-top: 8px; padding: 6px 10px; background: #fdfaf5; border-radius: 10px; border: 1px dashed var(--gold-light); }
+        .summary-item { font-size: 0.65rem; color: var(--text-main); font-weight: bold; }
+        .summary-item span { color: var(--gold); font-size: 0.75rem; margin-left: 2px; }
+
+        .trade-text-small { font-size: 0.65rem; color: var(--trade-text); word-break: break-all; font-weight: bold; line-height: 1.2; }
+        .item-card { transition: background 0.2s; }
+
+        .full-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .view-header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 210; height: 50px; }
+        
+        .editor-row { display: grid; grid-template-columns: 80px 1fr; gap: 10px; align-items: center; padding: 15px; border-radius: 16px; margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color); }
+        .btn-qty { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gold-light); background: #fff; font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; justify-content: center; }
+        
+        .qty-display { width: 40px; border: none; border-bottom: 1px solid var(--gold-light); background: transparent; text-align: center; font-size: 1rem; outline: none; padding: 2px 0; -moz-appearance: textfield; transition: 0.2s; }
+        .qty-display.qty-zero { color: #ccc; font-weight: normal; border-bottom-color: #eee; }
+        .qty-display.qty-has { color: var(--gold); font-weight: 800; border-bottom-color: var(--gold); }
+        .qty-display::-webkit-inner-spin-button, .qty-display::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .inf-btn { background: none; border: none; font-size: 1.1rem; color: #ddd; cursor: pointer; padding: 0; line-height: 1; transition: 0.2s; }
+        .inf-btn.active { color: var(--gold); }
+
+        .unboxing-panel { display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 12px; position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); user-select: none; -webkit-user-select: none; touch-action: none; height: 54px; overflow: visible; margin-bottom: 6px; background: #eee; }
+        .ub-area { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transition: all 0.1s; touch-action: none; -webkit-touch-callout: none; z-index: 1; }
+        .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px; }
+        .ub-area-right { border-radius: 0 12px 12px 0; }
+        
+        .ub-area:active { 
+            background: rgba(0,0,0,0.1); 
+            transform: scale(0.96); 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); 
+            z-index: 2;
+        }
+        
+        .ub-char-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 1px 6px; border-radius: 6px; font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none; }
+
+        .unboxing-count-badge { min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; font-weight: 800; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+        .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none; }
+        .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+
+        .fab { position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px; width: 64px; height: 64px; border-radius: 50%; background: var(--gold); color: white; border: none; font-size: 2rem; box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4); z-index: 150; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: white; width: 95%; max-width: 450px; padding: 15px; border-radius: 20px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
+
+        input, select, textarea { border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; font-size: 16px !important; background: #fff; color: var(--text-main); width: 100%; box-sizing: border-box; }
+        .primary-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--gold); color: white; font-weight: bold; font-size: 1rem; margin-top: 10px; }
+        .danger-btn { color: var(--danger); background: none; border: none; font-size: 0.8rem; }
+        .secondary-btn { width: 100%; padding: 12px; border: 1px solid var(--gold); border-radius: 14px; background: white; color: var(--gold); font-weight: bold; font-size: 0.9rem; margin-top: 10px; cursor: pointer; }
+
+        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;}
+        .editor-bulk-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 5px; }
+        .bulk-group-left { display: flex; gap: 8px; flex-wrap: wrap; }
+        .bulk-btn { background: none; border: 1px solid var(--gold-light); color: var(--gold); font-size: 0.65rem; padding: 5px 10px; border-radius: 8px; font-weight: bold; }
+        .bulk-btn-danger { color: var(--danger); border-color: #ffcdd2; }
+        
+        .series-comp-mark { color: var(--gold); font-size: 0.9rem; margin-left: 8px; vertical-align: middle; }
+        .sort-controls { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+        .sort-btn { white-space: nowrap; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--gold-light); background: #fff; color: var(--gold); font-size: 0.7rem; font-weight: bold; }
+        .sort-btn.active { background: var(--gold); color: #fff; }
+        .handle { color: var(--gold-light); cursor: grab; padding: 10px; font-size: 1.2rem; display: none; }
+        .sort-custom .handle { display: block; }
+        .fav-btn { background: none; border: none; font-size: 1.2rem; color: #ddd; padding: 0 5px; transition: 0.2s; }
+        .fav-btn.active { color: #fbc02d; }
+        .inf-status-container { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex: 1; margin-right: 10px; }
+        .inf-status-chip { font-size: 0.6rem; padding: 2px 6px; border-radius: 6px; font-weight: bold; display: flex; align-items: center; gap: 3px; }
+        .inf-status-chip span { font-size: 0.7rem; opacity: 0.8; }
+
+        /* 追加スタイル */
+        .preset-chip { display: inline-block; background: var(--gold-light); color: var(--gold); padding: 8px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; margin: 4px; cursor: pointer; }
+        .history-banner { background: #fff9f0; border: 1px dashed var(--gold); padding: 10px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body onload="init()">
 
-<div id="splash-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color:#fefaf9; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition: opacity 0.4s ease;">
-    <div style="color:#c5a059; font-size:1rem; letter-spacing:4px; font-weight:600; margin-bottom:25px;">COLLECTION ARCHIVE</div>
-    <div style="width:24px; height:24px; border:2px solid #eaddc0; border-top:2px solid #c5a059; border-radius:50%; animation: spin 0.8s linear infinite;"></div>
+<div id="splash-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color:var(--bg-color); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition: opacity 0.5s ease;">
+    <div style="color:var(--gold); font-size:1rem; letter-spacing:4px; font-weight:600; margin-bottom:25px;">COLLECTION ARCHIVE</div>
+    <div style="width:24px; height:24px; border:2px solid var(--gold-light); border-top:2px solid var(--gold); border-radius:50%; animation: spin 0.8s linear infinite;"></div>
 </div>
 
 <header>
@@ -396,18 +289,23 @@
 <div id="settingsOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:500;" onclick="toggleSettings(false)"></div>
 <div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box; overflow-y: auto; padding-top: env(safe-area-inset-top);">
     <h3 style="color:var(--gold); font-size:1.1rem; border-bottom:1px solid var(--gold-light); padding-bottom:10px;">SETTINGS</h3>
+    
     <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">募集文カスタマイズ</label>
     <input type="text" id="tradePrefixInput" placeholder="【交換】" style="margin-top:5px; font-size: 0.8rem !important; margin-bottom:5px;">
     <input type="text" id="tradeSuffixInput" placeholder="郵送希望です。検索からお気軽にどうぞ。" style="font-size: 0.8rem !important; margin-bottom:10px;">
     <label style="font-size:0.7rem; color:var(--text-sub); display:flex; align-items:center; gap:5px; margin-bottom:15px;">
         <input type="checkbox" id="tradeShowInfMark" style="width:16px; height:16px;"> 無限回収に(∞)を表示する
     </label>
+
     <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">キャラクターセット（セット名:名,名...）</label>
     <textarea id="charSettingsInput" rows="5" style="margin-top:5px; font-size: 0.75rem !important;"></textarea>
+    
     <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">プリセット（アイテム名,セット名,対象キャラ1|対象キャラ2...）</label>
     <textarea id="presetSettingsInput" rows="5" style="margin-top:5px; font-size: 0.75rem !important;" placeholder="缶バッジ,デフォルト,北門|是国|金城"></textarea>
+
     <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">新規登録テンプレート</label>
     <textarea id="tempSettingsInput" rows="3" style="margin-top:5px;"></textarea>
+    
     <button class="primary-btn" onclick="saveSettings()" style="margin-top:30px;">設定を保存して更新</button>
     <div style="margin-top:40px; border-top:1px solid var(--border-color); padding-top:20px;">
         <button class="secondary-btn" onclick="exportBackup()">バックアップを書き出し</button>
@@ -427,32 +325,32 @@
     let TRADE_CONFIG = JSON.parse(localStorage.getItem('gap_trade_config')) || { prefix: "", suffix: "", showInf: true };
     let DB = JSON.parse(localStorage.getItem('gap_db')) || {};
     let ORDER = JSON.parse(localStorage.getItem('gap_order')) || [];
-    let SORT_MODE = localStorage.getItem('gap_sort_mode') || 'new';
+    let SORT_MODE = localStorage.getItem('gap_sort_mode') || 'new'; 
     let LAST_ITEM = JSON.parse(localStorage.getItem('gap_last_item')) || null;
+    
     let currentSeriesId = null;
     let currentItemIdx = null;
     let touchStartX = 0;
-    let tempStocks = {};
+    let tempStocks = {}; 
     let activeCharList = [];
     let dragSrcId = null;
     let isTicking = false;
     let editorFromMissing = false;
 
-    function init() {
-        renderSeriesList();
-        // スプラッシュ解除をさらに高速化（DOM構築後すぐ）
-        requestAnimationFrame(() => {
+    function init() { 
+        renderSeriesList(); 
+        setTimeout(() => {
             const splash = document.getElementById('splash-screen');
             if (splash) {
                 splash.style.opacity = '0';
-                setTimeout(() => splash.remove(), 400);
+                setTimeout(() => splash.remove(), 500);
             }
-        });
+        }, 600);
     }
 
-    function save() {
-        localStorage.setItem('gap_db', JSON.stringify(DB));
-        localStorage.setItem('gap_order', JSON.stringify(ORDER));
+    function save() { 
+        localStorage.setItem('gap_db', JSON.stringify(DB)); 
+        localStorage.setItem('gap_order', JSON.stringify(ORDER)); 
         localStorage.setItem('gap_char_sets', JSON.stringify(CHAR_SETS));
         localStorage.setItem('gap_trade_config', JSON.stringify(TRADE_CONFIG));
         localStorage.setItem('gap_sort_mode', SORT_MODE);
@@ -461,516 +359,541 @@
 
     function showToast(msg) {
         const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.style.display = 'block';
+        t.textContent = msg; t.style.display = 'block';
         setTimeout(() => t.style.display = 'none', 2000);
     }
 
     function switchMainTab(tab) {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-${tab}`).classList.add('active');
-        if(tab==='list') {
-            document.getElementById('seriesView').style.display='block';
-            document.getElementById('missingView').style.display='none';
-            document.getElementById('mainFab').style.display='flex';
-            renderSeriesList();
-        } else {
-            document.getElementById('seriesView').style.display='none';
-            document.getElementById('missingView').style.display='block';
-            document.getElementById('mainFab').style.display='none';
-            renderMissingList();
-        }
+        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
+        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
+        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+        if(tab === 'missing') renderMissingList();
     }
 
     function setSortMode(mode) {
         SORT_MODE = mode;
-        save();
         document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`sort-${mode}`).classList.add('active');
-        const container = document.getElementById('seriesListContainer');
-        if(mode==='custom') container.classList.add('sort-custom');
-        else container.classList.remove('sort-custom');
+        save();
         renderSeriesList();
     }
 
-    function openSeriesModal() { document.getElementById('seriesModal').style.display='flex'; }
-    function closeSeriesModal() { document.getElementById('seriesModal').style.display='none'; }
-
-    function saveSeriesModal() {
-        const title = document.getElementById('msTitle').value.trim();
-        if(!title) return;
-        const id = 's' + Date.now();
-        DB[id] = {
-            title: title,
-            date: document.getElementById('msDate').value || "",
-            tags: document.getElementById('msTags').value.split(/[ ,，、]+/).filter(t=>t),
-            items: [],
-            isFav: false
-        };
-        if(document.getElementById('msUseTemplate').checked) {
-            TEMPLATES.forEach(type => {
-                DB[id].items.push({ type: type, charSetName: "デフォルト", status: "not", stocks: {}, targets: [...DEFAULT_CHARS] });
-            });
-        }
-        ORDER.unshift(id);
+    function toggleFavorite(id, e) {
+        e.stopPropagation();
+        DB[id].fav = !DB[id].fav;
         save();
         renderSeriesList();
-        closeSeriesModal();
-        document.getElementById('msTitle').value="";
-        document.getElementById('msTags').value="";
+    }
+
+    function handleDragStart(e, id) {
+        if(SORT_MODE !== 'custom') return;
+        dragSrcId = id;
+        e.target.classList.add('dragging');
+    }
+    function handleDragOver(e) { e.preventDefault(); }
+    function handleDrop(e, targetId) {
+        e.preventDefault();
+        if(!dragSrcId || dragSrcId === targetId) return;
+        let newOrder = [...ORDER];
+        const srcIdx = newOrder.indexOf(dragSrcId);
+        const targetIdx = newOrder.indexOf(targetId);
+        newOrder.splice(srcIdx, 1);
+        newOrder.splice(targetIdx, 0, dragSrcId);
+        ORDER = newOrder;
+        save();
+        renderSeriesList();
+    }
+
+    function attachSwipeEvents(element, onDelete) {
+        let startX = 0;
+        let isSwiping = false;
+        element.addEventListener('touchstart', (e) => {
+            if (SORT_MODE === 'custom') return;
+            const rect = element.getBoundingClientRect();
+            const touchX = e.touches[0].clientX;
+            const startThreshold = rect.right - (rect.width * 0.25);
+            if (touchX < startThreshold) { isSwiping = false; return; }
+            startX = touchX;
+            isSwiping = true;
+            element.classList.add('swiping');
+        }, {passive: true});
+
+        element.addEventListener('touchmove', (e) => {
+            if (!isSwiping || SORT_MODE === 'custom') return;
+            let currentX = e.touches[0].clientX - startX;
+            if (currentX < 0) {
+                if (currentX < -120) currentX = -120;
+                if (!isTicking) {
+                    window.requestAnimationFrame(() => {
+                        element.style.transform = `translateX(${currentX}px)`;
+                        isTicking = false;
+                    });
+                    isTicking = true;
+                }
+            }
+        }, {passive: true});
+
+        element.addEventListener('touchend', (e) => {
+            if (!isSwiping || SORT_MODE === 'custom') return;
+            isSwiping = false;
+            element.classList.remove('swiping');
+            const finalX = e.changedTouches[0].clientX - startX;
+            if (finalX < -50) { element.style.transform = 'translateX(-100px)'; } else { element.style.transform = 'translateX(0)'; }
+        }, {passive: true});
+
+        const originalOnClick = element.onclick;
+        element.onclick = (e) => {
+            if (element.style.transform === 'translateX(-100px)') {
+                element.style.transform = 'translateX(0)';
+                e.stopPropagation();
+            } else if (originalOnClick) { originalOnClick(e); }
+        };
     }
 
     function renderSeriesList() {
         const container = document.getElementById('seriesListContainer');
-        const query = document.getElementById('searchBar').value.toLowerCase();
-        const sDate = document.getElementById('filterStart').value;
-        const eDate = document.getElementById('filterEnd').value;
-        container.innerHTML = '';
-
-        let list = [...ORDER];
-        if(SORT_MODE === 'new') { /* default order */ }
-        else if(SORT_MODE === 'date') {
-            list.sort((a,b) => (DB[b].date||"0000-00").localeCompare(DB[a].date||"0000-00"));
-        }
-
-        list.forEach(id => {
+        container.innerHTML = "";
+        const term = document.getElementById('searchBar').value.toLowerCase();
+        const start = document.getElementById('filterStart').value;
+        const end = document.getElementById('filterEnd').value;
+        container.className = SORT_MODE === 'custom' ? 'sort-custom' : '';
+        let displayOrder = [...ORDER];
+        if (SORT_MODE === 'date') { displayOrder.sort((a, b) => (DB[b].date || "").localeCompare(DB[a].date || "")); }
+        displayOrder.sort((a, b) => (DB[b].fav ? 1 : 0) - (DB[a].fav ? 1 : 0));
+        displayOrder.forEach((id) => {
             const s = DB[id];
             if(!s) return;
-            const matchQuery = s.title.toLowerCase().includes(query) || s.tags.some(t => t.toLowerCase().includes(query));
-            let matchDate = true;
-            if(sDate && (s.date||"0000-00") < sDate) matchDate = false;
-            if(eDate && (s.date||"9999-12") > eDate) matchDate = false;
-
-            if(matchQuery && matchDate) {
-                const isAllComp = s.items.length > 0 && s.items.every(i => i.status === 'comp');
+            const titleMatch = s.title.toLowerCase().includes(term);
+            const tagsMatch = s.tags ? s.tags.toLowerCase().includes(term) : false;
+            let dateMatch = true;
+            if (start || end) {
+                if (!s.date) dateMatch = false;
+                else {
+                    if (start && s.date < start) dateMatch = false;
+                    if (end && s.date > end) dateMatch = false;
+                }
+            }
+            if((titleMatch || tagsMatch) && dateMatch) {
+                const items = s.items || [];
+                const isSeriesComp = items.length > 0 && items.every(it => it.status === 'comp' || it.status === 'none');
+                const compMark = isSeriesComp ? '<span class="series-comp-mark">✦</span>' : '';
+                const favActive = s.fav ? 'active' : '';
+                const swipeWrapper = document.createElement('div');
+                swipeWrapper.className = 'swipe-container';
+                swipeWrapper.draggable = SORT_MODE === 'custom';
+                swipeWrapper.ondragstart = (e) => handleDragStart(e, id);
+                swipeWrapper.ondragover = handleDragOver;
+                swipeWrapper.ondrop = (e) => handleDrop(e, id);
+                const deleteBtn = document.createElement('div');
+                deleteBtn.className = 'delete-btn-overlay';
+                deleteBtn.textContent = '削除';
+                deleteBtn.onclick = (e) => { e.stopPropagation(); deleteSeries(id); };
                 const card = document.createElement('div');
-                card.className = 'swipe-container';
+                card.className = 'card';
                 card.innerHTML = `
-                    <div class="delete-btn-overlay">削除</div>
-                    <div class="card" id="card-${id}" 
-                         onclick="openDetail('${id}')" 
-                         ontouchstart="handleTouchStart(event, '${id}')" 
-                         ontouchmove="handleTouchMove(event, '${id}')" 
-                         ontouchend="handleTouchEnd(event, '${id}')"
-                         draggable="${SORT_MODE==='custom'}"
-                         ondragstart="handleDragStart(event, '${id}')"
-                         ondragover="handleDragOver(event)"
-                         ondrop="handleDrop(event, '${id}')">
-                        <div class="handle">⠿</div>
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-                            <div style="flex:1;">
-                                <div style="display:flex; align-items:center;">
-                                    <span style="font-size:0.95rem; font-weight:800; color:var(--text-main); line-height:1.4;">${s.title}</span>
-                                    ${isAllComp ? '<span class="series-comp-mark">✔</span>' : ''}
-                                </div>
-                                <div style="font-size:0.65rem; color:var(--text-sub); margin-top:4px;">
-                                    ${s.date ? `<span>${s.date.replace('-','/')}</span>` : ''}
-                                    ${s.tags.map(t => `<span class="tag-chip" onclick="event.stopPropagation(); filterByTag('${t}')">#${t}</span>`).join('')}
+                    <div style="display:flex; align-items:flex-start;">
+                        <div class="handle">⋮⋮</div>
+                        <div style="flex:1;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <b style="color:var(--text-main); font-size:1rem; flex:1;">${s.title}${compMark}</b>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date || ''}</span>
+                                    <button class="fav-btn ${favActive}" onclick="toggleFavorite('${id}', event)">★</button>
                                 </div>
                             </div>
-                            <button class="fav-btn ${s.isFav?'active':''}" onclick="event.stopPropagation(); toggleFav('${id}')">★</button>
-                        </div>
-                        <div class="inventory-grid">
-                            ${s.items.slice(0,3).map(item => {
-                                const ownChars = item.targets.filter(c => (item.stocks[c]?.own || 0) > 0);
-                                return `
-                                    <div class="inv-box">
-                                        <span class="inv-label">${item.type}</span>
-                                        <div class="inv-content">
-                                            ${ownChars.length > 0 ? 
-                                                ownChars.slice(0,4).map(c => `<span class="char-chip c-${c}">${c}</span>`).join('') + (ownChars.length>4?'<span style="font-size:0.5rem; color:#ccc;">...</span>':''):
-                                                '<span style="font-size:0.5rem; color:#eee;">No Data</span>'}
-                                        </div>
-                                    </div>`;
-                            }).join('')}
+                            <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:4px;">
+                                ${s.tags ? s.tags.split(/[、, ]/).filter(t => t).map(t => `<span onclick="event.stopPropagation(); filterByTag('${t.trim()}')" class="tag-chip">#${t.trim()}</span>`).join('') : ''}
+                            </div>
                         </div>
                     </div>`;
-                container.appendChild(card);
+                card.onclick = (e) => { if (e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') openDetail(id); };
+                attachSwipeEvents(card, () => deleteSeries(id));
+                swipeWrapper.appendChild(deleteBtn);
+                swipeWrapper.appendChild(card);
+                container.appendChild(swipeWrapper);
             }
         });
     }
 
-    function toggleFav(id) { DB[id].isFav = !DB[id].isFav; save(); renderSeriesList(); }
-
-    function handleDragStart(e, id) { dragSrcId = id; e.dataTransfer.effectAllowed = 'move'; }
-    function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
-    function handleDrop(e, id) {
-        e.preventDefault();
-        if(dragSrcId !== id) {
-            const srcIdx = ORDER.indexOf(dragSrcId);
-            const targetIdx = ORDER.indexOf(id);
-            ORDER.splice(srcIdx, 1);
-            ORDER.splice(targetIdx, 0, dragSrcId);
-            save(); renderSeriesList();
+    window.onpopstate = function(e) {
+        const state = e.state || {};
+        const editor = document.getElementById('editorView');
+        const detail = document.getElementById('detailView');
+        if (editor.style.display === 'block') {
+            editor.style.display = 'none';
+            if (editorFromMissing) { editorFromMissing = false; renderMissingList(); }
         }
-    }
+        else if (detail.style.display === 'block' && state.view !== 'detail') {
+            detail.style.display = 'none';
+            renderSeriesList();
+        }
+    };
 
-    function handleTouchStart(e, id) { 
-        if(SORT_MODE==='custom') return;
-        touchStartX = e.touches[0].clientX; 
-        const card = document.getElementById(`card-${id}`);
-        card.classList.add('swiping');
+    function openDetail(id) { currentSeriesId = id; document.getElementById('detailHeaderTitle').textContent = DB[id].title; document.getElementById('detailView').style.display = 'block'; history.pushState({view: 'detail', seriesId: id}, ''); renderItemList(); }
+    function closeDetail() { document.getElementById('detailView').style.display = 'none'; if (history.state && history.state.view === 'detail') history.back(); renderSeriesList(); }
+    
+    function autoDetermineStatus(item) { 
+        if (item.status === "none") return "none"; 
+        const targets = item.targets || []; 
+        if (targets.length === 0) return item.status; 
+        const isAllCollected = targets.every(char => { 
+            const s = item.stocks[char] || { own: 0, trade: 0, infinite: false }; 
+            if(s.infinite) return false; 
+            return (s.own + s.trade) >= 1; 
+        }); 
+        return isAllCollected ? "comp" : "not"; 
     }
-    function handleTouchMove(e, id) {
-        if(SORT_MODE==='custom') return;
-        let diff = e.touches[0].clientX - touchStartX;
-        if(diff < -100) diff = -100;
-        if(diff > 0) diff = 0;
-        document.getElementById(`card-${id}`).style.transform = `translateX(${diff}px)`;
-    }
-    function handleTouchEnd(e, id) {
-        if(SORT_MODE==='custom') return;
-        const card = document.getElementById(`card-${id}`);
-        card.classList.remove('swiping');
-        const diff = e.changedTouches[0].clientX - touchStartX;
-        if(diff < -70) {
-            if(confirm('シリーズを削除しますか？')) {
-                ORDER = ORDER.filter(oid => oid !== id);
-                delete DB[id]; save(); renderSeriesList();
-            } else { card.style.transform = 'translateX(0)'; }
-        } else { card.style.transform = 'translateX(0)'; }
-    }
-
-    function openDetail(id) {
-        currentSeriesId = id;
-        const s = DB[id];
-        document.getElementById('detailHeaderTitle').textContent = s.title;
-        renderItemList();
-        document.getElementById('detailView').style.display = 'block';
-    }
-    function closeDetail() { document.getElementById('detailView').style.display = 'none'; renderSeriesList(); }
-
-    function renderItemList() {
-        const container = document.getElementById('itemListContainer');
-        container.innerHTML = '';
-        DB[currentSeriesId].items.forEach((item, idx) => {
-            const div = document.createElement('div');
-            div.className = 'card item-card';
-            div.style.marginBottom = '15px';
-            div.onclick = () => openItemEditor(idx);
-            
-            const ownCount = item.targets.reduce((acc, c) => acc + (item.stocks[c]?.own || 0), 0);
-            const tradeCount = item.targets.reduce((acc, c) => acc + (item.stocks[c]?.trade || 0), 0);
-            const isInf = item.targets.some(c => item.stocks[c]?.isInf);
-
-            div.innerHTML = `
-                <div class="status-tag st-${item.status}">${item.status==='comp'?'COMP':'NOT COMP'}</div>
-                <div style="font-weight:bold; color:var(--gold); font-size:0.8rem; margin-bottom:10px;">${item.type}</div>
-                <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px;">
-                    ${item.targets.map(c => {
-                        const count = (item.stocks[c]?.own || 0) + (item.stocks[c]?.trade || 0);
-                        const isInfinite = item.stocks[c]?.isInf;
-                        if(count === 0 && !isInfinite) return '';
-                        return `<span class="char-chip c-${c} ${isInfinite?'is-infinite-collected':''}">${c}${count>1?' x'+count:''}${isInfinite?' ∞':''}</span>`;
-                    }).join('')}
-                </div>
-                <div class="inv-summary-row">
-                    <div class="summary-item">保管<span>${ownCount}</span></div>
-                    <div class="summary-item">譲渡<span>${tradeCount}</span></div>
-                    ${isInf ? '<div class="summary-item" style="color:var(--gold)">RECOVERY ∞</div>' : ''}
-                </div>
-                <div style="margin-top:10px; display:flex; gap:8px;">
-                    <button class="secondary-btn" style="margin:0; flex:1; padding:8px; font-size:0.75rem;" onclick="event.stopPropagation(); openUnboxing(${idx})">UNBOXING</button>
-                    <button class="secondary-btn" style="margin:0; flex:1; padding:8px; font-size:0.75rem;" onclick="event.stopPropagation(); copyTradeText(${idx})">COPY TEXT</button>
-                </div>
-            `;
-            container.appendChild(div);
-        });
-    }
-
-    function openItemEditor(idx = null) {
+    
+    function openItemEditor(idx = null, fromMissing = false) {
         currentItemIdx = idx;
-        const s = DB[currentSeriesId];
-        const item = idx !== null ? s.items[idx] : { type: "", charSetName: "デフォルト", status: "not", stocks: {}, targets: [...CHAR_SETS["デフォルト"]] };
+        editorFromMissing = fromMissing;
         
-        document.getElementById('editItemType').value = item.type;
-        document.getElementById('editItemStatus').value = item.status;
+        // ヒストリーバナーの表示
+        document.getElementById('historyBanner').style.display = (idx === null && LAST_ITEM) ? 'flex' : 'none';
         
-        const setSelect = document.getElementById('editCharSetName');
-        setSelect.innerHTML = Object.keys(CHAR_SETS).map(k => `<option value="${k}" ${item.charSetName===k?'selected':''}>${k}</option>`).join('');
-        
-        activeCharList = CHAR_SETS[item.charSetName] || DEFAULT_CHARS;
-        tempStocks = JSON.parse(JSON.stringify(item.stocks));
-        
-        if(!item.type && LAST_ITEM) {
-            document.getElementById('historyBanner').style.display = 'flex';
-        } else {
-            document.getElementById('historyBanner').style.display = 'none';
-        }
-
+        // プリセットエリアの描画
         const presetArea = document.getElementById('presetArea');
         const presetChips = document.getElementById('presetChips');
-        if(PRESETS.length > 0) {
+        if(idx === null && PRESETS.length > 0) {
             presetArea.style.display = 'block';
-            presetChips.innerHTML = PRESETS.map((p, pidx) => `<span class="preset-chip" onclick="applyPreset(${pidx})">${p.name}</span>`).join('');
+            presetChips.innerHTML = PRESETS.map((p, i) => `<span class="preset-chip" onclick="applyPreset(${i})">${p.name}</span>`).join('');
         } else {
             presetArea.style.display = 'none';
         }
 
-        renderEditorGrid();
+        const setSelect = document.getElementById('editCharSetName');
+        setSelect.innerHTML = Object.keys(CHAR_SETS).map(n => `<option value="${n}">${n}</option>`).join('');
+        const item = idx !== null ? DB[currentSeriesId].items[idx] : { type: "", stocks: {}, targets: [], status: "not", charSetName: "デフォルト" };
+        
+        document.getElementById('editItemType').value = item.type;
+        document.getElementById('editItemStatus').value = item.status || "not";
+        document.getElementById('editCharSetName').value = item.charSetName || "デフォルト";
+        tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
+        activeCharList = CHAR_SETS[document.getElementById('editCharSetName').value] || DEFAULT_CHARS;
+        renderEditorGrid(item.targets && item.targets.length > 0 ? item.targets : [...activeCharList]);
         document.getElementById('editorView').style.display = 'block';
+        history.pushState({view: 'editor'}, '');
     }
 
     function applyHistory() {
         if(!LAST_ITEM) return;
         document.getElementById('editItemType').value = LAST_ITEM.type;
         document.getElementById('editCharSetName').value = LAST_ITEM.charSetName;
-        changeCharSet(LAST_ITEM.charSetName);
+        activeCharList = CHAR_SETS[LAST_ITEM.charSetName] || DEFAULT_CHARS;
+        tempStocks = {}; 
+        renderEditorGrid(LAST_ITEM.targets);
         showToast("履歴を適用しました");
     }
 
-    function applyPreset(pidx) {
-        const p = PRESETS[pidx];
+    function applyPreset(idx) {
+        const p = PRESETS[idx];
         document.getElementById('editItemType').value = p.name;
         document.getElementById('editCharSetName').value = p.charSet;
-        changeCharSet(p.charSet);
-        const tGrid = p.targets.split('|');
-        activeCharList.forEach(c => {
-            if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0, isInf: false, isTarget: false };
-            tempStocks[c].isTarget = tGrid.includes(c);
-        });
-        renderEditorGrid();
-        showToast("プリセットを適用しました");
+        activeCharList = CHAR_SETS[p.charSet] || DEFAULT_CHARS;
+        tempStocks = {};
+        renderEditorGrid(p.targets);
+        showToast(`プリセット: ${p.name} を適用`);
     }
 
-    function changeCharSet(setName) {
-        activeCharList = CHAR_SETS[setName] || DEFAULT_CHARS;
-        renderEditorGrid();
+    function duplicateItem(idx, e) {
+        e.stopPropagation();
+        const base = DB[currentSeriesId].items[idx];
+        const newItem = {
+            type: base.type,
+            charSetName: base.charSetName || "デフォルト",
+            targets: JSON.parse(JSON.stringify(base.targets)),
+            stocks: {}, // カウントのみリセット
+            status: "not"
+        };
+        DB[currentSeriesId].items.push(newItem);
+        save();
+        renderItemList();
+        showToast("複製しました");
+    }
+    
+    function saveItem() {
+        const type = document.getElementById('editItemType').value.trim(); if(!type) return alert("名前を入力してください");
+        let data = { type, stocks: tempStocks, targets: getSelectedTargets(), status: document.getElementById('editItemStatus').value, charSetName: document.getElementById('editCharSetName').value };
+        data.status = autoDetermineStatus(data);
+        
+        // 履歴として保存
+        LAST_ITEM = { type: data.type, charSetName: data.charSetName, targets: data.targets };
+        localStorage.setItem('gap_last_item', JSON.stringify(LAST_ITEM));
+
+        if(currentItemIdx === null) DB[currentSeriesId].items.push(data);
+        else DB[currentSeriesId].items[currentItemIdx] = data;
+        
+        save(); 
+        showToast("保存しました"); 
+        history.back(); 
+        document.getElementById('editorView').style.display = 'none'; 
+        if (!editorFromMissing) renderItemList(); else { editorFromMissing = false; renderMissingList(); }
     }
 
-    function renderEditorGrid() {
-        const grid = document.getElementById('editorGrid');
-        grid.innerHTML = '';
-        activeCharList.forEach(c => {
-            if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0, isInf: false, isTarget: true };
-            const s = tempStocks[c];
-            const row = document.createElement('div');
-            row.className = 'editor-row';
-            row.innerHTML = `
-                <div style="text-align:center;">
-                    <div class="char-chip c-${c}" style="margin:0 0 5px; cursor:pointer; opacity:${s.isTarget?1:0.3}" onclick="toggleTarget('${c}')">${c}</div>
-                    <button class="inf-btn ${s.isInf?'active':''}" onclick="toggleInf('${c}')">∞</button>
+    function closeEditor() { 
+        document.getElementById('editorView').style.display = 'none'; 
+        if (history.state && history.state.view === 'editor') history.back(); 
+        if (editorFromMissing) { editorFromMissing = false; renderMissingList(); }
+    }
+    
+    function renderItemList() {
+        const container = document.getElementById('itemListContainer'); container.innerHTML = "";
+        const items = DB[currentSeriesId].items || [];
+        const seriesTitle = DB[currentSeriesId].title;
+
+        items.forEach((item, idx) => {
+            const swipeWrapper = document.createElement('div'); swipeWrapper.className = 'swipe-container'; swipeWrapper.style.marginBottom = "15px";
+            const deleteBtn = document.createElement('div'); deleteBtn.className = 'delete-btn-overlay'; deleteBtn.textContent = '削除'; deleteBtn.onclick = (e) => { e.stopPropagation(); deleteItem(idx); };
+            const div = document.createElement('div'); div.className = 'card item-card'; 
+            attachSwipeEvents(div, () => deleteItem(idx));
+            const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
+            
+            let ownChips = [], tradeTextArr = [], tradeNamesArr = [], targetNamesArr = [], infiniteStatusChips = [];
+            let totalOwn = 0, totalTrade = 0;
+            const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
+
+            list.forEach(c => {
+                const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0, infinite:false};
+                const isTarget = (item.targets || list).includes(c);
+                totalOwn += s.own; totalTrade += s.trade;
+                
+                if(s.own > 0) ownChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
+                if(s.trade > 0) { 
+                    tradeTextArr.push(`${c}${s.trade}`); 
+                    tradeNamesArr.push(`${c}${s.trade > 1 ? s.trade : ''}`); 
+                }
+                
+                if(s.infinite) {
+                    infiniteStatusChips.push(`<span class="inf-status-chip c-${c.trim()}">${c}<span>:${s.own}</span></span>`);
+                }
+                
+                if(isTarget) {
+                    const isMissing = (s.own === 0 && s.trade === 0);
+                    if(isMissing || s.infinite) {
+                        const infClass = (!isMissing && s.infinite) ? 'is-infinite-collected' : '';
+                        const displayInf = s.infinite && TRADE_CONFIG.showInf;
+                        targetNamesArr.push(`${c}${displayInf ? '(∞)' : ''}`);
+                    }
+                }
+            });
+
+            const prefix = TRADE_CONFIG.prefix ? TRADE_CONFIG.prefix + "\n" : "";
+            const suffix = TRADE_CONFIG.suffix ? "\n" + TRADE_CONFIG.suffix : "";
+            const copyStr = `${prefix}${seriesTitle} ${item.type}\n譲：${tradeNamesArr.join('、') || 'なし'}\n求：${targetNamesArr.join('、') || '完遂'}${suffix}`;
+            
+            div.innerHTML = `
+                <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
+                <div style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; padding-right:60px;">
+                    <div><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div>
+                    <div style="display:flex; gap:5px;">
+                        <button onclick="duplicateItem(${idx}, event)" style="background:#f0f0f0; border:none; color:var(--text-main); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">複製</button>
+                        <button onclick="event.stopPropagation(); copyTradeText(\`${copyStr}\`)" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">コピー</button>
+                    </div>
                 </div>
-                <div style="display:flex; align-items:center; justify-content:space-around;">
+                <div class="inventory-grid" onclick="openItemEditor(${idx})">
+                    <div class="inv-box"><span class="inv-label">保管</span><div class="inv-content">${ownChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
+                    <div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content"><span class="trade-text-small">${tradeTextArr.join('<br>') || '<span style="color:#ccc;">－</span>'}</span></div></div>
+                    <div class="inv-box"><span class="inv-label">不足</span><div class="inv-content">
+                        ${list.filter(c => (item.targets || list).includes(c) && ((item.stocks[c]?.own || 0) + (item.stocks[c]?.trade || 0) === 0 || item.stocks[c]?.infinite)).map(c => `<span class="char-chip c-${c.trim()} ${(!item.stocks[c] || (item.stocks[c].own+item.stocks[c].trade===0)) ? '' : 'is-infinite-collected'}">${c}</span>`).join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}
+                    </div></div>
+                </div>
+                <div class="inv-summary-row">
+                    <div class="summary-item">保管合計<span>${totalOwn}</span></div>
+                    <div class="summary-item">譲渡合計<span>${totalTrade}</span></div>
+                    <div class="summary-item">総所有数<span>${totalOwn + totalTrade}</span></div>
+                </div>
+                <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div class="inf-status-container">
+                        ${infiniteStatusChips.join('')}
+                    </div>
+                    <span onclick="event.stopPropagation(); openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px; white-space:nowrap;">✨ 開封モード</span>
+                </div>`;
+            swipeWrapper.appendChild(deleteBtn); swipeWrapper.appendChild(div); container.appendChild(swipeWrapper);
+        });
+    }
+
+    function renderEditorGrid(targets) { 
+        const grid = document.getElementById('editorGrid'); 
+        grid.innerHTML = ""; 
+        activeCharList.forEach(c => { 
+            if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0, infinite: false }; 
+            const isTarget = targets.includes(c); 
+            const ownVal = tempStocks[c].own;
+            const tradeVal = tempStocks[c].trade;
+            const isInf = tempStocks[c].infinite || false;
+            const ownClass = ownVal > 0 ? 'qty-has' : 'qty-zero';
+            const tradeClass = tradeVal > 0 ? 'qty-has' : 'qty-zero';
+            const row = document.createElement('div'); 
+            row.className = 'editor-row'; 
+            row.style.opacity = isTarget ? "1" : "0.5"; 
+            row.innerHTML = `
+                <div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem; position:relative;">
+                    <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
+                    <button class="inf-btn ${isInf?'active':''}" onclick="toggleInfinite('${c}')" style="display:block; margin:5px auto 0;">${isInf?'∞':'∞'}</button>
+                </div>
+                <div style="display:flex; justify-content:space-around;">
                     <div style="text-align:center;">
-                        <span style="font-size:0.6rem; color:var(--text-sub); display:block; margin-bottom:4px;">保管</span>
+                        <span style="font-size:0.6rem; color:var(--text-sub);">保管</span>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <button class="btn-qty" onclick="updateQty('${c}','own',-1)">-</button>
-                            <input type="number" class="qty-display ${s.own>0?'qty-has':'qty-zero'}" value="${s.own}" onchange="updateQty('${c}','own',this.value,true)">
+                            <input type="number" inputmode="numeric" class="qty-display ${ownClass}" value="${ownVal}" onchange="directInputQty('${c}','own',this.value)" onclick="this.select()">
                             <button class="btn-qty" onclick="updateQty('${c}','own',1)">+</button>
                         </div>
                     </div>
                     <div style="text-align:center;">
-                        <span style="font-size:0.6rem; color:var(--text-sub); display:block; margin-bottom:4px;">譲渡</span>
+                        <span style="font-size:0.6rem; color:var(--text-sub);">譲渡</span>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <button class="btn-qty" onclick="updateQty('${c}','trade',-1)">-</button>
-                            <input type="number" class="qty-display ${s.trade>0?'qty-has':'qty-zero'}" value="${s.trade}" onchange="updateQty('${c}','trade',this.value,true)">
+                            <input type="number" inputmode="numeric" class="qty-display ${tradeClass}" value="${tradeVal}" onchange="directInputQty('${c}','trade',this.value)" onclick="this.select()">
                             <button class="btn-qty" onclick="updateQty('${c}','trade',1)">+</button>
                         </div>
                     </div>
-                </div>
-            `;
-            grid.appendChild(row);
-        });
+                </div>`; 
+            grid.appendChild(row); 
+        }); 
     }
 
-    function toggleTarget(c) { tempStocks[c].isTarget = !tempStocks[c].isTarget; renderEditorGrid(); }
-    function toggleInf(c) { tempStocks[c].isInf = !tempStocks[c].isInf; renderEditorGrid(); }
-    function updateQty(c, key, val, isDirect=false) {
-        if(isDirect) tempStocks[c][key] = Math.max(0, parseInt(val)||0);
-        else tempStocks[c][key] = Math.max(0, (tempStocks[c][key]||0) + val);
-        renderEditorGrid();
-    }
-
-    function bulkToggleTargets(bool) { activeCharList.forEach(c => tempStocks[c].isTarget = bool); renderEditorGrid(); }
-    function bulkIncrementOwn() { activeCharList.forEach(c => { if(tempStocks[c].isTarget) tempStocks[c].own++; }); renderEditorGrid(); }
-    function bulkResetCounts() { if(confirm('全ての個数を0にしますか？')){ activeCharList.forEach(c => { tempStocks[c].own=0; tempStocks[c].trade=0; }); renderEditorGrid(); } }
-
-    function saveItem() {
-        const type = document.getElementById('editItemType').value.trim();
-        if(!type) return;
-        const item = {
-            type: type,
-            charSetName: document.getElementById('editCharSetName').value,
-            status: document.getElementById('editItemStatus').value,
-            stocks: tempStocks,
-            targets: activeCharList.filter(c => tempStocks[c].isTarget)
-        };
-        if(currentItemIdx === null) DB[currentSeriesId].items.push(item);
-        else DB[currentSeriesId].items[currentItemIdx] = item;
-        
-        LAST_ITEM = { type: type, charSetName: item.charSetName };
-        localStorage.setItem('gap_last_item', JSON.stringify(LAST_ITEM));
-        
-        save();
-        closeEditor();
-        renderItemList();
-    }
-
-    function closeEditor() { document.getElementById('editorView').style.display = 'none'; if(editorFromMissing) { renderMissingList(); editorFromMissing=false; } }
-
-    function deleteAllItems() { if(confirm('全てのアイテムを削除しますか？')){ DB[currentSeriesId].items = []; save(); renderItemList(); } }
-
-    function openUnboxing(idx) {
-        currentItemIdx = idx;
-        const item = DB[currentSeriesId].items[idx];
-        document.getElementById('unboxingTitle').textContent = item.type;
-        const grid = document.getElementById('unboxingGrid');
-        grid.innerHTML = '';
-        item.targets.forEach(c => {
-            const area = document.createElement('div');
-            area.className = 'unboxing-panel';
-            const s = item.stocks[c] || {own:0, trade:0};
-            area.innerHTML = `
+    function toggleInfinite(char) { tempStocks[char].infinite = !tempStocks[char].infinite; renderEditorGrid(getSelectedTargets()); }
+    function updateQty(char, key, delta) { tempStocks[char][key] = Math.max(0, tempStocks[char][key] + delta); renderEditorGrid(getSelectedTargets()); }
+    function directInputQty(char, key, val) { let n = parseInt(val); if(isNaN(n) || n < 0) n = 0; tempStocks[char][key] = n; renderEditorGrid(getSelectedTargets()); }
+    function getSelectedTargets() { const cbs = document.querySelectorAll('#editorGrid input[type="checkbox"]'); let selected = []; cbs.forEach((cb, i) => { if(cb.checked) selected.push(activeCharList[i]); }); return selected; }
+    function refreshEditorTargets() { renderEditorGrid(getSelectedTargets()); }
+    function changeCharSet(setName) { activeCharList = CHAR_SETS[setName] || DEFAULT_CHARS; renderEditorGrid([...activeCharList]); }
+    function bulkToggleTargets(s) { renderEditorGrid(s ? [...activeCharList] : []); }
+    function bulkIncrementOwn() { activeCharList.forEach(c => { if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0, infinite: false }; tempStocks[c].own += 1; }); renderEditorGrid(getSelectedTargets()); showToast("保管を+1しました"); }
+    function bulkResetCounts() { if(confirm("カウントをすべて削除しますがよろしいですか？")) { Object.keys(tempStocks).forEach(c => { tempStocks[c].own = 0; tempStocks[c].trade = 0; tempStocks[c].infinite = false; }); renderEditorGrid(getSelectedTargets()); showToast("リセットしました"); } }
+    function copyTradeText(text) { navigator.clipboard.writeText(text).then(() => showToast("コピーしました")); }
+    function deleteItem(idx) { if(confirm("削除しますか？")) { DB[currentSeriesId].items.splice(idx,1); save(); renderItemList(); } }
+    function deleteSeries(id) { if(confirm("削除しますか？")) { delete DB[id]; ORDER = ORDER.filter(oid => oid !== id); save(); renderSeriesList(); } }
+    function deleteAllItems() { if(confirm("全削除しますか？")) { DB[currentSeriesId].items = []; save(); renderItemList(); } }
+    
+    function openUnboxing(idx) { currentItemIdx = idx; document.getElementById('unboxingTitle').textContent = DB[currentSeriesId].items[idx].type; renderUnboxingGrid(); document.getElementById('unboxingModal').style.display = 'flex'; }
+    function renderUnboxingGrid() { 
+        const grid = document.getElementById('unboxingGrid'); 
+        grid.innerHTML = ""; 
+        const item = DB[currentSeriesId].items[currentItemIdx]; 
+        const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; 
+        let tOwn = 0, tTrade = 0; 
+        list.forEach(c => { 
+            const s = item.stocks[c] || { own: 0, trade: 0, infinite: false }; 
+            tOwn += s.own; tTrade += s.trade; 
+            const panel = document.createElement('div'); 
+            panel.className = `unboxing-panel c-${c.trim()}`; 
+            const createHandler = (type) => { 
+                let timer; 
+                return { 
+                    onpointerdown: (e) => { e.preventDefault(); timer = setTimeout(() => { updateUnboxingCount(c, type, -1); timer = null; }, 500); }, 
+                    onpointerup: (e) => { e.preventDefault(); if(timer) { clearTimeout(timer); updateUnboxingCount(c, type, 1); } }, 
+                    oncontextmenu: (e) => { e.preventDefault(); } 
+                }; 
+            }; 
+            panel.innerHTML = `
                 <div class="ub-char-label">${c}</div>
-                <div class="ub-area ub-area-left" onclick="ubStep('${c}','own',1)" oncontextmenu="event.preventDefault(); ubStep('${c}','own',-1)">
-                    <div id="ub-own-${c}" class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</div>
-                    <span style="font-size:0.5rem; opacity:0.6;">KEEP</span>
-                </div>
-                <div class="ub-area ub-area-right" onclick="ubStep('${c}','trade',1)" oncontextmenu="event.preventDefault(); ubStep('${c}','trade',-1)">
-                    <div id="ub-trade-${c}" class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</div>
-                    <span style="font-size:0.5rem; opacity:0.6;">TRADE</span>
-                </div>
-            `;
-            grid.appendChild(area);
-        });
-        updateUbTotal();
-        document.getElementById('unboxingModal').style.display = 'flex';
+                <div class="ub-area ub-area-left"><span id="ubc-own-${c}" class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div>
+                <div class="ub-area ub-area-right"><span id="ubc-trade-${c}" class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`; 
+            Object.assign(panel.querySelector('.ub-area-left'), createHandler('own')); 
+            Object.assign(panel.querySelector('.ub-area-right'), createHandler('trade')); 
+            grid.appendChild(panel); 
+        }); 
+        updateUnboxingFooter(tOwn, tTrade); 
     }
+    function updateUnboxingCount(char, type, delta) { const item = DB[currentSeriesId].items[currentItemIdx]; if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0, infinite: false }; item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta); const oldStatus = item.status; item.status = autoDetermineStatus(item); if (oldStatus !== item.status) showToast(item.status === 'comp' ? "コンプリート！" : "未コンプに戻りました"); save(); renderUnboxingGrid(); }
+    function updateUnboxingFooter(own, trade) { document.getElementById('unboxingTotalCount').innerHTML = `保管: ${own} / 譲渡: ${trade} / 合計: ${own+trade}`; }
+    function closeUnboxing() { document.getElementById('unboxingModal').style.display = 'none'; renderItemList(); }
 
-    function ubStep(c, key, step) {
-        const item = DB[currentSeriesId].items[currentItemIdx];
-        if(!item.stocks[c]) item.stocks[c] = {own:0, trade:0, isInf:false};
-        item.stocks[c][key] = Math.max(0, (item.stocks[c][key]||0) + step);
-        const el = document.getElementById(`ub-${key}-${c}`);
-        el.textContent = item.stocks[c][key];
-        el.className = `unboxing-count-badge ${item.stocks[c][key]>0?'has-count':'is-zero'}`;
-        updateUbTotal();
-        if ("vibrate" in navigator) navigator.vibrate(10);
+    function openSeriesModal() { document.getElementById('msTitle').value=""; document.getElementById('seriesModal').style.display='flex'; }
+    function closeSeriesModal() { document.getElementById('seriesModal').style.display='none'; }
+    function saveSeriesModal() { const title = document.getElementById('msTitle').value.trim(); if(!title) return; const id = "s" + Date.now(); const useTemp = document.getElementById('msUseTemplate').checked; let items = []; if(useTemp) TEMPLATES.forEach(t => items.push({ type: t, stocks: {}, targets: [...DEFAULT_CHARS], status: "not", charSetName: "デフォルト" })); DB[id] = { title, date: document.getElementById('msDate').value, tags: document.getElementById('msTags').value, items: items, fav: false }; ORDER.unshift(id); save(); closeSeriesModal(); openDetail(id); }
+    
+    function toggleSettings(s) { 
+        document.getElementById('settingsOverlay').style.display=s?'block':'none'; 
+        document.getElementById('settingsPanel').style.right=s?'0':'-85%'; 
+        if(s) { 
+            document.getElementById('charSettingsInput').value = Object.keys(CHAR_SETS).map(n => `${n}:${CHAR_SETS[n].join(',')}`).join('\n'); 
+            document.getElementById('tempSettingsInput').value = TEMPLATES.join('\n');
+            document.getElementById('tradePrefixInput').value = TRADE_CONFIG.prefix || "";
+            document.getElementById('tradeSuffixInput').value = TRADE_CONFIG.suffix || "";
+            document.getElementById('tradeShowInfMark').checked = TRADE_CONFIG.showInf !== false;
+            document.getElementById('presetSettingsInput').value = PRESETS.map(p => `${p.name},${p.charSet},${p.targets.join('|')}`).join('\n');
+        } 
     }
-    function updateUbTotal() {
-        const item = DB[currentSeriesId].items[currentItemIdx];
-        const total = item.targets.reduce((acc, c) => acc + (item.stocks[c]?.own||0) + (item.stocks[c]?.trade||0), 0);
-        document.getElementById('unboxingTotalCount').textContent = `合計開封数: ${total}`;
-    }
-    function closeUnboxing() { save(); document.getElementById('unboxingModal').style.display = 'none'; renderItemList(); }
-
-    function copyTradeText(idx) {
-        const item = DB[currentSeriesId].items[idx];
-        const s = DB[currentSeriesId];
-        const have = item.targets.filter(c => (item.stocks[c]?.trade||0) > 0).map(c => {
-            const count = item.stocks[c].trade;
-            const inf = (TRADE_CONFIG.showInf && item.stocks[c].isInf) ? '(∞)' : '';
-            return `${c}${inf}${count>1?'×'+count:''}`;
-        });
-        const want = item.targets.filter(c => (item.stocks[c]?.own||0) === 0 || item.stocks[c]?.isInf).map(c => {
-            return `${c}${item.stocks[c]?.isInf?'(∞)':''}`;
-        });
+    function saveSettings() { 
+        const lines = document.getElementById('charSettingsInput').value.split('\n'); let newSets = {}; 
+        lines.forEach(line => { const p = line.split(':'); if(p.length >= 2) newSets[p[0].trim()] = p[1].split(',').map(c => c.trim()).filter(c => c); }); 
+        CHAR_SETS = Object.keys(newSets).length ? newSets : { "デフォルト": DEFAULT_CHARS }; 
+        TEMPLATES = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n); 
         
-        const text = `${TRADE_CONFIG.prefix || '【交換】'}\n${s.title} ${item.type}\n\n譲：${have.join('、')}\n求：${want.join('、')}\n\n${TRADE_CONFIG.suffix || '郵送希望です。検索からお気軽にどうぞ。'}`;
-        navigator.clipboard.writeText(text).then(() => showToast('コピーしました'));
+        const pLines = document.getElementById('presetSettingsInput').value.split('\n'); let newPresets = [];
+        pLines.forEach(l => { const p = l.split(','); if(p.length >= 3) newPresets.push({ name: p[0].trim(), charSet: p[1].trim(), targets: p[2].split('|').map(c => c.trim()) }); });
+        PRESETS = newPresets;
+
+        TRADE_CONFIG = {
+            prefix: document.getElementById('tradePrefixInput').value,
+            suffix: document.getElementById('tradeSuffixInput').value,
+            showInf: document.getElementById('tradeShowInfMark').checked
+        };
+        save(); location.reload(); 
+    }
+    function exportBackup() { const data = { gap_db: DB, gap_order: ORDER, gap_char_sets: CHAR_SETS, gap_temps: TEMPLATES, gap_sort_mode: SORT_MODE, gap_trade_config: TRADE_CONFIG, gap_presets: PRESETS }; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'})); a.download=`backup.json`; a.click(); }
+    function importBackup(e) { const reader = new FileReader(); reader.onload = (ev) => { const data = JSON.parse(ev.target.result); if(confirm("上書きしますか？")) { localStorage.setItem('gap_db', JSON.stringify(data.gap_db)); localStorage.setItem('gap_order', JSON.stringify(data.gap_order)); localStorage.setItem('gap_char_sets', JSON.stringify(data.gap_char_sets || { "デフォルト": DEFAULT_CHARS })); localStorage.setItem('gap_trade_config', JSON.stringify(data.gap_trade_config || { prefix: "", suffix: "", showInf: true })); localStorage.setItem('gap_sort_mode', data.gap_sort_mode || 'new'); localStorage.setItem('gap_presets', JSON.stringify(data.gap_presets || [])); location.reload(); } }; reader.readAsText(e.target.files[0]); }
+    
+    function jumpToEditorFromMissing(sId, itemIdx, charName) {
+        currentSeriesId = sId;
+        openItemEditor(itemIdx, true); 
+        setTimeout(() => {
+            const rows = document.querySelectorAll('.editor-row');
+            for(let row of rows) {
+                if(row.innerText.includes(charName)) {
+                    row.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    row.style.outline = "2px solid var(--gold)";
+                    setTimeout(() => row.style.outline = "none", 2000);
+                    break;
+                }
+            }
+        }, 300);
     }
 
     function renderMissingList() {
-        const container = document.getElementById('missingListContainer');
-        container.innerHTML = '';
-        let found = false;
-        ORDER.forEach(sid => {
-            const s = DB[sid];
-            const missingItems = s.items.filter(i => i.status === 'not');
-            if(missingItems.length > 0) {
-                found = true;
-                const group = document.createElement('div');
-                group.innerHTML = `<h3 style="font-size:0.8rem; color:var(--gold); margin:20px 0 10px; border-left:4px solid var(--gold); padding-left:10px;">${s.title}</h3>`;
-                group.innerHTML += missingItems.map((item) => {
-                    const idx = s.items.indexOf(item);
-                    return `
-                        <div class="card" style="margin-bottom:10px; padding:15px;" onclick="currentSeriesId='${sid}'; editorFromMissing=true; openItemEditor(${idx})">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span><span style="color:var(--gold); font-weight:bold;">${item.type}</span></span>
-                                <span style="color:var(--gold-light); font-size:0.8rem;">✎</span>
-                            </div>
-                        </div>`;
-                }).join('');
-                container.appendChild(group);
+        const container = document.getElementById('missingListContainer'); container.innerHTML = "";
+        let found = false; let allChars = new Set(); Object.values(CHAR_SETS).forEach(list => list.forEach(c => allChars.add(c)));
+        Array.from(allChars).forEach(char => {
+            let list = [];
+            ORDER.forEach(sId => { (DB[sId].items || []).forEach((item, itemIdx) => { 
+                const charList = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; 
+                if(!charList.includes(char)) return; 
+                if(!(item.targets || charList).includes(char)) return; 
+                const s = item.stocks[char] || {own: 0, trade: 0, infinite: false}; 
+                const isMissing = (s.own === 0 && s.trade === 0);
+                if (item.status === 'not' && (isMissing || s.infinite)) {
+                    list.push({ series: DB[sId].title, seriesId: sId, type: item.type, itemIdx: itemIdx, isInf: s.infinite, isOwn: !isMissing }); 
+                }
+            }); });
+            if (list.length > 0) { 
+                found = true; 
+                const group = document.createElement('div'); 
+                group.className = 'card'; group.id = `missing-group-${char}`; group.style.marginBottom = "15px"; 
+                group.innerHTML = `
+                    <div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div>
+                        <span style="color:var(--gold-light);">▼</span>
+                    </div>
+                    <div style="display:none; margin-top:10px;">
+                        ${list.map(li => `
+                            <div onclick="jumpToEditorFromMissing('${li.seriesId}', ${li.itemIdx}, '${char}')" style="font-size:0.75rem; padding:12px 0; border-top:1px solid #eee; ${li.isOwn ? 'opacity:0.5;' : ''} cursor:pointer;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type} ${li.isInf ? '<span style="color:var(--gold); font-size:0.6rem;">(∞)</span>' : ''}</span>
+                                    <span style="color:var(--gold-light); font-size:0.8rem;">✎</span>
+                                </div>
+                            </div>`).join('')}
+                    </div>`; 
+                container.appendChild(group); 
             }
         });
         if(!found) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px;">不足はありません。</div>`;
     }
-
-    function toggleSettings(show) {
-        const panel = document.getElementById('settingsPanel');
-        const overlay = document.getElementById('settingsOverlay');
-        if(show) {
-            document.getElementById('tradePrefixInput').value = TRADE_CONFIG.prefix;
-            document.getElementById('tradeSuffixInput').value = TRADE_CONFIG.suffix;
-            document.getElementById('tradeShowInfMark').checked = TRADE_CONFIG.showInf;
-            document.getElementById('charSettingsInput').value = Object.entries(CHAR_SETS).map(([k,v]) => `${k}:${v.join(',')}`).join('\n');
-            document.getElementById('tempSettingsInput').value = TEMPLATES.join(',');
-            document.getElementById('presetSettingsInput').value = PRESETS.map(p => `${p.name},${p.charSet},${p.targets}`).join('\n');
-            panel.style.right = '0';
-            overlay.style.display = 'block';
-        } else {
-            panel.style.right = '-85%';
-            overlay.style.display = 'none';
-        }
-    }
-
-    function saveSettings() {
-        TRADE_CONFIG.prefix = document.getElementById('tradePrefixInput').value;
-        TRADE_CONFIG.suffix = document.getElementById('tradeSuffixInput').value;
-        TRADE_CONFIG.showInf = document.getElementById('tradeShowInfMark').checked;
-        
-        const charLines = document.getElementById('charSettingsInput').value.split('\n');
-        CHAR_SETS = {};
-        charLines.forEach(l => {
-            const [k, v] = l.split(':');
-            if(k && v) CHAR_SETS[k.trim()] = v.split(',').map(s=>s.trim());
-        });
-        
-        TEMPLATES = document.getElementById('tempSettingsInput').value.split(',').map(s=>s.trim()).filter(s=>s);
-        
-        const presetLines = document.getElementById('presetSettingsInput').value.split('\n');
-        PRESETS = presetLines.map(l => {
-            const [name, cSet, targets] = l.split(',');
-            if(name && cSet && targets) return { name: name.trim(), charSet: cSet.trim(), targets: targets.trim() };
-            return null;
-        }).filter(p => p);
-
-        save();
-        location.reload();
-    }
-
-    function exportBackup() {
-        const data = { db: DB, order: ORDER, char_sets: CHAR_SETS, temps: TEMPLATES, trade_config: TRADE_CONFIG, presets: PRESETS };
-        const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `coll-archive-backup-${new Date().toISOString().split('T')[0]}.json`;
-        a.click();
-    }
-
-    function importBackup(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const data = JSON.parse(event.target.result);
-                if(data.db) DB = data.db;
-                if(data.order) ORDER = data.order;
-                if(data.char_sets) CHAR_SETS = data.char_sets;
-                if(data.temps) TEMPLATES = data.temps;
-                if(data.trade_config) TRADE_CONFIG = data.trade_config;
-                if(data.presets) PRESETS = data.presets;
-                save();
-                location.reload();
-            } catch(err) { alert('バックアップの読み込みに失敗しました'); }
-        };
-        reader.readAsText(file);
-    }
-
+    
     function toggleDateFilter() { const p = document.getElementById('dateFilterPanel'); p.style.display = p.style.display==='none'?'block':'none'; }
     function clearDateFilter() { document.getElementById('filterStart').value=""; document.getElementById('filterEnd').value=""; renderSeriesList(); }
     function filterByTag(t) { document.getElementById('searchBar').value=t; renderSeriesList(); window.scrollTo({top:0, behavior:'smooth'}); }
