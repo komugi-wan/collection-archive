@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>COLLECTION ARCHIVE v4.1.0 Pro</title>
+    <title>COLLECTION ARCHIVE v4.0.0 Pro</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#c5a059">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -26,263 +26,128 @@
         }
 
         /* キャラクターチップ & 開封モード用カラー定義 */
-        .char-chip { font-size: 0.75rem;
-        padding: 4px 10px; border-radius: 8px; margin-right: 6px; margin-bottom: 6px; display: inline-block; font-weight: bold; border: 1px solid rgba(0,0,0,0.03);
-        }
-        .char-chip.is-infinite-collected { opacity: 0.4; transform: scale(0.9);
-        }
+        .char-chip { font-size: 0.75rem; padding: 4px 10px; border-radius: 8px; margin-right: 6px; margin-bottom: 6px; display: inline-block; font-weight: bold; border: 1px solid rgba(0,0,0,0.03); }
+        .char-chip.is-infinite-collected { opacity: 0.4; transform: scale(0.9); }
         
-        .c-default { background: #eee;
-        color: #666; }
-        .c-北門 { background: #ffffff !important; color: #777 !important;
-        border: 1px solid #ddd; }
-        .c-是国 { background: #000000 !important; color: #ffffff !important;
-        }
-        .c-金城 { background: #9e9e9e !important; color: #fff !important;
-        }
-        .c-阿修 { background: #fce4ec !important; color: #ad1457 !important;
-        }
-        .c-愛染 { background: #e1f5fe !important; color: #0288d1 !important;
-        }
-        .c-増長 { background: #bbdefb !important; color: #1565c0 !important;
-        }
-        .c-音済 { background: #ffebee !important; color: #d32f2f !important;
-        }
-        .c-王茶利 { background: #e8f5e9 !important; color: #2e7d32 !important;
-        border: 1px solid #c8e6c9 !important; }
-        .c-野目 { background: #f3e5f5 !important;
-        color: #7b1fa2 !important; }
-        .c-釈村 { background: #fff176 !important; color: #fbc02d !important;
-        font-weight: 800 !important; }
-        .c-遙日 { background: #fffceb !important; color: #c5a059 !important;
-        border: 1px solid #f0e6e6 !important; }
-        .c-唯月 { background: #eeeeee !important;
-        color: #616161 !important; }
-        .c-不動 { background: #ffe082 !important; color: #ff8f00 !important;
-        }
-        .c-殿 { background: #f1f8e9 !important; color: #689f38 !important;
-        border: 1px solid #dcedc8 !important; }
+        .c-default { background: #eee; color: #666; }
+        .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
+        .c-是非国 { background: #000000 !important; color: #ffffff !important; }
+        .c-金城 { background: #9e9e9e !important; color: #fff !important; }
+        .c-阿修 { background: #fce4ec !important; color: #ad1457 !important; }
+        .c-愛染 { background: #e1f5fe !important; color: #0288d1 !important; }
+        .c-増長 { background: #bbdefb !important; color: #1565c0 !important; }
+        .c-音済 { background: #ffebee !important; color: #d32f2f !important; }
+        .c-王茶利 { background: #e8f5e9 !important; color: #2e7d32 !important; border: 1px solid #c8e6c9 !important; }
+        .c-野目 { background: #f3e5f5 !important; color: #7b1fa2 !important; }
+        .c-釈村 { background: #fff176 !important; color: #fbc02d !important; font-weight: 800 !important; }
+        .c-遙日 { background: #fffceb !important; color: #c5a059 !important; border: 1px solid #f0e6e6 !important; }
+        .c-唯月 { background: #eeeeee !important; color: #616161 !important; }
+        .c-不動 { background: #ffe082 !important; color: #ff8f00 !important; }
+        .c-殿 { background: #f1f8e9 !important; color: #689f38 !important; border: 1px solid #dcedc8 !important; }
 
-        .tag-chip { font-size: 0.65rem; background: var(--gold-light);
-        color: var(--text-main); padding: 4px 10px; border-radius: 8px; margin-right: 6px; font-weight: bold; cursor: pointer; display: inline-block; border: none; transition: 0.2s;
-        }
-        .tag-chip:active { opacity: 0.6;
-        }
+        .tag-chip { font-size: 0.65rem; background: var(--gold-light); color: var(--text-main); padding: 4px 10px; border-radius: 8px; margin-right: 6px; font-weight: bold; cursor: pointer; display: inline-block; border: none; transition: 0.2s; }
+        .tag-chip:active { opacity: 0.6; }
 
-        html, body { overflow-x: hidden; width: 100%; position: relative; overscroll-behavior-y: none;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif;
-        background-color: var(--bg-color); color: var(--text-main); margin: 0; padding-bottom: calc(120px + var(--safe-bottom)); -webkit-font-smoothing: antialiased; touch-action: manipulation;
-        }
+        html, body { overflow-x: hidden; width: 100%; position: relative; overscroll-behavior-y: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding-bottom: calc(120px + var(--safe-bottom)); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
+        header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; text-align: center; border-bottom: 1px solid var(--gold-light); position: sticky; top: 0; z-index: 100; }
+        header h1 { margin: 15px 0 0; font-size: 0.85rem; letter-spacing: 4px; color: var(--gold); font-weight: 600; }
 
-        header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; text-align: center;
-        border-bottom: 1px solid var(--gold-light); position: sticky; top: 0; z-index: 100;
-        }
-        header h1 { margin: 15px 0 0; font-size: 0.85rem; letter-spacing: 4px;
-        color: var(--gold); font-weight: 600; }
+        .nav-tabs { display: flex; background: var(--card-bg); position: sticky; top: 58px; z-index: 90; border-bottom: 1px solid var(--border-color); }
+        .nav-tab { flex: 1; padding: 15px; text-align: center; font-size: 0.8rem; color: var(--text-sub); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .nav-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold; }
 
-        .nav-tabs { display: flex; background: var(--card-bg); position: sticky;
-        top: 58px; z-index: 90; border-bottom: 1px solid var(--border-color); }
-        .nav-tab { flex: 1;
-        padding: 15px; text-align: center; font-size: 0.8rem; color: var(--text-sub); cursor: pointer; letter-spacing: 2px; transition: 0.2s;
-        }
-        .nav-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold;
-        }
-
-        .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box;
-        }
+        .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box; }
         
-        .swipe-container { position: relative;
-        margin-bottom: 15px; overflow: hidden; border-radius: 20px; touch-action: pan-y; background: transparent;
-        }
-        .swipe-container.dragging { opacity: 0.5;
-        }
+        .swipe-container { position: relative; margin-bottom: 15px; overflow: hidden; border-radius: 20px; touch-action: pan-y; background: transparent; }
+        .swipe-container.dragging { opacity: 0.5; }
         
         .card { 
-            background: var(--card-bg);
-            padding: 20px; 
-            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); 
-            border: 1px solid rgba(197, 160, 89, 0.1); 
-            position: relative;
-            z-index: 2; 
+            background: var(--card-bg); padding: 20px; 
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.1); position: relative; z-index: 2; 
             box-sizing: border-box; width: 100%; border-radius: 20px;
-            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
-            will-change: transform;
-            touch-action: pan-y;
+            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); will-change: transform; touch-action: pan-y;
         }
+        .card.swiping { transition: none; }
+        .delete-btn-overlay { position: absolute; top: 0; right: 0; width: 100px; height: 100%; background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0; }
         
-        .card.swiping { transition: none;
-        }
+        #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; }
+        .status-tag { position: absolute; top: 0; right: 0; font-size: 0.65rem; padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold; }
+        .st-comp { background: #fce4ec; color: var(--dark-pink); }
+        .st-not { background: #f5f5f5; color: #999; }
+        .st-none { background: transparent; color: #ddd; border: 1px solid #eee; }
 
-        .delete-btn-overlay { position: absolute; top: 0; right: 0; width: 100px; height: 100%;
-        background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1;
-        border-radius: 0 20px 20px 0; }
+        .inventory-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; cursor: pointer; }
+        .inv-box { background: #fafafa; border: 1px solid #f0f0f0; border-radius: 12px; padding: 8px 4px; text-align: center; min-height: 70px; display: flex; flex-direction: column; pointer-events: none; }
+        .inv-label { font-size: 0.6rem; font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block; }
+        .inv-content { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; flex: 1; align-items: center; }
+        .inv-content .char-chip { font-size: 0.6rem; padding: 2px 5px; margin-right: 2px; margin-bottom: 2px; }
         
-        #searchBar { border: 1px solid var(--border-color);
-        border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none;
-        }
-        .status-tag { position: absolute; top: 0; right: 0; font-size: 0.65rem;
-        padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold; }
-        .st-comp { background: #fce4ec;
-        color: var(--dark-pink); }
-        .st-not { background: #f5f5f5; color: #999;
-        }
-        .st-none { background: transparent; color: #ddd; border: 1px solid #eee;
-        }
+        .inv-summary-row { display: flex; justify-content: space-around; margin-top: 8px; padding: 6px 10px; background: #fdfaf5; border-radius: 10px; border: 1px dashed var(--gold-light); }
+        .summary-item { font-size: 0.65rem; color: var(--text-main); font-weight: bold; }
+        .summary-item span { color: var(--gold); font-size: 0.75rem; margin-left: 2px; }
 
-        .inventory-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px;
-        cursor: pointer; }
-        .inv-box { background: #fafafa; border: 1px solid #f0f0f0; border-radius: 12px;
-        padding: 8px 4px; text-align: center; min-height: 70px; display: flex; flex-direction: column; pointer-events: none;
-        }
-        .inv-label { font-size: 0.6rem; font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block;
-        }
-        .inv-content { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; flex: 1;
-        align-items: center; }
-        .inv-content .char-chip { font-size: 0.6rem; padding: 2px 5px; margin-right: 2px;
-        margin-bottom: 2px; }
+        .trade-text-small { font-size: 0.65rem; color: var(--trade-text); word-break: break-all; font-weight: bold; line-height: 1.2; }
+        .item-card { transition: background 0.2s; }
+
+        .full-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .view-header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 210; height: 50px; }
         
-        .inv-summary-row { display: flex;
-        justify-content: space-around; margin-top: 8px; padding: 6px 10px; background: #fdfaf5; border-radius: 10px; border: 1px dashed var(--gold-light);
-        }
-        .summary-item { font-size: 0.65rem; color: var(--text-main); font-weight: bold;
-        }
-        .summary-item span { color: var(--gold); font-size: 0.75rem; margin-left: 2px;
-        }
-
-        .trade-text-small { font-size: 0.65rem; color: var(--trade-text); word-break: break-all; font-weight: bold; line-height: 1.2;
-        }
-        .item-card { transition: background 0.2s;
-        }
-
-        .full-view { display: none; position: fixed; top: 0; left: 0; width: 100%;
-        height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; -webkit-overflow-scrolling: touch;
-        }
-        .view-header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; display: flex; align-items: center;
-        border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 210; height: 50px;
-        }
+        .editor-row { display: grid; grid-template-columns: 80px 1fr; gap: 10px; align-items: center; padding: 15px; border-radius: 16px; margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color); }
+        .btn-qty { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gold-light); background: #fff; font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; justify-content: center; }
         
-        .editor-row { display: grid;
-        grid-template-columns: 80px 1fr; gap: 10px; align-items: center; padding: 15px; border-radius: 16px; margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color);
-        }
-        .btn-qty { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gold-light);
-        background: #fff; font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; justify-content: center;
-        }
+        .qty-display { width: 40px; border: none; border-bottom: 1px solid var(--gold-light); background: transparent; text-align: center; font-size: 1rem; outline: none; padding: 2px 0; -moz-appearance: textfield; transition: 0.2s; }
+        .qty-display.qty-zero { color: #ccc; font-weight: normal; border-bottom-color: #eee; }
+        .qty-display.qty-has { color: var(--gold); font-weight: 800; border-bottom-color: var(--gold); }
+        .qty-display::-webkit-inner-spin-button, .qty-display::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .inf-btn { background: none; border: none; font-size: 1.1rem; color: #ddd; cursor: pointer; padding: 0; line-height: 1; transition: 0.2s; }
+        .inf-btn.active { color: var(--gold); }
+
+        .unboxing-panel { display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 12px; position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); user-select: none; -webkit-user-select: none; touch-action: none; height: 54px; overflow: visible; margin-bottom: 6px; background: #eee; }
+        .ub-area { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transition: all 0.1s; touch-action: none; -webkit-touch-callout: none; z-index: 1; }
+        .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px; }
+        .ub-area-right { border-radius: 0 12px 12px 0; }
         
-        .qty-display { width: 40px;
-        border: none; border-bottom: 1px solid var(--gold-light); background: transparent; text-align: center; font-size: 1rem; outline: none; padding: 2px 0; -moz-appearance: textfield;
-        transition: 0.2s; }
-        .qty-display.qty-zero { color: #ccc; font-weight: normal; border-bottom-color: #eee;
-        }
-        .qty-display.qty-has { color: var(--gold); font-weight: 800; border-bottom-color: var(--gold);
-        }
-        .qty-display::-webkit-inner-spin-button, .qty-display::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0;
-        }
+        .ub-area:active { background: rgba(0,0,0,0.1); transform: scale(0.96); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); z-index: 2; }
+        .ub-char-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 1px 6px; border-radius: 6px; font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none; }
 
-        .inf-btn { background: none; border: none; font-size: 1.1rem; color: #ddd; cursor: pointer;
-        padding: 0; line-height: 1; transition: 0.2s; }
-        .inf-btn.active { color: var(--gold);
-        }
+        .unboxing-count-badge { min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; font-weight: 800; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+        .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none; }
+        .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
 
-        .unboxing-panel { display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 12px;
-        position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); user-select: none; -webkit-user-select: none; touch-action: none;
-        height: 54px; overflow: visible; margin-bottom: 6px; background: #eee; }
-        .ub-area { display: flex;
-        flex-direction: column; justify-content: center; align-items: center; position: relative; transition: all 0.1s; touch-action: none; -webkit-touch-callout: none; z-index: 1;
-        }
-        .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px;
-        }
-        .ub-area-right { border-radius: 0 12px 12px 0;
-        }
+        .fab { position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px; width: 64px; height: 64px; border-radius: 50%; background: var(--gold); color: white; border: none; font-size: 2rem; box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4); z-index: 150; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: white; width: 95%; max-width: 450px; padding: 15px; border-radius: 20px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
+
+        input, select, textarea { border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; font-size: 16px !important; background: #fff; color: var(--text-main); width: 100%; box-sizing: border-box; }
+        .primary-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--gold); color: white; font-weight: bold; font-size: 1rem; margin-top: 10px; }
+        .danger-btn { color: var(--danger); background: none; border: none; font-size: 0.8rem; }
+        .secondary-btn { width: 100%; padding: 12px; border: 1px solid var(--gold); border-radius: 14px; background: white; color: var(--gold); font-weight: bold; font-size: 0.9rem; margin-top: 10px; cursor: pointer; }
+
+        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;}
+        .editor-bulk-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 5px; }
+        .bulk-group-left { display: flex; gap: 8px; flex-wrap: wrap; }
+        .bulk-btn { background: none; border: 1px solid var(--gold-light); color: var(--gold); font-size: 0.65rem; padding: 5px 10px; border-radius: 8px; font-weight: bold; }
+        .bulk-btn-danger { color: var(--danger); border-color: #ffcdd2; }
         
-        .ub-area:active { 
-            background: rgba(0,0,0,0.1);
-            transform: scale(0.96); 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); 
-            z-index: 2;
-        }
-        
-        .ub-char-label { position: absolute;
-        top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 1px 6px; border-radius: 6px; font-size: 0.6rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none;
-        }
+        .series-comp-mark { color: var(--gold); font-size: 0.9rem; margin-left: 8px; vertical-align: middle; }
+        .sort-controls { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+        .sort-btn { white-space: nowrap; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--gold-light); background: #fff; color: var(--gold); font-size: 0.7rem; font-weight: bold; }
+        .sort-btn.active { background: var(--gold); color: #fff; }
+        .handle { color: var(--gold-light); cursor: grab; padding: 10px; font-size: 1.2rem; display: none; }
+        .sort-custom .handle { display: block; }
+        .fav-btn { background: none; border: none; font-size: 1.2rem; color: #ddd; padding: 0 5px; transition: 0.2s; }
+        .fav-btn.active { color: #fbc02d; }
+        .inf-status-container { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex: 1; margin-right: 10px; }
+        .inf-status-chip { font-size: 0.6rem; padding: 2px 6px; border-radius: 6px; font-weight: bold; display: flex; align-items: center; gap: 3px; }
+        .inf-status-chip span { font-size: 0.7rem; opacity: 0.8; }
 
-        .unboxing-count-badge { min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px;
-        font-size: 0.85rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; font-weight: 800; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        pointer-events: none; }
-        .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none;
-        }
-        .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-        }
+        .preset-chip { display: inline-block; background: var(--gold-light); color: var(--gold); padding: 8px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; margin: 4px; cursor: pointer; }
+        .history-banner { background: #fff9f0; border: 1px dashed var(--gold); padding: 10px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
 
-        .fab { position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px; width: 64px;
-        height: 64px; border-radius: 50%; background: var(--gold); color: white; border: none; font-size: 2rem; box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4);
-        z-index: 150; display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%;
-        height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center;
-        }
-        .modal-content { background: white; width: 95%; max-width: 450px; padding: 15px; border-radius: 20px;
-        box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
-
-        input, select, textarea { border: 1px solid var(--border-color);
-        border-radius: 12px; padding: 14px; font-size: 16px !important; background: #fff; color: var(--text-main); width: 100%; box-sizing: border-box;
-        }
-        .primary-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--gold);
-        color: white; font-weight: bold; font-size: 1rem; margin-top: 10px; }
-        .danger-btn { color: var(--danger);
-        background: none; border: none; font-size: 0.8rem; }
-        .secondary-btn { width: 100%; padding: 12px;
-        border: 1px solid var(--gold); border-radius: 14px; background: white; color: var(--gold); font-weight: bold; font-size: 0.9rem; margin-top: 10px; cursor: pointer;
-        }
-
-        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8);
-        color: white; padding: 12px 24px; border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        pointer-events: none;}
-        .editor-bulk-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-        padding: 0 5px; }
-        .bulk-group-left { display: flex; gap: 8px; flex-wrap: wrap;
-        }
-        .bulk-btn { background: none; border: 1px solid var(--gold-light); color: var(--gold); font-size: 0.65rem;
-        padding: 5px 10px; border-radius: 8px; font-weight: bold; }
-        .bulk-btn-danger { color: var(--danger);
-        border-color: #ffcdd2; }
-        
-        .series-comp-mark { color: var(--gold);
-        font-size: 0.9rem; margin-left: 8px; vertical-align: middle; }
-        .sort-controls { display: flex; gap: 8px;
-        margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
-        .sort-btn { white-space: nowrap;
-        padding: 6px 12px; border-radius: 20px; border: 1px solid var(--gold-light); background: #fff; color: var(--gold); font-size: 0.7rem; font-weight: bold;
-        }
-        .sort-btn.active { background: var(--gold); color: #fff;
-        }
-        .handle { color: var(--gold-light); cursor: grab; padding: 10px; font-size: 1.2rem; display: none;
-        }
-        .sort-custom .handle { display: block;
-        }
-        .fav-btn { background: none; border: none; font-size: 1.2rem; color: #ddd;
-        padding: 0 5px; transition: 0.2s; }
-        .fav-btn.active { color: #fbc02d;
-        }
-        .inf-status-container { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex: 1;
-        margin-right: 10px; }
-        .inf-status-chip { font-size: 0.6rem; padding: 2px 6px; border-radius: 6px;
-        font-weight: bold; display: flex; align-items: center; gap: 3px; }
-        .inf-status-chip span { font-size: 0.7rem;
-        opacity: 0.8; }
-
-        /* 追加スタイル */
-        .preset-chip { display: inline-block;
-        background: var(--gold-light); color: var(--gold); padding: 8px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; margin: 4px; cursor: pointer;
-        }
-        .history-banner { background: #fff9f0; border: 1px dashed var(--gold); padding: 10px; border-radius: 12px;
-        margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .edit-series-btn { background:none; border:none; font-size:0.9rem; color:var(--text-sub); padding:0 5px; cursor:pointer;}
-
-        @keyframes spin { 0% { transform: rotate(0deg);
-        } 100% { transform: rotate(360deg); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body onload="init()">
@@ -294,7 +159,7 @@
 
 <header>
     <button onclick="toggleSettings(true)" style="position:absolute; right:15px; top:calc(15px + env(safe-area-inset-top)); background:none; border:none; font-size:1.4rem; color:var(--gold);">⚙</button>
-    <h1>COLLECTION ARCHIVE v4.1.0</h1>
+    <h1>COLLECTION ARCHIVE v4.0.0</h1>
 </header>
 
 <div class="nav-tabs">
@@ -303,11 +168,9 @@
 </div>
 
 <div id="seriesView" class="container">
-    <div style="display: flex;
-    gap: 10px; align-items: center; margin-bottom: 10px;">
+    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
         <input type="text" id="searchBar" placeholder="シリーズ・タグを検索..." oninput="renderSeriesList()" style="flex:1;">
-        <button id="btnToggleDate" onclick="toggleDateFilter()" style="background:var(--card-bg);
-        border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold);">📅</button>
+        <button id="btnToggleDate" onclick="toggleDateFilter()" style="background:var(--card-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold);">📅</button>
     </div>
 
     <div class="sort-controls">
@@ -316,28 +179,22 @@
         <button class="sort-btn" id="sort-custom" onclick="setSortMode('custom')">カスタム順</button>
     </div>
 
-    <div id="dateFilterPanel" style="display:none;
-    background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light);">
-        <p style="font-size:0.7rem; font-weight:bold; color:var(--gold);
-        margin:0 0 10px;">表示期間を指定</p>
-        <div style="display:flex; align-items:center;
-        gap:10px;">
-            <input type="month" id="filterStart" onchange="renderSeriesList()" style="padding:8px;
-            font-size:0.85rem;">
+    <div id="dateFilterPanel" style="display:none; background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light);">
+        <p style="font-size:0.7rem; font-weight:bold; color:var(--gold); margin:0 0 10px;">表示期間を指定</p>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <input type="month" id="filterStart" onchange="renderSeriesList()" style="padding:8px; font-size:0.85rem;">
             <span style="color:var(--text-sub)">〜</span>
-            <input type="month" id="filterEnd" onchange="renderSeriesList()" style="padding:8px;
-            font-size:0.85rem;">
-            <button onclick="clearDateFilter()" style="background:none; border:none; color:var(--danger); font-size:0.75rem;
-            min-width:50px;">クリア</button>
+            <input type="month" id="filterEnd" onchange="renderSeriesList()" style="padding:8px; font-size:0.85rem;">
+            <button onclick="clearDateFilter()" style="background:none; border:none; color:var(--danger); font-size:0.75rem; min-width:50px;">クリア</button>
         </div>
     </div>
     <div id="seriesListContainer"></div>
 </div>
 
 <div id="missingView" class="container" style="display:none;">
-    <div style="margin-bottom:10px; display:flex; justify-content:flex-end;">
-        <label style="font-size:0.7rem; color:var(--text-main); display:flex; align-items:center; gap:5px;">
-            <input type="checkbox" id="missingShowInfCollected" onchange="renderMissingList()" checked style="width:16px; height:16px;"> 収集済みの無限回収を表示
+    <div style="margin-bottom: 15px; background: #fff; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
+        <label style="font-size: 0.8rem; color: var(--text-main); display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="missingFilterInf" onchange="renderMissingList()" style="width: 18px; height: 18px;"> 無限回収中（所持1以上）を非表示
         </label>
     </div>
     <div id="missingListContainer"></div>
@@ -345,10 +202,9 @@
 
 <div id="detailView" class="full-view">
     <div class="view-header">
-        <button onclick="closeDetail()" style="background:none;
-        border:none; font-size:1.6rem; color:var(--gold); padding: 0 10px;">✕</button>
-        <div id="detailHeaderTitle" style="flex:1; text-align:center; font-weight:bold; color:var(--text-main); font-size:0.9rem;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px;"></div>
+        <button onclick="closeDetail()" style="background:none; border:none; font-size:1.6rem; color:var(--gold); padding: 0 10px;">✕</button>
+        <div id="detailHeaderTitle" style="flex:1; text-align:center; font-weight:bold; color:var(--text-main); font-size:0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px;"></div>
+        <button onclick="openEditSeries()" style="background:none; border:none; color:var(--gold); font-size:0.8rem; margin-right:5px;">編集</button>
         <button onclick="deleteAllItems()" class="danger-btn">全削除</button>
     </div>
     <div id="itemListContainer" class="container"></div>
@@ -357,36 +213,26 @@
 
 <div id="editorView" class="full-view" style="z-index:300;">
     <div class="view-header">
-        <button id="editorBackBtn" onclick="closeEditor()" style="background:none;
-        border:none; color:var(--text-sub); font-size: 1rem;">戻る</button>
-        <div style="flex:1; text-align:center; font-weight:bold;
-        font-size:0.9rem;">アイテム編集</div>
-        <button onclick="saveItem()" style="background:none; border:none; color:var(--dark-pink); font-weight:bold;
-        font-size: 1rem;">保存</button>
+        <button id="editorBackBtn" onclick="closeEditor()" style="background:none; border:none; color:var(--text-sub); font-size: 1rem;">戻る</button>
+        <div style="flex:1; text-align:center; font-weight:bold; font-size:0.9rem;">アイテム編集</div>
+        <button onclick="saveItem()" style="background:none; border:none; color:var(--dark-pink); font-weight:bold; font-size: 1rem;">保存</button>
     </div>
     <div class="container">
         <div id="historyBanner" class="history-banner" style="display:none;">
-            <span style="font-size:0.7rem;
-            color:var(--gold); font-weight:bold;">前回の設定を復元できます</span>
-            <button onclick="applyHistory()" style="background:var(--gold); color:white; border:none; padding:5px 10px;
-            border-radius:8px; font-size:0.65rem; font-weight:bold;">履歴から作成</button>
+            <span style="font-size:0.7rem; color:var(--gold); font-weight:bold;">前回の設定を復元できます</span>
+            <button onclick="applyHistory()" style="background:var(--gold); color:white; border:none; padding:5px 10px; border-radius:8px; font-size:0.65rem; font-weight:bold;">履歴から作成</button>
         </div>
         
-        <div id="presetArea" style="margin-bottom:15px;
-        display:none;">
-            <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold;
-            margin-bottom: 5px;">プリセットから選択</p>
+        <div id="presetArea" style="margin-bottom:15px; display:none;">
+            <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">プリセットから選択</p>
             <div id="presetChips"></div>
         </div>
 
-        <p style="font-size: 0.7rem;
-        color: var(--gold); font-weight: bold; margin-bottom: 5px;">アイテム名</p>
+        <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">アイテム名</p>
         <input type="text" id="editItemType" placeholder="例: 缶バッジ" style="margin-bottom:15px;">
-        <p style="font-size: 0.7rem;
-        color: var(--gold); font-weight: bold; margin-bottom: 5px;">キャラセット</p>
+        <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">キャラセット</p>
         <select id="editCharSetName" onchange="changeCharSet(this.value)" style="margin-bottom:15px;"></select>
-        <p style="font-size: 0.7rem;
-        color: var(--gold); font-weight: bold; margin-bottom: 5px;">ステータス</p>
+        <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">ステータス</p>
         <select id="editItemStatus" style="margin-bottom:20px;">
             <option value="not">未コンプ</option>
             <option value="comp">コンプ済</option>
@@ -394,7 +240,6 @@
         </select>
         <div class="editor-bulk-actions">
             <div class="bulk-group-left">
-                
                 <button class="bulk-btn" onclick="bulkToggleTargets(true)">ALL SELECT</button>
                 <button class="bulk-btn" onclick="bulkToggleTargets(false)">CANCEL</button>
                 <button class="bulk-btn" onclick="bulkIncrementOwn()">ALL +1</button>
@@ -407,77 +252,56 @@
 
 <div id="seriesModal" class="modal-overlay">
     <div class="modal-content">
-        <h3 id="seriesModalTitle" style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center;">NEW SERIES</h3>
-        <input type="hidden" id="msId">
+        <h3 id="msModalTitle" style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center;">NEW SERIES</h3>
         <input type="text" id="msTitle" placeholder="シリーズ名" style="margin-bottom:15px;">
-        <div style="display:flex;
-        gap:10px; margin-bottom:15px;">
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
             <input type="month" id="msDate" style="flex:1.2;">
             <input type="text" id="msTags" placeholder="タグ" style="flex:1;">
         </div>
         <div id="msTemplateArea">
-            <label style="font-size: 0.9rem;
-            color: var(--text-main); display:flex; align-items:center; gap:8px; margin-bottom:20px;">
-                <input type="checkbox" id="msUseTemplate" checked style="width:20px;
-                height:20px;"> テンプレートを適用
+            <label style="font-size: 0.9rem; color: var(--text-main); display:flex; align-items:center; gap:8px; margin-bottom:20px;">
+                <input type="checkbox" id="msUseTemplate" checked style="width:20px; height:20px;"> テンプレートを適用
             </label>
         </div>
-        <button class="primary-btn" onclick="saveSeriesModal()">登録する</button>
-        <button onclick="closeSeriesModal()" style="width:100%;
-        background:none; border:none; margin-top:15px; color:var(--text-sub);">キャンセル</button>
+        <button class="primary-btn" id="msSubmitBtn" onclick="saveSeriesModal()">登録する</button>
+        <button onclick="closeSeriesModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--text-sub);">キャンセル</button>
     </div>
 </div>
 
 <div id="unboxingModal" class="modal-overlay">
     <div class="modal-content">
-        <div style="display: flex;
-        justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <div id="unboxingTitle" style="color:var(--gold);
-            font-size:0.95rem; font-weight:bold;"></div>
-            <p style="font-size: 0.6rem; color: var(--text-sub);
-            margin: 0;">左:保管 / 右:譲渡<br>長押しでマイナス</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div id="unboxingTitle" style="color:var(--gold); font-size:0.95rem; font-weight:bold;"></div>
+            <p style="font-size: 0.6rem; color: var(--text-sub); margin: 0;">左:保管 / 右:譲渡<br>長押しでマイナス</p>
         </div>
-        <div id="unboxingGrid" style="display: grid;
-        grid-template-columns: repeat(2, 1fr); gap: 6px;"></div>
-        <div id="unboxingTotalCount" style="text-align:center; margin-top:12px; font-size:0.8rem; color:var(--gold); background:var(--bg-color); padding:8px;
-        border-radius:12px; border:1px solid var(--gold-light);"></div>
+        <div id="unboxingGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;"></div>
+        <div id="unboxingTotalCount" style="text-align:center; margin-top:12px; font-size:0.8rem; color:var(--gold); background:var(--bg-color); padding:8px; border-radius:12px; border:1px solid var(--gold-light);"></div>
         <button onclick="closeUnboxing()" class="primary-btn">完了</button>
     </div>
 </div>
 
-<div id="settingsOverlay" style="display:none;
-position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:500;" onclick="toggleSettings(false)"></div>
-<div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box;
-overflow-y: auto; padding-top: env(safe-area-inset-top);">
-    <h3 style="color:var(--gold); font-size:1.1rem; border-bottom:1px solid var(--gold-light);
-    padding-bottom:10px;">SETTINGS</h3>
+<div id="settingsOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:500;" onclick="toggleSettings(false)"></div>
+<div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box; overflow-y: auto; padding-top: env(safe-area-inset-top);">
+    <h3 style="color:var(--gold); font-size:1.1rem; border-bottom:1px solid var(--gold-light); padding-bottom:10px;">SETTINGS</h3>
     
-    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px;
-    display:block;">募集文カスタマイズ</label>
-    <input type="text" id="tradePrefixInput" placeholder="【交換】" style="margin-top:5px; font-size: 0.8rem !important;
-    margin-bottom:5px;">
+    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">募集文カスタマイズ</label>
+    <input type="text" id="tradePrefixInput" placeholder="【交換】" style="margin-top:5px; font-size: 0.8rem !important; margin-bottom:5px;">
     <input type="text" id="tradeSuffixInput" placeholder="郵送希望です。検索からお気軽にどうぞ。" style="font-size: 0.8rem !important; margin-bottom:10px;">
-    <label style="font-size:0.7rem; color:var(--text-sub); display:flex; align-items:center;
-    gap:5px; margin-bottom:15px;">
-        <input type="checkbox" id="tradeShowInfMark" style="width:16px;
-        height:16px;"> 無限回収に(∞)を表示する
+    <label style="font-size:0.7rem; color:var(--text-sub); display:flex; align-items:center; gap:5px; margin-bottom:15px;">
+        <input type="checkbox" id="tradeShowInfMark" style="width:16px; height:16px;"> 無限回収に(∞)を表示する
     </label>
 
-    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px;
-    display:block;">キャラクターセット（セット名:名,名...）</label>
+    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">キャラクターセット（セット名:名,名...）</label>
     <textarea id="charSettingsInput" rows="5" style="margin-top:5px; font-size: 0.75rem !important;"></textarea>
     
-    <label style="font-size:0.75rem;
-    font-weight:bold; color:var(--gold); margin-top:20px; display:block;">プリセット（アイテム名,セット名,対象キャラ1|対象キャラ2...）</label>
+    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">プリセット（アイテム名,セット名,対象キャラ1|対象キャラ2...）</label>
     <textarea id="presetSettingsInput" rows="5" style="margin-top:5px; font-size: 0.75rem !important;" placeholder="缶バッジ,デフォルト,北門|是国|金城"></textarea>
 
-    <label style="font-size:0.75rem;
-    font-weight:bold; color:var(--gold); margin-top:20px; display:block;">新規登録テンプレート</label>
+    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">新規登録テンプレート</label>
     <textarea id="tempSettingsInput" rows="3" style="margin-top:5px;"></textarea>
     
     <button class="primary-btn" onclick="saveSettings()" style="margin-top:30px;">設定を保存して更新</button>
-    <div style="margin-top:40px;
-    border-top:1px solid var(--border-color); padding-top:20px;">
+    <div style="margin-top:40px; border-top:1px solid var(--border-color); padding-top:20px;">
         <button class="secondary-btn" onclick="exportBackup()">バックアップを書き出し</button>
         <button class="secondary-btn" onclick="document.getElementById('importFile').click()">バックアップを読み込み</button>
         <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
@@ -492,23 +316,21 @@ overflow-y: auto; padding-top: env(safe-area-inset-top);">
     let CHAR_SETS = JSON.parse(localStorage.getItem('gap_char_sets')) || { "デフォルト": DEFAULT_CHARS };
     let TEMPLATES = JSON.parse(localStorage.getItem('gap_temps')) || ["缶バッジ", "アクスタ", "ブロマイド"];
     let PRESETS = JSON.parse(localStorage.getItem('gap_presets')) || [];
-    
     let TRADE_CONFIG = JSON.parse(localStorage.getItem('gap_trade_config')) || { prefix: "", suffix: "", showInf: true };
-    let DB = JSON.parse(localStorage.getItem('gap_db')) ||
-    {};
+    let DB = JSON.parse(localStorage.getItem('gap_db')) || {};
     let ORDER = JSON.parse(localStorage.getItem('gap_order')) || [];
-    let SORT_MODE = localStorage.getItem('gap_sort_mode') || 'new'; 
+    let SORT_MODE = localStorage.getItem('gap_sort_mode') || 'new';
     let LAST_ITEM = JSON.parse(localStorage.getItem('gap_last_item')) || null;
     let currentSeriesId = null;
     let currentItemIdx = null;
     let touchStartX = 0;
-    let tempStocks = {}; 
+    let tempStocks = {};
     let activeCharList = [];
     let dragSrcId = null;
     let isTicking = false;
     let editorFromMissing = false;
 
-    function init() { 
+    function init() {
         renderSeriesList();
         setTimeout(() => {
             const splash = document.getElementById('splash-screen');
@@ -519,8 +341,8 @@ overflow-y: auto; padding-top: env(safe-area-inset-top);">
         }, 600);
     }
 
-    function save() { 
-        localStorage.setItem('gap_db', JSON.stringify(DB)); 
+    function save() {
+        localStorage.setItem('gap_db', JSON.stringify(DB));
         localStorage.setItem('gap_order', JSON.stringify(ORDER));
         localStorage.setItem('gap_char_sets', JSON.stringify(CHAR_SETS));
         localStorage.setItem('gap_trade_config', JSON.stringify(TRADE_CONFIG));
@@ -530,7 +352,8 @@ overflow-y: auto; padding-top: env(safe-area-inset-top);">
 
     function showToast(msg) {
         const t = document.getElementById('toast');
-        t.textContent = msg; t.style.display = 'block';
+        t.textContent = msg;
+        t.style.display = 'block';
         setTimeout(() => t.style.display = 'none', 2000);
     }
 
@@ -563,8 +386,11 @@ overflow-y: auto; padding-top: env(safe-area-inset-top);">
         dragSrcId = id;
         e.target.classList.add('dragging');
     }
-    function handleDragOver(e) { e.preventDefault();
+
+    function handleDragOver(e) {
+        e.preventDefault();
     }
+
     function handleDrop(e, targetId) {
         e.preventDefault();
         if(!dragSrcId || dragSrcId === targetId) return;
@@ -587,7 +413,6 @@ overflow-y: auto; padding-top: env(safe-area-inset-top);">
             const touchX = e.touches[0].clientX;
             const startThreshold = rect.right - (rect.width * 0.25);
             if (touchX < startThreshold) { isSwiping = false; return; }
-       
             startX = touchX;
             isSwiping = true;
             element.classList.add('swiping');
@@ -598,12 +423,10 @@ overflow-y: auto; padding-top: env(safe-area-inset-top);">
             if (currentX < 0) {
                 if (currentX < -120) currentX = -120;
                 if (!isTicking) {
-      
                     window.requestAnimationFrame(() => {
                         element.style.transform = `translateX(${currentX}px)`;
                         isTicking = false;
                     });
-            
                     isTicking = true;
                 }
             }
@@ -612,606 +435,617 @@ overflow-y: auto; padding-top: env(safe-area-inset-top);">
             if (!isSwiping || SORT_MODE === 'custom') return;
             isSwiping = false;
             element.classList.remove('swiping');
-            const finalX = e.changedTouches[0].clientX - startX;
-            if (finalX < -50) { element.style.transform = 'translateX(-100px)'; } else { element.style.transform = 'translateX(0)'; }
-        }, {passive: 
-        true});
-
-        const originalOnClick = element.onclick;
-        element.onclick = (e) => {
-            if (element.style.transform === 'translateX(-100px)') {
+            const currentX = e.changedTouches[0].clientX - startX;
+            if (currentX < -80) {
+                element.style.transform = 'translateX(-100%)';
+                setTimeout(() => onDelete(), 300);
+            } else {
                 element.style.transform = 'translateX(0)';
-                e.stopPropagation();
-            } else if (originalOnClick) { originalOnClick(e); }
-        };
+            }
+        }, {passive: true});
+    }
+
+    function getItemStatus(item) {
+        if (item.status === 'comp') return 'comp';
+        if (item.status === 'none') return 'none';
+        
+        let hasAll = true;
+        let hasOne = false;
+        item.chars.forEach(c => {
+            if (c.target) {
+                if ((c.own || 0) <= 0) hasAll = false;
+                if ((c.own || 0) > 0) hasOne = true;
+            }
+        });
+
+        // 修正点①: 無限回収（isInf）設定時は、1つ以上持っていればコンプ判定とする
+        if (item.isInf && hasOne) return 'comp';
+        
+        return hasAll ? 'comp' : 'not';
     }
 
     function renderSeriesList() {
         const container = document.getElementById('seriesListContainer');
         container.innerHTML = "";
-        const term = document.getElementById('searchBar').value.toLowerCase();
+        const query = document.getElementById('searchBar').value.toLowerCase();
         const start = document.getElementById('filterStart').value;
         const end = document.getElementById('filterEnd').value;
-        container.className = SORT_MODE === 'custom' ? 'sort-custom' : '';
-        let displayOrder = [...ORDER];
-        if (SORT_MODE === 'date') { displayOrder.sort((a, b) => (DB[b].date || "").localeCompare(DB[a].date || ""));
+
+        let list = ORDER.map(id => ({ id, ...DB[id] }));
+
+        if (SORT_MODE === 'date') {
+            list.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+        } else if (SORT_MODE === 'new') {
+            list.reverse();
         }
-        displayOrder.sort((a, b) => (DB[b].fav ? 1 : 0) - (DB[a].fav ? 1 : 0));
-        displayOrder.forEach((id) => {
-            const s = DB[id];
-            if(!s) return;
-            const titleMatch = s.title.toLowerCase().includes(term);
-            const tagsMatch = s.tags ? s.tags.toLowerCase().includes(term) : false;
-            let dateMatch = true;
-            if (start || end) {
-     
-                if (!s.date) dateMatch = false;
-                else {
-                    if (start && s.date < start) dateMatch = false;
-                    if (end && s.date > end) dateMatch = false;
-            
+
+        list.forEach(s => {
+            const matchesQuery = s.title.toLowerCase().includes(query) || (s.tags && s.tags.toLowerCase().includes(query));
+            const matchesStart = !start || (s.date && s.date >= start);
+            const matchesEnd = !end || (s.date && s.date <= end);
+
+            if (matchesQuery && matchesStart && matchesEnd) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'swipe-container';
+                if (SORT_MODE === 'custom') {
+                    wrapper.draggable = true;
+                    wrapper.ondragstart = (e) => handleDragStart(e, s.id);
+                    wrapper.ondragover = handleDragOver;
+                    wrapper.ondrop = (e) => handleDrop(e, s.id);
                 }
-            }
-            if((titleMatch || tagsMatch) && dateMatch) {
-                const items = s.items || [];
-                const isSeriesComp = items.length > 0 && items.every(it => it.status === 'comp' || it.status === 'none');
-               
-                const compMark = isSeriesComp ? '<span class="series-comp-mark">✦</span>' : '';
-                const favActive = s.fav ? 'active' : '';
-                const swipeWrapper = document.createElement('div');
-                swipeWrapper.className = 'swipe-container';
-                swipeWrapper.draggable = SORT_MODE === 'custom';
-                swipeWrapper.ondragstart = (e) => handleDragStart(e, id);
-                swipeWrapper.ondragover = handleDragOver;
-                swipeWrapper.ondrop = (e) => handleDrop(e, id);
-                const deleteBtn = document.createElement('div');
-                deleteBtn.className = 'delete-btn-overlay';
-                deleteBtn.textContent = '削除';
-                deleteBtn.onclick = (e) => { e.stopPropagation(); deleteSeries(id); };
+
+                const delOverlay = document.createElement('div');
+                delOverlay.className = 'delete-btn-overlay';
+                delOverlay.textContent = "削除";
+
                 const card = document.createElement('div');
                 card.className = 'card';
+                
+                const allComp = s.items.length > 0 && s.items.every(i => getItemStatus(i) === 'comp');
+
                 card.innerHTML = `
-                    <div style="display:flex; align-items:flex-start;">
-                        <div class="handle">⋮⋮</div>
+                    <div class="handle">⠿</div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
                         <div style="flex:1;">
-                          
-                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                                <b style="color:var(--text-main); font-size:1rem; flex:1;">${s.title}${compMark}</b>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                         
-                                    <span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date ||
-                                    ''}</span>
-                                    <button class="edit-series-btn" onclick="event.stopPropagation(); openSeriesModal('${id}')">✎</button>
-                                    <button class="fav-btn ${favActive}" onclick="toggleFavorite('${id}', event)">★</button>
-                                </div>
-                            
+                            <div style="font-size:0.6rem; color:var(--text-sub); margin-bottom:2px;">${s.date || ''}</div>
+                            <div style="font-weight:bold; font-size:1rem; color:var(--text-main); line-height:1.3;">
+                                ${s.title} ${allComp ? '<span class="series-comp-mark">✔</span>' : ''}
                             </div>
-                            <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:4px;">
-                                ${s.tags ?
-                                s.tags.split(/[、, ]/).filter(t => t).map(t => `<span onclick="event.stopPropagation(); filterByTag('${t.trim()}')" class="tag-chip">#${t.trim()}</span>`).join('') : ''}
+                            <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:4px;">
+                                ${(s.tags || "").split(/[,，\s]+/).filter(t => t).map(t => `<span class="tag-chip" onclick="filterByTag('${t}')">#${t}</span>`).join('')}
                             </div>
                         </div>
-                    </div>`;
-                card.onclick = (e) => { if (e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') openDetail(id); };
-                attachSwipeEvents(card, () => deleteSeries(id));
-                swipeWrapper.appendChild(deleteBtn);
-                swipeWrapper.appendChild(card);
-                container.appendChild(swipeWrapper);
+                        <button class="fav-btn ${s.fav ? 'active' : ''}" onclick="toggleFavorite('${s.id}', event)">${s.fav ? '★' : '☆'}</button>
+                    </div>
+                    <div class="inventory-grid">
+                        ${s.items.slice(0, 3).map(i => {
+                            const status = getItemStatus(i);
+                            return `
+                                <div class="inv-box">
+                                    <span class="inv-label" style="color:${status === 'comp' ? 'var(--dark-pink)' : 'var(--gold)'}; opacity:${status === 'none' ? '0.3' : '1'};">
+                                        ${i.type} ${i.isInf ? '<span style="font-size:0.5rem;">(∞)</span>' : ''}
+                                    </span>
+                                    <div class="inv-content">
+                                        ${i.chars.filter(c => c.target && (c.own || 0) > 0).slice(0, 4).map(c => `<span class="char-chip c-${c.name}" style="font-size:0.5rem; padding:1px 3px;">${c.name}</span>`).join('')}
+                                        ${i.chars.filter(c => c.target && (c.own || 0) > 0).length > 4 ? '<span style="font-size:0.5rem; color:var(--text-sub);">...</span>' : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                card.onclick = () => openDetail(s.id);
+                attachSwipeEvents(card, () => {
+                    if (confirm(`「${s.title}」を削除しますか？`)) {
+                        delete DB[s.id];
+                        ORDER = ORDER.filter(id => id !== s.id);
+                        save();
+                        renderSeriesList();
+                    } else {
+                        renderSeriesList();
+                    }
+                });
+
+                wrapper.appendChild(delOverlay);
+                wrapper.appendChild(card);
+                container.appendChild(wrapper);
             }
         });
+        document.getElementById('seriesView').className = SORT_MODE === 'custom' ? 'container sort-custom' : 'container';
     }
 
-    window.onpopstate = function(e) {
-        const state = e.state ||
-        {};
-        const editor = document.getElementById('editorView');
-        const detail = document.getElementById('detailView');
-        if (editor.style.display === 'block') {
-            editor.style.display = 'none';
-            if (editorFromMissing) { editorFromMissing = false; renderMissingList(); }
-        }
-        else if (detail.style.display === 'block' && state.view !== 'detail') {
-            detail.style.display = 'none';
+    function openSeriesModal() {
+        currentSeriesId = null;
+        document.getElementById('msModalTitle').textContent = "NEW SERIES";
+        document.getElementById('msSubmitBtn').textContent = "登録する";
+        document.getElementById('msTitle').value = "";
+        document.getElementById('msDate').value = new Date().toISOString().substring(0, 7);
+        document.getElementById('msTags').value = "";
+        document.getElementById('msTemplateArea').style.display = "block";
+        document.getElementById('seriesModal').style.display = 'flex';
+    }
+
+    // 修正点②: シリーズ情報の編集
+    function openEditSeries() {
+        const s = DB[currentSeriesId];
+        document.getElementById('msModalTitle').textContent = "EDIT SERIES";
+        document.getElementById('msSubmitBtn').textContent = "更新する";
+        document.getElementById('msTitle').value = s.title;
+        document.getElementById('msDate').value = s.date || "";
+        document.getElementById('msTags').value = s.tags || "";
+        document.getElementById('msTemplateArea').style.display = "none";
+        document.getElementById('seriesModal').style.display = 'flex';
+    }
+
+    function closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; }
+
+    function saveSeriesModal() {
+        const title = document.getElementById('msTitle').value.trim();
+        if (!title) return;
+        const date = document.getElementById('msDate').value;
+        const tags = document.getElementById('msTags').value;
+        const useTemp = document.getElementById('msUseTemplate').checked;
+
+        if (currentSeriesId) {
+            // 編集モード
+            DB[currentSeriesId].title = title;
+            DB[currentSeriesId].date = date;
+            DB[currentSeriesId].tags = tags;
+            showToast("シリーズ情報を更新しました");
+            renderSeriesList();
+            renderDetail();
+        } else {
+            // 新規作成
+            const id = 's' + Date.now();
+            DB[id] = { title, date, tags, items: [], fav: false };
+            if (useTemp) {
+                TEMPLATES.forEach(t => {
+                    DB[id].items.push({
+                        type: t,
+                        charSetName: "デフォルト",
+                        status: "not",
+                        isInf: false,
+                        chars: CHAR_SETS["デフォルト"].map(name => ({ name, target: true, own: 0, trade: 0 }))
+                    });
+                });
+            }
+            ORDER.push(id);
+            showToast("シリーズを登録しました");
             renderSeriesList();
         }
-    };
-
-    function openDetail(id) { currentSeriesId = id; document.getElementById('detailHeaderTitle').textContent = DB[id].title; document.getElementById('detailView').style.display = 'block';
-    history.pushState({view: 'detail', seriesId: id}, ''); renderItemList(); }
-    function closeDetail() { document.getElementById('detailView').style.display = 'none';
-    if (history.state && history.state.view === 'detail') history.back(); renderSeriesList(); }
-    
-    function autoDetermineStatus(item) { 
-        if (item.status === "none") return "none";
-        const targets = item.targets || []; 
-        if (targets.length === 0) return item.status;
-        const isAllCollected = targets.every(char => { 
-            const s = item.stocks[char] || { own: 0, trade: 0, infinite: false }; 
-            // 修正点1: 無限回収(infinite)であっても、所持(own)または譲渡(trade)が1以上あればOKとする
-            return (s.own + s.trade) >= 1; 
-        });
-        return isAllCollected ? "comp" : "not"; 
+        save();
+        closeSeriesModal();
     }
-    
-    function openItemEditor(idx = null, fromMissing = false) {
-        currentItemIdx = idx;
-        editorFromMissing = fromMissing;
+
+    function openDetail(id) {
+        currentSeriesId = id;
+        document.getElementById('detailView').style.display = 'block';
+        renderDetail();
+    }
+
+    function closeDetail() {
+        document.getElementById('detailView').style.display = 'none';
+        renderSeriesList();
+    }
+
+    function renderDetail() {
+        const s = DB[currentSeriesId];
+        document.getElementById('detailHeaderTitle').textContent = s.title;
+        const container = document.getElementById('itemListContainer');
+        container.innerHTML = "";
+
+        s.items.forEach((item, idx) => {
+            const status = getItemStatus(item);
+            const card = document.createElement('div');
+            card.className = 'card item-card';
+            card.style.marginBottom = "15px";
+            card.style.padding = "15px";
+            
+            const hasInfTarget = item.isInf && item.chars.some(c => c.target && (c.own || 0) > 0);
+
+            card.innerHTML = `
+                <div class="status-tag ${status === 'comp' ? 'st-comp' : (status === 'none' ? 'st-none' : 'st-not')}">
+                    ${status === 'comp' ? 'COMPLETE' : (status === 'none' ? '－' : 'INCOMPLETE')}
+                </div>
+                <div style="display:flex; align-items:center; margin-bottom:12px;">
+                    <div style="flex:1;">
+                        <span style="font-weight:bold; font-size:0.95rem; color:var(--text-main);">${item.type}</span>
+                        ${item.isInf ? '<span style="color:var(--gold); font-size:0.7rem; font-weight:bold; margin-left:5px;">∞</span>' : ''}
+                    </div>
+                    <button onclick="openUnboxing(${idx}, event)" style="background:var(--gold-light); border:none; color:var(--gold); padding:6px 12px; border-radius:10px; font-size:0.7rem; font-weight:bold; margin-right:8px;">開封</button>
+                    <button onclick="openItemEditor(${idx}, event)" style="background:none; border:none; font-size:1.1rem; color:var(--gold);">✎</button>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:5px;">
+                    ${item.chars.filter(c => c.target).map(c => {
+                        // 修正点①: 無限回収時の不透明度判定。
+                        // 「不足には現状通り（薄い色で）表示する」ため、無限回収時は所持0の場合のみ薄くする
+                        const isDimmed = item.isInf ? (c.own || 0) === 0 : (c.own || 0) === 0;
+                        return `<span class="char-chip c-${c.name}" style="${isDimmed ? 'opacity:0.35; transform:scale(0.9);' : ''}">${c.name}${(c.own || 0) > 1 ? `×${c.own}` : ''}</span>`;
+                    }).join('')}
+                </div>
+                <div class="inv-summary-row">
+                    <div class="summary-item">所持<span>${item.chars.reduce((acc, c) => acc + (c.own || 0), 0)}</span></div>
+                    <div class="summary-item">譲渡可能<span>${item.chars.reduce((acc, c) => acc + (c.trade || 0), 0)}</span></div>
+                </div>
+                <div style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--border-color); display:flex; align-items:center;">
+                    <div id="tradeText-${idx}" class="trade-text-small" style="flex:1;">${generateTradeText(item)}</div>
+                    <button onclick="copyTradeText(${idx})" style="background:none; border:none; color:var(--gold); font-size:0.8rem; padding:5px;">Copy</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function generateTradeText(item) {
+        const outChars = item.chars.filter(c => (c.trade || 0) > 0).map(c => `${c.name}${(c.trade > 1 ? c.trade : '')}`);
+        const inChars = item.chars.filter(c => c.target && (c.own || 0) === 0).map(c => c.name);
+        const infChars = item.isInf ? item.chars.filter(c => c.target).map(c => c.name + (TRADE_CONFIG.showInf ? '(∞)' : '')) : [];
         
-        // ヒストリーバナーの表示
-        document.getElementById('historyBanner').style.display = (idx === null && LAST_ITEM) ?
-        'flex' : 'none';
-        
-        // プリセットエリアの描画
-        const presetArea = document.getElementById('presetArea');
-        const presetChips = document.getElementById('presetChips');
-        if(idx === null && PRESETS.length > 0) {
-            presetArea.style.display = 'block';
-            presetChips.innerHTML = PRESETS.map((p, i) => `<span class="preset-chip" onclick="applyPreset(${i})">${p.name}</span>`).join('');
+        if (outChars.length === 0) return "譲渡可能アイテムなし";
+        let text = `${TRADE_CONFIG.prefix} ${item.type}\n【譲】${outChars.join('、')}\n【求】`;
+        if (item.isInf) {
+            text += infChars.join('、') + "（無限回収中）";
         } else {
-            presetArea.style.display = 'none';
+            text += inChars.length > 0 ? inChars.join('、') : "完遂済";
+        }
+        return text + `\n${TRADE_CONFIG.suffix}`;
+    }
+
+    function copyTradeText(idx) {
+        const txt = generateTradeText(DB[currentSeriesId].items[idx]);
+        navigator.clipboard.writeText(txt).then(() => showToast("募集文をコピーしました"));
+    }
+
+    function deleteAllItems() {
+        if (confirm("このシリーズ内の全アイテムを削除しますか？")) {
+            DB[currentSeriesId].items = [];
+            save();
+            renderDetail();
+        }
+    }
+
+    function openItemEditor(idx = null, e = null) {
+        if (e) e.stopPropagation();
+        currentItemIdx = idx;
+        const s = DB[currentSeriesId];
+        const isNew = idx === null;
+
+        const typeInput = document.getElementById('editItemType');
+        const charSetSelect = document.getElementById('editCharSetName');
+        const statusSelect = document.getElementById('editItemStatus');
+        
+        charSetSelect.innerHTML = Object.keys(CHAR_SETS).map(k => `<option value="${k}">${k}</option>`).join('');
+
+        if (isNew) {
+            typeInput.value = "";
+            charSetSelect.value = "デフォルト";
+            statusSelect.value = "not";
+            activeCharList = CHAR_SETS["デフォルト"].map(name => ({ name, target: true, own: 0, trade: 0, isInf: false }));
+            document.getElementById('historyBanner').style.display = LAST_ITEM ? 'flex' : 'none';
+        } else {
+            const item = s.items[idx];
+            typeInput.value = item.type;
+            charSetSelect.value = item.charSetName || "デフォルト";
+            statusSelect.value = item.status || "not";
+            activeCharList = JSON.parse(JSON.stringify(item.chars));
+            if (item.isInf) activeCharList.forEach(c => c.isInf = true);
+            document.getElementById('historyBanner').style.display = 'none';
         }
 
-        const setSelect = document.getElementById('editCharSetName');
-        setSelect.innerHTML = Object.keys(CHAR_SETS).map(n => `<option value="${n}">${n}</option>`).join('');
-        const item = idx !== null ? DB[currentSeriesId].items[idx] : { type: "", stocks: {}, targets: [], status: "not", charSetName: "デフォルト" };
-        document.getElementById('editItemType').value = item.type;
-        document.getElementById('editItemStatus').value = item.status || "not";
-        document.getElementById('editCharSetName').value = item.charSetName || "デフォルト";
-        tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
-        activeCharList = CHAR_SETS[document.getElementById('editCharSetName').value] || DEFAULT_CHARS;
-        renderEditorGrid(item.targets && item.targets.length > 0 ? item.targets : [...activeCharList]);
+        renderPresetChips();
+        renderEditorGrid();
         document.getElementById('editorView').style.display = 'block';
-        history.pushState({view: 'editor'}, '');
     }
 
-    function applyHistory() {
-        if(!LAST_ITEM) return;
-        document.getElementById('editItemType').value = LAST_ITEM.type;
-        document.getElementById('editCharSetName').value = LAST_ITEM.charSetName;
-        activeCharList = CHAR_SETS[LAST_ITEM.charSetName] || DEFAULT_CHARS;
-        tempStocks = {}; 
-        renderEditorGrid(LAST_ITEM.targets);
-        showToast("履歴を適用しました");
+    function renderPresetChips() {
+        const area = document.getElementById('presetArea');
+        const container = document.getElementById('presetChips');
+        if (PRESETS.length === 0) { area.style.display = 'none'; return; }
+        area.style.display = 'block';
+        container.innerHTML = PRESETS.map((p, i) => `<span class="preset-chip" onclick="applyPreset(${i})">${p.name}</span>`).join('');
     }
 
     function applyPreset(idx) {
         const p = PRESETS[idx];
         document.getElementById('editItemType').value = p.name;
         document.getElementById('editCharSetName').value = p.charSet;
-        activeCharList = CHAR_SETS[p.charSet] || DEFAULT_CHARS;
-        tempStocks = {};
-        renderEditorGrid(p.targets);
-        showToast(`プリセット: ${p.name} を適用`);
+        const baseChars = CHAR_SETS[p.charSet] || DEFAULT_CHARS;
+        const targets = p.targets.split('|');
+        activeCharList = baseChars.map(name => ({
+            name,
+            target: targets.includes(name),
+            own: 0, trade: 0
+        }));
+        renderEditorGrid();
     }
 
-    function duplicateItem(idx, e) {
-        e.stopPropagation();
-        const base = DB[currentSeriesId].items[idx];
-        const newItem = {
-            type: base.type,
-            charSetName: base.charSetName ||
-            "デフォルト",
-            targets: JSON.parse(JSON.stringify(base.targets)),
-            stocks: {}, // カウントのみリセット
-            status: "not"
-        };
-        DB[currentSeriesId].items.push(newItem);
-        save();
-        renderItemList();
-        showToast("複製しました");
+    function applyHistory() {
+        if (!LAST_ITEM) return;
+        document.getElementById('editItemType').value = LAST_ITEM.type;
+        document.getElementById('editCharSetName').value = LAST_ITEM.charSetName;
+        document.getElementById('editItemStatus').value = LAST_ITEM.status;
+        activeCharList = JSON.parse(JSON.stringify(LAST_ITEM.chars));
+        renderEditorGrid();
+        showToast("前回の設定を復元しました");
     }
-    
+
+    function changeCharSet(setName) {
+        const base = CHAR_SETS[setName] || DEFAULT_CHARS;
+        activeCharList = base.map(name => {
+            const old = activeCharList.find(c => c.name === name);
+            return old ? old : { name, target: true, own: 0, trade: 0 };
+        });
+        renderEditorGrid();
+    }
+
+    function renderEditorGrid() {
+        const grid = document.getElementById('editorGrid');
+        grid.innerHTML = activeCharList.map((c, i) => `
+            <div class="editor-row" style="background:${c.target ? '#fff' : '#f9f9f9'}; opacity:${c.target ? '1' : '0.6'}">
+                <div style="text-align:center;">
+                    <div class="char-chip c-${c.name}" style="margin:0 0 5px 0; width:60px; padding:4px 0;">${c.name}</div>
+                    <label style="font-size:0.6rem; display:block; color:var(--text-sub);">
+                        <input type="checkbox" ${c.target ? 'checked' : ''} onchange="activeCharList[${i}].target=this.checked; renderEditorGrid();" style="width:12px; height:12px; vertical-align:middle;"> 求
+                    </label>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="flex:1;">
+                        <div style="font-size:0.6rem; color:var(--text-sub); margin-bottom:4px;">所持 / 譲渡</div>
+                        <div style="display:flex; align-items:center; gap:5px;">
+                            <button class="btn-qty" onclick="updateQty(${i}, 'own', -1)">−</button>
+                            <input type="number" class="qty-display ${c.own > 0 ? 'qty-has' : 'qty-zero'}" value="${c.own}" onchange="activeCharList[${i}].own=parseInt(this.value)||0; renderEditorGrid();">
+                            <button class="btn-qty" onclick="updateQty(${i}, 'own', 1)">＋</button>
+                            <span style="color:#ddd; margin:0 2px;">/</span>
+                            <input type="number" class="qty-display ${c.trade > 0 ? 'qty-has' : 'qty-zero'}" value="${c.trade}" onchange="activeCharList[${i}].trade=parseInt(this.value)||0; renderEditorGrid();">
+                        </div>
+                    </div>
+                    <button class="inf-btn ${c.isInf ? 'active' : ''}" onclick="activeCharList[${i}].isInf=!activeCharList[${i}].isInf; renderEditorGrid();" title="無限回収設定">∞</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateQty(idx, key, diff) {
+        activeCharList[idx][key] = Math.max(0, (activeCharList[idx][key] || 0) + diff);
+        renderEditorGrid();
+    }
+
+    function bulkToggleTargets(val) { activeCharList.forEach(c => c.target = val); renderEditorGrid(); }
+    function bulkIncrementOwn() { activeCharList.forEach(c => { if(c.target) c.own = (c.own || 0) + 1; }); renderEditorGrid(); }
+    function bulkResetCounts() { if(confirm("全キャラの数値を0にしますか？")) { activeCharList.forEach(c => { c.own = 0; c.trade = 0; }); renderEditorGrid(); } }
+
     function saveItem() {
         const type = document.getElementById('editItemType').value.trim();
-        if(!type) return alert("名前を入力してください");
-        let data = { type, stocks: tempStocks, targets: getSelectedTargets(), status: document.getElementById('editItemStatus').value, charSetName: document.getElementById('editCharSetName').value };
-        data.status = autoDetermineStatus(data);
-        // 履歴として保存
-        LAST_ITEM = { type: data.type, charSetName: data.charSetName, targets: data.targets };
-        localStorage.setItem('gap_last_item', JSON.stringify(LAST_ITEM));
-
-        if(currentItemIdx === null) DB[currentSeriesId].items.push(data);
-        else DB[currentSeriesId].items[currentItemIdx] = data;
+        if (!type) return;
         
-        save(); 
-        showToast("保存しました"); 
-        history.back(); 
-        document.getElementById('editorView').style.display = 'none'; 
-        if (!editorFromMissing) renderItemList();
-        else { editorFromMissing = false; renderMissingList(); }
-    }
-
-    function closeEditor() { 
-        document.getElementById('editorView').style.display = 'none';
-        if (history.state && history.state.view === 'editor') history.back(); 
-        if (editorFromMissing) { editorFromMissing = false; renderMissingList();
-        }
-    }
-    
-    function renderItemList() {
-        const container = document.getElementById('itemListContainer');
-        container.innerHTML = "";
-        const items = DB[currentSeriesId].items || [];
-        const seriesTitle = DB[currentSeriesId].title;
-        items.forEach((item, idx) => {
-            const swipeWrapper = document.createElement('div'); swipeWrapper.className = 'swipe-container'; swipeWrapper.style.marginBottom = "15px";
-            const deleteBtn = document.createElement('div'); deleteBtn.className = 'delete-btn-overlay'; deleteBtn.textContent = '削除'; deleteBtn.onclick = (e) => { e.stopPropagation(); deleteItem(idx); };
-            const div = document.createElement('div'); div.className = 'card item-card'; 
-            attachSwipeEvents(div, () => deleteItem(idx));
-            
-            const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
-            
-            let ownChips = [], tradeTextArr = [], tradeNamesArr = [], targetNamesArr = [], infiniteStatusChips = [];
-            let totalOwn = 0, totalTrade = 0;
-            const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
-
-            
-            list.forEach(c => {
-                const s = (item.stocks && item.stocks[c]) ?
-                item.stocks[c] : {own:0, trade:0, infinite:false};
-                const isTarget = (item.targets || list).includes(c);
-                totalOwn += s.own; totalTrade += s.trade;
-                if(s.own > 0) ownChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
-                if(s.trade > 0) { 
-                    tradeTextArr.push(`${c}${s.trade}`);
-                    tradeNamesArr.push(`${c}${s.trade > 1 ? s.trade : ''}`); 
-                }
-                
-                if(s.infinite) {
-                    infiniteStatusChips.push(`<span class="inf-status-chip c-${c.trim()}">${c}<span>:${s.own}</span></span>`);
-                }
-                
-                if(isTarget) {
-                    const isMissing = (s.own === 0 && s.trade === 0);
-                    if(isMissing || s.infinite) {
-                        const infClass = (!isMissing && s.infinite) ?
-                        'is-infinite-collected' : '';
-                        const displayInf = s.infinite && TRADE_CONFIG.showInf;
-                        targetNamesArr.push(`${c}${displayInf ? '(∞)' : ''}`);
-                    }
-                }
-            });
-            const prefix = TRADE_CONFIG.prefix ? TRADE_CONFIG.prefix + "\n" : "";
-            const suffix = TRADE_CONFIG.suffix ? "\n" + TRADE_CONFIG.suffix : "";
-            const copyStr = `${prefix}${seriesTitle} ${item.type}\n譲：${tradeNamesArr.join('、') || 'なし'}\n求：${targetNamesArr.join('、') || '完遂'}${suffix}`;
-            
-            div.innerHTML = `
-                <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
-                <div style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; padding-right:60px;">
-                    <div><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div>
-                    <div style="display:flex; gap:5px;">
-    
-                        <button onclick="duplicateItem(${idx}, event)" style="background:#f0f0f0; border:none; color:var(--text-main); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">複製</button>
-                        <button onclick="event.stopPropagation(); copyTradeText(\`${copyStr}\`)" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">コピー</button>
-                    </div>
-                
-                </div>
-                <div class="inventory-grid" onclick="openItemEditor(${idx})">
-                    <div class="inv-box"><span class="inv-label">保管</span><div class="inv-content">${ownChips.join('') ||
-                    '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
-                    <div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content"><span class="trade-text-small">${tradeTextArr.join('<br>') ||
-                    '<span style="color:#ccc;">－</span>'}</span></div></div>
-                    <div class="inv-box"><span class="inv-label">不足</span><div class="inv-content">
-                        ${list.filter(c => (item.targets || list).includes(c) && ((item.stocks[c]?.own || 0) + (item.stocks[c]?.trade || 0) === 0 || item.stocks[c]?.infinite)).map(c => `<span class="char-chip c-${c.trim()} ${(!item.stocks[c] || (item.stocks[c].own+item.stocks[c].trade===0)) ? '' : 'is-infinite-collected'}">${c}</span>`).join('') ||
-                    '<span style="color:#ccc; font-size:0.6rem;">－</span>'}
-                    </div></div>
-                </div>
-                <div class="inv-summary-row">
-                    <div class="summary-item">保管合計<span>${totalOwn}</span></div>
-                    <div class="summary-item">譲渡合計<span>${totalTrade}</span></div>
-   
-                    <div class="summary-item">総所有数<span>${totalOwn + totalTrade}</span></div>
-                </div>
-                <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <div class="inf-status-container">
-                       
-                        ${infiniteStatusChips.join('')}
-                    </div>
-                    <span onclick="event.stopPropagation(); openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px; white-space:nowrap;">✨ 開封モード</span>
-                </div>`;
-            swipeWrapper.appendChild(deleteBtn); swipeWrapper.appendChild(div); container.appendChild(swipeWrapper);
-        });
-    }
-
-    function renderEditorGrid(targets) { 
-        const grid = document.getElementById('editorGrid');
-        grid.innerHTML = ""; 
-        activeCharList.forEach(c => { 
-            if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0, infinite: false }; 
-            const isTarget = targets.includes(c); 
-            const ownVal = tempStocks[c].own;
-            const tradeVal = tempStocks[c].trade;
-            const isInf = tempStocks[c].infinite || false;
-        
-            const ownClass = ownVal > 0 ? 'qty-has' : 'qty-zero';
-            const tradeClass = tradeVal > 0 ? 'qty-has' : 'qty-zero';
-            const row = document.createElement('div'); 
-            row.className = 'editor-row'; 
-            row.style.opacity = isTarget ? "1" : "0.5"; 
-            row.innerHTML = `
-  
-                <div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem; position:relative;">
-                    <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
-                    <button class="inf-btn ${isInf?'active':''}" onclick="toggleInfinite('${c}')" style="display:block;
-                    margin:5px auto 0;">${isInf?'∞':'∞'}</button>
-                </div>
-                <div style="display:flex;
-                justify-content:space-around;">
-                    <div style="text-align:center;">
-                        <span style="font-size:0.6rem;
-                        color:var(--text-sub);">保管</span>
-                        <div style="display:flex;
-                        align-items:center; gap:8px;">
-                            <button class="btn-qty" onclick="updateQty('${c}','own',-1)">-</button>
-                            <input type="number" inputmode="numeric" class="qty-display ${ownClass}" value="${ownVal}" onchange="directInputQty('${c}','own',this.value)" onclick="this.select()">
-                            <button class="btn-qty" onclick="updateQty('${c}','own',1)">+</button>
-    
-                        </div>
-                    </div>
-                    <div style="text-align:center;">
-                        <span style="font-size:0.6rem;
-                        color:var(--text-sub);">譲渡</span>
-                        <div style="display:flex;
-                        align-items:center; gap:8px;">
-                            <button class="btn-qty" onclick="updateQty('${c}','trade',-1)">-</button>
-                            <input type="number" inputmode="numeric" class="qty-display ${tradeClass}" value="${tradeVal}" onchange="directInputQty('${c}','trade',this.value)" onclick="this.select()">
-                            <button class="btn-qty" onclick="updateQty('${c}','trade',1)">+</button>
-    
-                        </div>
-                    </div>
-                </div>`; 
-            grid.appendChild(row); 
-        }); 
-    }
-
-    function toggleInfinite(char) { tempStocks[char].infinite = !tempStocks[char].infinite; renderEditorGrid(getSelectedTargets()); }
-    function updateQty(char, 
-    key, delta) { tempStocks[char][key] = Math.max(0, tempStocks[char][key] + delta); renderEditorGrid(getSelectedTargets()); }
-    function directInputQty(char, key, val) { let n = parseInt(val); if(isNaN(n) || n < 0) n = 0; tempStocks[char][key] = n; renderEditorGrid(getSelectedTargets());
-    }
-    function getSelectedTargets() { const cbs = document.querySelectorAll('#editorGrid input[type="checkbox"]'); let selected = [];
-    cbs.forEach((cb, i) => { if(cb.checked) selected.push(activeCharList[i]); }); return selected; }
-    function refreshEditorTargets() { renderEditorGrid(getSelectedTargets());
-    }
-    function changeCharSet(setName) { activeCharList = CHAR_SETS[setName] || DEFAULT_CHARS; renderEditorGrid([...activeCharList]);
-    }
-    function bulkToggleTargets(s) { renderEditorGrid(s ? [...activeCharList] : []);
-    }
-    function bulkIncrementOwn() { activeCharList.forEach(c => { if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0, infinite: false }; tempStocks[c].own += 1; });
-    renderEditorGrid(getSelectedTargets()); showToast("保管を+1しました"); }
-    function bulkResetCounts() { if(confirm("カウントをすべて削除しますがよろしいですか？")) { Object.keys(tempStocks).forEach(c => { tempStocks[c].own = 0; tempStocks[c].trade = 0; tempStocks[c].infinite = false; });
-    renderEditorGrid(getSelectedTargets()); showToast("リセットしました"); } }
-    function copyTradeText(text) { navigator.clipboard.writeText(text).then(() => showToast("コピーしました"));
-    }
-    function deleteItem(idx) { if(confirm("削除しますか？")) { DB[currentSeriesId].items.splice(idx,1); save(); renderItemList();
-    } }
-    function deleteSeries(id) { if(confirm("削除しますか？")) { delete DB[id]; ORDER = ORDER.filter(oid => oid !== id); save();
-    renderSeriesList(); } }
-    function deleteAllItems() { if(confirm("全削除しますか？")) { DB[currentSeriesId].items = []; save(); renderItemList();
-    } }
-    
-    function openUnboxing(idx) { currentItemIdx = idx; document.getElementById('unboxingTitle').textContent = DB[currentSeriesId].items[idx].type; renderUnboxingGrid();
-    document.getElementById('unboxingModal').style.display = 'flex'; }
-    function renderUnboxingGrid() { 
-        const grid = document.getElementById('unboxingGrid');
-        grid.innerHTML = ""; 
-        const item = DB[currentSeriesId].items[currentItemIdx]; 
-        const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
-        let tOwn = 0, tTrade = 0; 
-        list.forEach(c => { 
-            const s = item.stocks[c] || { own: 0, trade: 0, infinite: false }; 
-            tOwn += s.own; tTrade += s.trade; 
-            const panel = document.createElement('div'); 
-            panel.className = `unboxing-panel c-${c.trim()}`; 
-            const createHandler = 
-            (type) => { 
-                let timer; 
-                return { 
-                    onpointerdown: (e) => { e.preventDefault(); timer = setTimeout(() => { updateUnboxingCount(c, type, -1); timer = null; }, 500); }, 
-                    onpointerup: (e) 
-                    => { e.preventDefault(); if(timer) { clearTimeout(timer); updateUnboxingCount(c, type, 1); } }, 
-                    oncontextmenu: (e) => { e.preventDefault(); } 
-                }; 
-            }; 
-            panel.innerHTML = `
-                <div class="ub-char-label">${c}</div>
-  
-                <div class="ub-area ub-area-left"><span id="ubc-own-${c}" class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div>
-                <div class="ub-area ub-area-right"><span id="ubc-trade-${c}" class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`;
-            Object.assign(panel.querySelector('.ub-area-left'), createHandler('own')); 
-            Object.assign(panel.querySelector('.ub-area-right'), createHandler('trade')); 
-            grid.appendChild(panel); 
-        }); 
-        updateUnboxingFooter(tOwn, tTrade); 
-    }
-    function updateUnboxingCount(char, type, delta) { const item = DB[currentSeriesId].items[currentItemIdx];
-    if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0, infinite: false }; item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta);
-    const oldStatus = item.status; item.status = autoDetermineStatus(item); if (oldStatus !== item.status) showToast(item.status === 'comp' ? "コンプリート！" : "未コンプに戻りました"); save(); renderUnboxingGrid();
-    }
-    function updateUnboxingFooter(own, trade) { document.getElementById('unboxingTotalCount').innerHTML = `保管: ${own} / 譲渡: ${trade} / 合計: ${own+trade}`;
-    }
-    function closeUnboxing() { document.getElementById('unboxingModal').style.display = 'none'; renderItemList(); }
-
-    // 修正点2: シリーズ編集機能の拡張（引数idを受け取るように変更）
-    function openSeriesModal(id = null) {
-        document.getElementById('seriesModal').style.display = 'flex';
-        const titleEl = document.getElementById('seriesModalTitle');
-        const idInput = document.getElementById('msId');
-        
-        if (id) {
-            // 編集モード
-            titleEl.textContent = "EDIT SERIES";
-            idInput.value = id;
-            document.getElementById('msTitle').value = DB[id].title;
-            document.getElementById('msDate').value = DB[id].date;
-            document.getElementById('msTags').value = DB[id].tags;
-            document.getElementById('msTemplateArea').style.display = 'none'; // 編集時はテンプレート選択を非表示
-        } else {
-            // 新規作成モード
-            titleEl.textContent = "NEW SERIES";
-            idInput.value = "";
-            document.getElementById('msTitle').value = "";
-            document.getElementById('msDate').value = "";
-            document.getElementById('msTags').value = "";
-            document.getElementById('msTemplateArea').style.display = 'block';
-        }
-    }
-    function closeSeriesModal() { document.getElementById('seriesModal').style.display='none'; }
-    
-    function saveSeriesModal() { 
-        const title = document.getElementById('msTitle').value.trim();
-        if(!title) return;
-        
-        const existId = document.getElementById('msId').value;
-        
-        if (existId && DB[existId]) {
-            // 編集保存
-            DB[existId].title = title;
-            DB[existId].date = document.getElementById('msDate').value;
-            DB[existId].tags = document.getElementById('msTags').value;
-            save();
-            renderSeriesList();
-            showToast("シリーズ情報を更新しました");
-            closeSeriesModal();
-        } else {
-            // 新規保存
-            const id = "s" + Date.now(); 
-            const useTemp = document.getElementById('msUseTemplate').checked; 
-            let items = [];
-            if(useTemp) TEMPLATES.forEach(t => items.push({ type: t, stocks: {}, targets: [...DEFAULT_CHARS], status: "not", charSetName: "デフォルト" }));
-            DB[id] = { title, date: document.getElementById('msDate').value, tags: document.getElementById('msTags').value, items: items, fav: false }; 
-            ORDER.unshift(id); 
-            save(); 
-            closeSeriesModal(); 
-            openDetail(id);
-        }
-    }
-    
-    function toggleSettings(s) { 
-        document.getElementById('settingsOverlay').style.display=s?'block':'none';
-        document.getElementById('settingsPanel').style.right=s?'0':'-85%'; 
-        if(s) { 
-            document.getElementById('charSettingsInput').value = Object.keys(CHAR_SETS).map(n => `${n}:${CHAR_SETS[n].join(',')}`).join('\n');
-            document.getElementById('tempSettingsInput').value = TEMPLATES.join('\n');
-            document.getElementById('tradePrefixInput').value = TRADE_CONFIG.prefix || "";
-            document.getElementById('tradeSuffixInput').value = TRADE_CONFIG.suffix || "";
-            document.getElementById('tradeShowInfMark').checked = TRADE_CONFIG.showInf !== false;
-            document.getElementById('presetSettingsInput').value = PRESETS.map(p => `${p.name},${p.charSet},${p.targets.join('|')}`).join('\n');
-        } 
-    }
-    function saveSettings() { 
-        const lines = document.getElementById('charSettingsInput').value.split('\n');
-        let newSets = {}; 
-        lines.forEach(line => { const p = line.split(':'); if(p.length >= 2) newSets[p[0].trim()] = p[1].split(',').map(c => c.trim()).filter(c => c); });
-        CHAR_SETS = Object.keys(newSets).length ? newSets : { "デフォルト": DEFAULT_CHARS }; 
-        TEMPLATES = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n); 
-        
-        const pLines = document.getElementById('presetSettingsInput').value.split('\n');
-        let newPresets = [];
-        pLines.forEach(l => { const p = l.split(','); if(p.length >= 3) newPresets.push({ name: p[0].trim(), charSet: p[1].trim(), targets: p[2].split('|').map(c => c.trim()) }); });
-        PRESETS = newPresets;
-
-        TRADE_CONFIG = {
-            prefix: document.getElementById('tradePrefixInput').value,
-            suffix: document.getElementById('tradeSuffixInput').value,
-            showInf: document.getElementById('tradeShowInfMark').checked
+        const itemData = {
+            type,
+            charSetName: document.getElementById('editCharSetName').value,
+            status: document.getElementById('editItemStatus').value,
+            isInf: activeCharList.some(c => c.isInf),
+            chars: activeCharList.map(c => ({ name: c.name, target: c.target, own: c.own, trade: c.trade, isInf: c.isInf }))
         };
-        save(); location.reload(); 
-    }
-    function exportBackup() { const data = { gap_db: DB, gap_order: ORDER, gap_char_sets: CHAR_SETS, gap_temps: TEMPLATES, gap_sort_mode: SORT_MODE, gap_trade_config: TRADE_CONFIG, gap_presets: PRESETS };
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'})); a.download=`backup.json`; a.click();
-    }
-    function importBackup(e) { const reader = new FileReader();
-    reader.onload = (ev) => { const data = JSON.parse(ev.target.result); if(confirm("上書きしますか？")) { localStorage.setItem('gap_db', JSON.stringify(data.gap_db)); localStorage.setItem('gap_order', JSON.stringify(data.gap_order));
-    localStorage.setItem('gap_char_sets', JSON.stringify(data.gap_char_sets || { "デフォルト": DEFAULT_CHARS })); localStorage.setItem('gap_trade_config', JSON.stringify(data.gap_trade_config || { prefix: "", suffix: "", showInf: true }));
-    localStorage.setItem('gap_sort_mode', data.gap_sort_mode || 'new'); localStorage.setItem('gap_presets', JSON.stringify(data.gap_presets || [])); location.reload(); } }; reader.readAsText(e.target.files[0]);
-    }
-    
-    function jumpToEditorFromMissing(sId, itemIdx, charName) {
-        currentSeriesId = sId;
-        openItemEditor(itemIdx, true); 
-        setTimeout(() => {
-            const rows = document.querySelectorAll('.editor-row');
-            for(let row of rows) {
-                if(row.innerText.includes(charName)) {
-                    row.scrollIntoView({behavior: 'smooth', block: 'center'});
-                    row.style.outline = "2px solid var(--gold)";
- 
-                    setTimeout(() => row.style.outline = "none", 2000);
-                    break;
-                }
-            }
-        }, 300);
+
+        if (currentItemIdx === null) {
+            DB[currentSeriesId].items.push(itemData);
+        } else {
+            DB[currentSeriesId].items[currentItemIdx] = itemData;
+        }
+
+        LAST_ITEM = itemData;
+        localStorage.setItem('gap_last_item', JSON.stringify(LAST_ITEM));
+        save();
+        closeEditor();
+        renderDetail();
+        if (editorFromMissing) renderMissingList();
     }
 
+    function closeEditor() { document.getElementById('editorView').style.display = 'none'; editorFromMissing = false; }
+
+    function openUnboxing(idx, e) {
+        e.stopPropagation();
+        currentItemIdx = idx;
+        const item = DB[currentSeriesId].items[idx];
+        document.getElementById('unboxingTitle').textContent = `${item.type} - 開封モード`;
+        tempStocks = {};
+        item.chars.forEach(c => { tempStocks[c.name] = { own: 0, trade: 0 }; });
+        renderUnboxingGrid();
+        updateUnboxingTotal();
+        document.getElementById('unboxingModal').style.display = 'flex';
+    }
+
+    function renderUnboxingGrid() {
+        const item = DB[currentSeriesId].items[currentItemIdx];
+        const grid = document.getElementById('unboxingGrid');
+        grid.innerHTML = item.chars.map(c => `
+            <div class="unboxing-panel">
+                <div class="ub-char-label">${c.name}</div>
+                <div class="ub-area ub-area-left" onpointerdown="handleUnboxingTouch('${c.name}', 'own', event)">
+                    <div class="unboxing-count-badge ${tempStocks[c.name].own > 0 ? 'has-count' : 'is-zero'}">${tempStocks[c.name].own}</div>
+                </div>
+                <div class="ub-area ub-area-right" onpointerdown="handleUnboxingTouch('${c.name}', 'trade', event)">
+                    <div class="unboxing-count-badge ${tempStocks[c.name].trade > 0 ? 'has-count' : 'is-zero'}">${tempStocks[c.name].trade}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    let longPressTimer;
+    function handleUnboxingTouch(charName, key, e) {
+        e.preventDefault();
+        const start = Date.now();
+        const action = (isLong) => {
+            if (isLong) {
+                tempStocks[charName][key] = Math.max(0, tempStocks[charName][key] - 1);
+            } else {
+                tempStocks[charName][key]++;
+            }
+            renderUnboxingGrid();
+            updateUnboxingTotal();
+        };
+
+        longPressTimer = setTimeout(() => { action(true); longPressTimer = null; }, 500);
+
+        const endHandler = () => {
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                action(false);
+            }
+            window.removeEventListener('pointerup', endHandler);
+        };
+        window.addEventListener('pointerup', endHandler);
+    }
+
+    function updateUnboxingTotal() {
+        let total = 0;
+        for (let name in tempStocks) { total += tempStocks[name].own + tempStocks[name].trade; }
+        document.getElementById('unboxingTotalCount').textContent = `合計開封数: ${total}`;
+    }
+
+    function closeUnboxing() {
+        const item = DB[currentSeriesId].items[currentItemIdx];
+        item.chars.forEach(c => {
+            c.own = (c.own || 0) + tempStocks[c.name].own;
+            c.trade = (c.trade || 0) + tempStocks[c.name].trade;
+        });
+        save();
+        document.getElementById('unboxingModal').style.display = 'none';
+        renderDetail();
+    }
+
+    // 修正点③: MISSING欄のフィルタリング
     function renderMissingList() {
         const container = document.getElementById('missingListContainer');
         container.innerHTML = "";
-        
-        // 修正点3: チェックボックスの状態を取得
-        const showCollectedInf = document.getElementById('missingShowInfCollected').checked;
-        
-        let found = false; let allChars = new Set(); Object.values(CHAR_SETS).forEach(list => list.forEach(c => allChars.add(c)));
-        Array.from(allChars).forEach(char => {
-            let list = [];
-            ORDER.forEach(sId => { (DB[sId].items || []).forEach((item, itemIdx) => { 
-                const charList = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; 
-                if(!charList.includes(char)) return; 
-                if(!(item.targets || charList).includes(char)) return; 
+        let found = false;
+        const hideInfCollected = document.getElementById('missingFilterInf').checked;
 
-                const s = item.stocks[char] || {own: 0, trade: 0, infinite: false}; 
-                const isMissing = (s.own === 0 && s.trade === 0);
+        ORDER.forEach(sid => {
+            const s = DB[sid];
+            const missingInSeries = s.items.filter(item => {
+                if (item.status === 'none') return false;
                 
-                // 修正点3: 無限回収かつ所持済みの場合の表示判定
-                if (item.status === 'not' && (isMissing || s.infinite)) {
-                     // 所持済み(isMissing=false)かつ無限(s.infinite=true)の場合、
-                     // showCollectedInfがfalseならリストに追加しない
-                     if (!isMissing && s.infinite && !showCollectedInf) return;
-                     
-                     list.push({ series: DB[sId].title, seriesId: 
-                     sId, type: item.type, itemIdx: itemIdx, isInf: s.infinite, isOwn: !isMissing }); 
+                // 無限回収設定かつ1つ以上持っている場合の除外判定
+                if (hideInfCollected && item.isInf) {
+                    const hasOne = item.chars.some(c => c.target && (c.own || 0) > 0);
+                    if (hasOne) return false;
                 }
-            }); });
-            if (list.length > 0) { 
-                found = true; 
-                const group = document.createElement('div'); 
-     
-                group.className = 'card'; group.id = `missing-group-${char}`; group.style.marginBottom = "15px";
+
+                // 通常の不足判定
+                return item.chars.some(c => c.target && (c.own || 0) <= 0);
+            });
+
+            if (missingInSeries.length > 0) {
+                found = true;
+                const group = document.createElement('div');
+                group.style.marginBottom = "25px";
                 group.innerHTML = `
-                    <div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div>
-                        <span style="color:var(--gold-light);">▼</span>
-                 
-                    </div>
-                    <div style="display:none; margin-top:10px;">
-                        ${list.map(li => `
-                            <div onclick="jumpToEditorFromMissing('${li.seriesId}', ${li.itemIdx}, '${char}')" style="font-size:0.75rem; padding:12px 0; border-top:1px solid #eee; ${li.isOwn ? 'opacity:0.5;' : ''} cursor:pointer;">
-      
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span><span style="color:var(--gold);
-                                    font-weight:bold;">${li.series}</span> / ${li.type} ${li.isInf ? '<span style="color:var(--gold); font-size:0.6rem;">(∞)</span>' : ''}</span>
-                                    <span style="color:var(--gold-light);
-                                    font-size:0.8rem;">✎</span>
+                    <div style="font-size:0.75rem; color:var(--gold); font-weight:bold; margin-bottom:10px; padding-left:5px; border-left:3px solid var(--gold);">${s.title}</div>
+                    <div style="display:grid; grid-template-columns:1fr; gap:10px;">
+                        ${missingInSeries.map(li => {
+                            const idx = s.items.indexOf(li);
+                            return `
+                            <div class="card" style="padding:12px; border-radius:15px;" onclick="currentSeriesId='${sid}'; openItemEditor(${idx}); editorFromMissing=true;">
+                                <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;">
+                                    ${li.chars.filter(c => c.target && (c.own || 0) <= 0).map(c => `<span class="char-chip c-${c.name}">${c.name}</span>`).join('')}
                                 </div>
-                            </div>`).join('')}
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span><span style="color:var(--gold); font-weight:bold;">${li.type}</span> ${li.isInf ? '<span style="color:var(--gold); font-size:0.6rem;">(∞)</span>' : ''}</span>
+                                    <span style="color:var(--gold-light); font-size:0.8rem;">✎</span>
+                                </div>
+                            </div>`}).join('')}
                     </div>`; 
                 container.appendChild(group); 
-  
             }
         });
-        if(!found) container.innerHTML = `<div style="text-align:center;
-        color:var(--text-sub); margin-top:50px;">不足はありません。</div>`;
+        if(!found) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px;">不足はありません。</div>`;
     }
     
     function toggleDateFilter() { const p = document.getElementById('dateFilterPanel'); p.style.display = p.style.display==='none'?'block':'none'; }
     function clearDateFilter() { document.getElementById('filterStart').value=""; document.getElementById('filterEnd').value=""; renderSeriesList(); }
     function filterByTag(t) { document.getElementById('searchBar').value=t; renderSeriesList(); window.scrollTo({top:0, behavior:'smooth'}); }
 
+    function toggleSettings(show) {
+        const panel = document.getElementById('settingsPanel');
+        const overlay = document.getElementById('settingsOverlay');
+        if (show) {
+            document.getElementById('tradePrefixInput').value = TRADE_CONFIG.prefix || "";
+            document.getElementById('tradeSuffixInput').value = TRADE_CONFIG.suffix || "";
+            document.getElementById('tradeShowInfMark').checked = TRADE_CONFIG.showInf;
+            document.getElementById('charSettingsInput').value = Object.entries(CHAR_SETS).map(([k, v]) => `${k}:${v.join(',')}`).join('\n');
+            document.getElementById('tempSettingsInput').value = TEMPLATES.join(',');
+            document.getElementById('presetSettingsInput').value = PRESETS.map(p => `${p.name},${p.charSet},${p.targets}`).join('\n');
+            overlay.style.display = 'block';
+            panel.style.right = '0';
+        } else {
+            overlay.style.display = 'none';
+            panel.style.right = '-85%';
+        }
+    }
+
+    function saveSettings() {
+        TRADE_CONFIG.prefix = document.getElementById('tradePrefixInput').value;
+        TRADE_CONFIG.suffix = document.getElementById('tradeSuffixInput').value;
+        TRADE_CONFIG.showInf = document.getElementById('tradeShowInfMark').checked;
+        
+        const charLines = document.getElementById('charSettingsInput').value.split('\n');
+        const newSets = {};
+        charLines.forEach(l => {
+            const [name, list] = l.split(':');
+            if (name && list) newSets[name.trim()] = list.split(',').map(n => n.trim()).filter(n => n);
+        });
+        if (Object.keys(newSets).length > 0) CHAR_SETS = newSets;
+
+        const preLines = document.getElementById('presetSettingsInput').value.split('\n');
+        PRESETS = preLines.map(l => {
+            const [name, set, targets] = l.split(',');
+            return (name && set && targets) ? { name: name.trim(), charSet: set.trim(), targets: targets.trim() } : null;
+        }).filter(p => p);
+
+        TEMPLATES = document.getElementById('tempSettingsInput').value.split(',').map(t => t.trim()).filter(t => t);
+        
+        save();
+        toggleSettings(false);
+        renderSeriesList();
+        showToast("設定を保存しました");
+    }
+
+    function exportBackup() {
+        const data = { db: DB, order: ORDER, charSets: CHAR_SETS, trade: TRADE_CONFIG, presets: PRESETS };
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `collection_archive_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+    }
+
+    function importBackup(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const data = JSON.parse(event.target.result);
+                if (data.db) DB = data.db;
+                if (data.order) ORDER = data.order;
+                if (data.charSets) CHAR_SETS = data.charSets;
+                if (data.trade) TRADE_CONFIG = data.trade;
+                if (data.presets) PRESETS = data.presets;
+                save();
+                renderSeriesList();
+                showToast("データを復元しました");
+            } catch (err) {
+                alert("バックアップファイルの読み込みに失敗しました。");
+            }
+        };
+        reader.readAsText(file);
+    }
+
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js').then(reg => {
                 console.log('SW registered', reg);
-     
             }).catch(err => {
                 console.log('SW registration failed', err);
             });
