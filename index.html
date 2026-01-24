@@ -64,14 +64,8 @@
         .swipe-container.dragging { opacity: 0.5; }
         
         .card { 
-            background: var(--card-bg); padding: 20px; 
-            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); 
-            border: 1px solid rgba(197, 160, 89, 0.1); 
-            position: relative; z-index: 2; 
-            box-sizing: border-box; width: 100%; border-radius: 20px;
-            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
-            will-change: transform;
-            touch-action: pan-y;
+            background: var(--card-bg); padding: 20px; box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.1); position: relative; z-index: 2; 
+            box-sizing: border-box; width: 100%; border-radius: 20px; transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); will-change: transform; touch-action: pan-y;
         }
         
         .card.swiping { transition: none; }
@@ -116,13 +110,7 @@
         .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px; }
         .ub-area-right { border-radius: 0 12px 12px 0; }
         
-        .ub-area:active { 
-            background: rgba(0,0,0,0.1); 
-            transform: scale(0.96); 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); 
-            z-index: 2;
-        }
-        
+        .ub-area:active { background: rgba(0,0,0,0.1); transform: scale(0.96); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); z-index: 2; }
         .ub-char-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 1px 6px; border-radius: 6px; font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none; }
 
         .unboxing-count-badge { min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; font-weight: 800; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
@@ -325,20 +313,19 @@
     let TRADE_CONFIG = JSON.parse(localStorage.getItem('gap_trade_config')) || { prefix: "", suffix: "", showInf: true };
     let DB = JSON.parse(localStorage.getItem('gap_db')) || {};
     let ORDER = JSON.parse(localStorage.getItem('gap_order')) || [];
-    let SORT_MODE = localStorage.getItem('gap_sort_mode') || 'new'; 
+    let SORT_MODE = localStorage.getItem('gap_sort_mode') || 'new';
     let LAST_ITEM = JSON.parse(localStorage.getItem('gap_last_item')) || null;
-    
     let currentSeriesId = null;
     let currentItemIdx = null;
     let touchStartX = 0;
-    let tempStocks = {}; 
+    let tempStocks = {};
     let activeCharList = [];
     let dragSrcId = null;
     let isTicking = false;
     let editorFromMissing = false;
 
-    function init() { 
-        renderSeriesList(); 
+    function init() {
+        renderSeriesList();
         setTimeout(() => {
             const splash = document.getElementById('splash-screen');
             if (splash) {
@@ -348,9 +335,9 @@
         }, 600);
     }
 
-    function save() { 
-        localStorage.setItem('gap_db', JSON.stringify(DB)); 
-        localStorage.setItem('gap_order', JSON.stringify(ORDER)); 
+    function save() {
+        localStorage.setItem('gap_db', JSON.stringify(DB));
+        localStorage.setItem('gap_order', JSON.stringify(ORDER));
         localStorage.setItem('gap_char_sets', JSON.stringify(CHAR_SETS));
         localStorage.setItem('gap_trade_config', JSON.stringify(TRADE_CONFIG));
         localStorage.setItem('gap_sort_mode', SORT_MODE);
@@ -359,7 +346,8 @@
 
     function showToast(msg) {
         const t = document.getElementById('toast');
-        t.textContent = msg; t.style.display = 'block';
+        t.textContent = msg;
+        t.style.display = 'block';
         setTimeout(() => t.style.display = 'none', 2000);
     }
 
@@ -392,7 +380,11 @@
         dragSrcId = id;
         e.target.classList.add('dragging');
     }
-    function handleDragOver(e) { e.preventDefault(); }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+    }
+
     function handleDrop(e, targetId) {
         e.preventDefault();
         if(!dragSrcId || dragSrcId === targetId) return;
@@ -419,7 +411,6 @@
             isSwiping = true;
             element.classList.add('swiping');
         }, {passive: true});
-
         element.addEventListener('touchmove', (e) => {
             if (!isSwiping || SORT_MODE === 'custom') return;
             let currentX = e.touches[0].clientX - startX;
@@ -434,156 +425,222 @@
                 }
             }
         }, {passive: true});
-
         element.addEventListener('touchend', (e) => {
             if (!isSwiping || SORT_MODE === 'custom') return;
             isSwiping = false;
             element.classList.remove('swiping');
             const finalX = e.changedTouches[0].clientX - startX;
-            if (finalX < -50) { element.style.transform = 'translateX(-100px)'; } else { element.style.transform = 'translateX(0)'; }
-        }, {passive: true});
-
-        const originalOnClick = element.onclick;
-        element.onclick = (e) => {
-            if (element.style.transform === 'translateX(-100px)') {
+            if (finalX < -50) {
+                element.style.transform = 'translateX(-100px)';
+            } else {
                 element.style.transform = 'translateX(0)';
-                e.stopPropagation();
-            } else if (originalOnClick) { originalOnClick(e); }
-        };
+            }
+        }, {passive: true});
     }
 
     function renderSeriesList() {
         const container = document.getElementById('seriesListContainer');
-        container.innerHTML = "";
-        const term = document.getElementById('searchBar').value.toLowerCase();
-        const start = document.getElementById('filterStart').value;
-        const end = document.getElementById('filterEnd').value;
-        container.className = SORT_MODE === 'custom' ? 'sort-custom' : '';
-        let displayOrder = [...ORDER];
-        if (SORT_MODE === 'date') { displayOrder.sort((a, b) => (DB[b].date || "").localeCompare(DB[a].date || "")); }
-        displayOrder.sort((a, b) => (DB[b].fav ? 1 : 0) - (DB[a].fav ? 1 : 0));
-        displayOrder.forEach((id) => {
-            const s = DB[id];
-            if(!s) return;
-            const titleMatch = s.title.toLowerCase().includes(term);
-            const tagsMatch = s.tags ? s.tags.toLowerCase().includes(term) : false;
-            let dateMatch = true;
-            if (start || end) {
-                if (!s.date) dateMatch = false;
-                else {
-                    if (start && s.date < start) dateMatch = false;
-                    if (end && s.date > end) dateMatch = false;
+        const q = document.getElementById('searchBar').value.toLowerCase();
+        const fStart = document.getElementById('filterStart').value;
+        const fEnd = document.getElementById('filterEnd').value;
+        
+        container.innerHTML = '';
+        let list = ORDER.map(id => ({id, ...DB[id]}));
+
+        if (SORT_MODE === 'new') list.reverse();
+        else if (SORT_MODE === 'date') {
+            list.sort((a,b) => (b.date || "").localeCompare(a.date || "") || (ORDER.indexOf(b.id) - ORDER.indexOf(a.id)));
+        }
+
+        list.forEach(s => {
+            const dateMatch = (!fStart || s.date >= fStart) && (!fEnd || s.date <= fEnd);
+            const tagMatch = s.tags.some(t => t.toLowerCase().includes(q));
+            if ((s.title.toLowerCase().includes(q) || tagMatch) && dateMatch) {
+                const isAllComp = s.items.length > 0 && s.items.every(it => {
+                    if(it.status === 'none') return true;
+                    if(it.status === 'comp') return true;
+                    // コンプ判定の修正: 無限回収かつ1つ以上所持している場合もコンプリートとみなす
+                    return it.list.filter(li => li.target).every(li => li.own > 0 || (li.isInf && li.own > 0));
+                });
+
+                const swipeContainer = document.createElement('div');
+                swipeContainer.className = 'swipe-container';
+                if(SORT_MODE === 'custom') {
+                    swipeContainer.draggable = true;
+                    swipeContainer.ondragstart = (e) => handleDragStart(e, s.id);
+                    swipeContainer.ondragover = handleDragOver;
+                    swipeContainer.ondrop = (e) => handleDrop(e, s.id);
+                    swipeContainer.ondragend = (e) => e.target.classList.remove('dragging');
                 }
-            }
-            if((titleMatch || tagsMatch) && dateMatch) {
-                const items = s.items || [];
-                const isSeriesComp = items.length > 0 && items.every(it => it.status === 'comp' || it.status === 'none');
-                const compMark = isSeriesComp ? '<span class="series-comp-mark">✦</span>' : '';
-                const favActive = s.fav ? 'active' : '';
-                const swipeWrapper = document.createElement('div');
-                swipeWrapper.className = 'swipe-container';
-                swipeWrapper.draggable = SORT_MODE === 'custom';
-                swipeWrapper.ondragstart = (e) => handleDragStart(e, id);
-                swipeWrapper.ondragover = handleDragOver;
-                swipeWrapper.ondrop = (e) => handleDrop(e, id);
-                const deleteBtn = document.createElement('div');
-                deleteBtn.className = 'delete-btn-overlay';
-                deleteBtn.textContent = '削除';
-                deleteBtn.onclick = (e) => { e.stopPropagation(); deleteSeries(id); };
+
+                const delOverlay = document.createElement('div');
+                delOverlay.className = 'delete-btn-overlay';
+                delOverlay.textContent = '削除';
+                delOverlay.onclick = () => deleteSeries(s.id);
+
                 const card = document.createElement('div');
-                card.className = 'card';
+                card.className = 'card item-card';
+                card.onclick = () => openDetail(s.id);
+                attachSwipeEvents(card);
+
+                const tagsHtml = s.tags.map(t => `<span class="tag-chip" onclick="event.stopPropagation(); filterByTag('${t}')">#${t}</span>`).join('');
+                
                 card.innerHTML = `
-                    <div style="display:flex; align-items:flex-start;">
-                        <div class="handle">⋮⋮</div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div style="flex:1;">
-                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                                <b style="color:var(--text-main); font-size:1rem; flex:1;">${s.title}${compMark}</b>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date || ''}</span>
-                                    <button class="fav-btn ${favActive}" onclick="toggleFavorite('${id}', event)">★</button>
-                                </div>
+                            <div style="font-size:0.6rem; color:var(--text-sub); margin-bottom:4px; font-weight:bold;">
+                                ${s.date || '日付未設定'} ${isAllComp ? '<span class="series-comp-mark">COMPLETE ✨</span>' : ''}
                             </div>
-                            <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:4px;">
-                                ${s.tags ? s.tags.split(/[、, ]/).filter(t => t).map(t => `<span onclick="event.stopPropagation(); filterByTag('${t.trim()}')" class="tag-chip">#${t.trim()}</span>`).join('') : ''}
-                            </div>
+                            <div style="font-size:1rem; font-weight:bold; color:var(--text-main); line-height:1.2;">${s.title}</div>
                         </div>
-                    </div>`;
-                card.onclick = (e) => { if (e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') openDetail(id); };
-                attachSwipeEvents(card, () => deleteSeries(id));
-                swipeWrapper.appendChild(deleteBtn);
-                swipeWrapper.appendChild(card);
-                container.appendChild(swipeWrapper);
+                        <div style="display:flex; align-items:center;">
+                            <span class="handle">⠿</span>
+                            <button class="fav-btn ${s.fav?'active':''}" onclick="toggleFavorite('${s.id}', event)">${s.fav?'★':'☆'}</button>
+                        </div>
+                    </div>
+                    <div style="margin-top:10px;">${tagsHtml}</div>
+                `;
+                swipeContainer.appendChild(delOverlay);
+                swipeContainer.appendChild(card);
+                container.appendChild(swipeContainer);
             }
         });
     }
 
-    window.onpopstate = function(e) {
-        const state = e.state || {};
-        const editor = document.getElementById('editorView');
-        const detail = document.getElementById('detailView');
-        if (editor.style.display === 'block') {
-            editor.style.display = 'none';
-            if (editorFromMissing) { editorFromMissing = false; renderMissingList(); }
+    function openSeriesModal() {
+        document.getElementById('msTitle').value = '';
+        document.getElementById('msDate').value = '';
+        document.getElementById('msTags').value = '';
+        document.getElementById('tempSettingsInput').value = TEMPLATES.join('\n');
+        document.getElementById('seriesModal').style.display = 'flex';
+    }
+
+    function closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; }
+
+    function saveSeriesModal() {
+        const title = document.getElementById('msTitle').value.trim();
+        if(!title) return;
+        const id = 's' + Date.now();
+        const tags = document.getElementById('msTags').value.split(/[,、\s]+/).filter(t => t);
+        const useTemp = document.getElementById('msUseTemplate').checked;
+        
+        const newItems = [];
+        if(useTemp) {
+            TEMPLATES.forEach(type => {
+                newItems.push({
+                    type, status: 'not', charSet: "デフォルト",
+                    list: DEFAULT_CHARS.map(name => ({name, target:true, own:0, trade:0, isInf:false}))
+                });
+            });
         }
-        else if (detail.style.display === 'block' && state.view !== 'detail') {
-            detail.style.display = 'none';
+
+        DB[id] = { title, date: document.getElementById('msDate').value, tags, items: newItems, fav: false };
+        ORDER.push(id);
+        save();
+        closeSeriesModal();
+        renderSeriesList();
+    }
+
+    function deleteSeries(id) {
+        if(confirm('シリーズを削除しますか？')) {
+            delete DB[id];
+            ORDER = ORDER.filter(oid => oid !== id);
+            save();
             renderSeriesList();
         }
-    };
-
-    function openDetail(id) { currentSeriesId = id; document.getElementById('detailHeaderTitle').textContent = DB[id].title; document.getElementById('detailView').style.display = 'block'; history.pushState({view: 'detail', seriesId: id}, ''); renderItemList(); }
-    function closeDetail() { document.getElementById('detailView').style.display = 'none'; if (history.state && history.state.view === 'detail') history.back(); renderSeriesList(); }
-    
-    function autoDetermineStatus(item) { 
-        if (item.status === "none") return "none"; 
-        const targets = item.targets || []; 
-        if (targets.length === 0) return item.status; 
-        const isAllCollected = targets.every(char => { 
-            const s = item.stocks[char] || { own: 0, trade: 0, infinite: false }; 
-            if(s.infinite) return false; 
-            return (s.own + s.trade) >= 1; 
-        }); 
-        return isAllCollected ? "comp" : "not"; 
     }
-    
-    function openItemEditor(idx = null, fromMissing = false) {
+
+    function openDetail(id) {
+        currentSeriesId = id;
+        document.getElementById('detailHeaderTitle').textContent = DB[id].title;
+        renderItemList();
+        document.getElementById('detailView').style.display = 'block';
+    }
+
+    function closeDetail() {
+        document.getElementById('detailView').style.display = 'none';
+        renderSeriesList();
+    }
+
+    function renderItemList() {
+        const container = document.getElementById('itemListContainer');
+        container.innerHTML = '';
+        const items = DB[currentSeriesId].items;
+
+        items.forEach((it, idx) => {
+            // コンプ判定の修正: 無限回収かつ1つ以上所持している場合もコンプリートとみなす
+            const isComp = it.status === 'comp' || (it.status !== 'none' && it.list.filter(li => li.target).every(li => li.own > 0 || (li.isInf && li.own > 0)));
+            const statusLabel = it.status === 'none' ? '予定なし' : (isComp ? 'COMP' : '未コンプ');
+            const statusClass = it.status === 'none' ? 'st-none' : (isComp ? 'st-comp' : 'st-not');
+            
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.style.marginBottom = '15px';
+            card.onclick = () => openItemEditor(idx);
+
+            const tradeIn = it.list.filter(li => li.trade > 0).map(li => `${li.name}${li.trade>1?li.trade:''}`).join(' ');
+            const tradeOut = it.list.filter(li => li.target && li.own === 0).map(li => `${li.name}${li.isInf && TRADE_CONFIG.showInf ? '(∞)':''}`).join(' ');
+
+            card.innerHTML = `
+                <div class="status-tag ${statusClass}">${statusLabel}</div>
+                <div style="font-size:0.8rem; font-weight:bold; color:var(--gold);">${it.type}</div>
+                <div class="inventory-grid" onclick="event.stopPropagation(); openUnboxing(${idx})">
+                    <div class="inv-box"><span class="inv-label">所持</span><div class="inv-content">${it.list.filter(li => li.own > 0).map(li => `<span class="char-chip c-${li.name}">${li.name}${li.own>1?li.own:''}</span>`).join('')}</div></div>
+                    <div class="inv-box"><span class="inv-label">譲渡可</span><div class="inv-content">${it.list.filter(li => li.trade > 0).map(li => `<span class="char-chip c-${li.name}">${li.name}${li.trade>1?li.trade:''}</span>`).join('')}</div></div>
+                    <div class="inv-box"><span class="inv-label">求</span><div class="inv-content">${it.list.filter(li => li.target && li.own === 0).map(li => `<span class="char-chip c-default">${li.name}</span>`).join('')}</div></div>
+                </div>
+                <div class="inv-summary-row">
+                    <div class="summary-item">総数<span>${it.list.reduce((a,b)=>a+b.own+b.trade, 0)}</span></div>
+                    <div class="summary-item">保管<span>${it.list.reduce((a,b)=>a+b.own, 0)}</span></div>
+                    <div class="summary-item">譲渡<span>${it.list.reduce((a,b)=>a+b.trade, 0)}</span></div>
+                </div>
+                <div style="margin-top:12px; padding-top:10px; border-top:1px solid #f9f0f0;">
+                    <div class="trade-text-small" style="margin-bottom:4px;">譲：${tradeIn || 'なし'}</div>
+                    <div class="trade-text-small" style="color:var(--danger);">求：${tradeOut || 'なし'}</div>
+                    <button onclick="copyTradeText(${idx}, event)" style="margin-top:8px; width:100%; padding:8px; border:1px solid var(--gold-light); border-radius:8px; background:#fff; color:var(--gold); font-size:0.65rem; font-weight:bold;">募集文をコピー</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function openItemEditor(idx = null) {
         currentItemIdx = idx;
-        editorFromMissing = fromMissing;
+        const charSetSelect = document.getElementById('editCharSetName');
+        charSetSelect.innerHTML = Object.keys(CHAR_SETS).map(k => `<option value="${k}">${k}</option>`).join('');
         
-        // ヒストリーバナーの表示
-        document.getElementById('historyBanner').style.display = (idx === null && LAST_ITEM) ? 'flex' : 'none';
-        
-        // プリセットエリアの描画
-        const presetArea = document.getElementById('presetArea');
         const presetChips = document.getElementById('presetChips');
-        if(idx === null && PRESETS.length > 0) {
-            presetArea.style.display = 'block';
+        if(PRESETS.length > 0) {
+            document.getElementById('presetArea').style.display = 'block';
             presetChips.innerHTML = PRESETS.map((p, i) => `<span class="preset-chip" onclick="applyPreset(${i})">${p.name}</span>`).join('');
         } else {
-            presetArea.style.display = 'none';
+            document.getElementById('presetArea').style.display = 'none';
         }
 
-        const setSelect = document.getElementById('editCharSetName');
-        setSelect.innerHTML = Object.keys(CHAR_SETS).map(n => `<option value="${n}">${n}</option>`).join('');
-        const item = idx !== null ? DB[currentSeriesId].items[idx] : { type: "", stocks: {}, targets: [], status: "not", charSetName: "デフォルト" };
-        
-        document.getElementById('editItemType').value = item.type;
-        document.getElementById('editItemStatus').value = item.status || "not";
-        document.getElementById('editCharSetName').value = item.charSetName || "デフォルト";
-        tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
-        activeCharList = CHAR_SETS[document.getElementById('editCharSetName').value] || DEFAULT_CHARS;
-        renderEditorGrid(item.targets && item.targets.length > 0 ? item.targets : [...activeCharList]);
+        if(idx !== null) {
+            const it = DB[currentSeriesId].items[idx];
+            document.getElementById('editItemType').value = it.type;
+            document.getElementById('editItemStatus').value = it.status;
+            charSetSelect.value = it.charSet || "デフォルト";
+            activeCharList = JSON.parse(JSON.stringify(it.list));
+            document.getElementById('historyBanner').style.display = 'none';
+        } else {
+            document.getElementById('editItemType').value = '';
+            document.getElementById('editItemStatus').value = 'not';
+            charSetSelect.value = "デフォルト";
+            changeCharSet("デフォルト");
+            if(LAST_ITEM) document.getElementById('historyBanner').style.display = 'flex';
+        }
+        renderEditorGrid();
         document.getElementById('editorView').style.display = 'block';
-        history.pushState({view: 'editor'}, '');
     }
 
     function applyHistory() {
         if(!LAST_ITEM) return;
         document.getElementById('editItemType').value = LAST_ITEM.type;
-        document.getElementById('editCharSetName').value = LAST_ITEM.charSetName;
-        activeCharList = CHAR_SETS[LAST_ITEM.charSetName] || DEFAULT_CHARS;
-        tempStocks = {}; 
-        renderEditorGrid(LAST_ITEM.targets);
+        document.getElementById('editCharSetName').value = LAST_ITEM.charSet;
+        activeCharList = JSON.parse(JSON.stringify(LAST_ITEM.list)).map(li => ({...li, own:0, trade:0}));
+        renderEditorGrid();
         showToast("履歴を適用しました");
     }
 
@@ -591,302 +648,183 @@
         const p = PRESETS[idx];
         document.getElementById('editItemType').value = p.name;
         document.getElementById('editCharSetName').value = p.charSet;
-        activeCharList = CHAR_SETS[p.charSet] || DEFAULT_CHARS;
-        tempStocks = {};
-        renderEditorGrid(p.targets);
-        showToast(`プリセット: ${p.name} を適用`);
+        const baseChars = CHAR_SETS[p.charSet] || DEFAULT_CHARS;
+        activeCharList = baseChars.map(name => ({
+            name, target: p.targets.includes(name), own: 0, trade: 0, isInf: false
+        }));
+        renderEditorGrid();
+        showToast("プリセットを適用しました");
     }
 
-    function duplicateItem(idx, e) {
-        e.stopPropagation();
-        const base = DB[currentSeriesId].items[idx];
-        const newItem = {
-            type: base.type,
-            charSetName: base.charSetName || "デフォルト",
-            targets: JSON.parse(JSON.stringify(base.targets)),
-            stocks: {}, // カウントのみリセット
-            status: "not"
-        };
-        DB[currentSeriesId].items.push(newItem);
-        save();
-        renderItemList();
-        showToast("複製しました");
+    function changeCharSet(setName) {
+        const names = CHAR_SETS[setName] || DEFAULT_CHARS;
+        activeCharList = names.map(name => ({ name, target: true, own: 0, trade: 0, isInf: false }));
+        renderEditorGrid();
     }
-    
+
+    function renderEditorGrid() {
+        const grid = document.getElementById('editorGrid');
+        grid.innerHTML = activeCharList.map((li, i) => `
+            <div class="editor-row" style="${!li.target ? 'opacity:0.5; background:#f5f5f5;' : ''}">
+                <div class="char-chip c-${li.name}" style="margin:0; text-align:center; width:60px; font-size:0.65rem;" onclick="toggleTarget(${i})">${li.name}</div>
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:5px;">
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <button class="btn-qty" onclick="updateQty(${i}, -1)">−</button>
+                        <input type="number" class="qty-display ${li.own>0?'qty-has':'qty-zero'}" value="${li.own}" onchange="activeCharList[${i}].own=parseInt(this.value)||0; renderEditorGrid();">
+                        <button class="btn-qty" onclick="updateQty(${i}, 1)">＋</button>
+                    </div>
+                    <button class="inf-btn ${li.isInf?'active':''}" onclick="li.isInf=!li.isInf; activeCharList[${i}].isInf=li.isInf; renderEditorGrid();">${li.isInf?'∞':'∞'}</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function toggleTarget(i) {
+        activeCharList[i].target = !activeCharList[i].target;
+        renderEditorGrid();
+    }
+    function updateQty(i, diff) {
+        activeCharList[i].own = Math.max(0, activeCharList[i].own + diff);
+        renderEditorGrid();
+    }
+    function bulkToggleTargets(val) { activeCharList.forEach(li => li.target = val); renderEditorGrid(); }
+    function bulkIncrementOwn() { activeCharList.forEach(li => { if(li.target) li.own++; }); renderEditorGrid(); }
+    function bulkResetCounts() { if(confirm('カウントをリセットしますか？')){ activeCharList.forEach(li => { li.own=0; li.trade=0; }); renderEditorGrid(); } }
+
     function saveItem() {
-        const type = document.getElementById('editItemType').value.trim(); if(!type) return alert("名前を入力してください");
-        let data = { type, stocks: tempStocks, targets: getSelectedTargets(), status: document.getElementById('editItemStatus').value, charSetName: document.getElementById('editCharSetName').value };
-        data.status = autoDetermineStatus(data);
-        
-        // 履歴として保存
-        LAST_ITEM = { type: data.type, charSetName: data.charSetName, targets: data.targets };
-        localStorage.setItem('gap_last_item', JSON.stringify(LAST_ITEM));
-
-        if(currentItemIdx === null) DB[currentSeriesId].items.push(data);
-        else DB[currentSeriesId].items[currentItemIdx] = data;
-        
-        save(); 
-        showToast("保存しました"); 
-        history.back(); 
-        document.getElementById('editorView').style.display = 'none'; 
-        if (!editorFromMissing) renderItemList(); else { editorFromMissing = false; renderMissingList(); }
-    }
-
-    function closeEditor() { 
-        document.getElementById('editorView').style.display = 'none'; 
-        if (history.state && history.state.view === 'editor') history.back(); 
-        if (editorFromMissing) { editorFromMissing = false; renderMissingList(); }
-    }
-    
-    function renderItemList() {
-        const container = document.getElementById('itemListContainer'); container.innerHTML = "";
-        const items = DB[currentSeriesId].items || [];
-        const seriesTitle = DB[currentSeriesId].title;
-
-        items.forEach((item, idx) => {
-            const swipeWrapper = document.createElement('div'); swipeWrapper.className = 'swipe-container'; swipeWrapper.style.marginBottom = "15px";
-            const deleteBtn = document.createElement('div'); deleteBtn.className = 'delete-btn-overlay'; deleteBtn.textContent = '削除'; deleteBtn.onclick = (e) => { e.stopPropagation(); deleteItem(idx); };
-            const div = document.createElement('div'); div.className = 'card item-card'; 
-            attachSwipeEvents(div, () => deleteItem(idx));
-            const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
-            
-            let ownChips = [], tradeTextArr = [], tradeNamesArr = [], targetNamesArr = [], infiniteStatusChips = [];
-            let totalOwn = 0, totalTrade = 0;
-            const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS;
-
-            list.forEach(c => {
-                const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0, infinite:false};
-                const isTarget = (item.targets || list).includes(c);
-                totalOwn += s.own; totalTrade += s.trade;
-                
-                if(s.own > 0) ownChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
-                if(s.trade > 0) { 
-                    tradeTextArr.push(`${c}${s.trade}`); 
-                    tradeNamesArr.push(`${c}${s.trade > 1 ? s.trade : ''}`); 
-                }
-                
-                if(s.infinite) {
-                    infiniteStatusChips.push(`<span class="inf-status-chip c-${c.trim()}">${c}<span>:${s.own}</span></span>`);
-                }
-                
-                if(isTarget) {
-                    const isMissing = (s.own === 0 && s.trade === 0);
-                    if(isMissing || s.infinite) {
-                        const infClass = (!isMissing && s.infinite) ? 'is-infinite-collected' : '';
-                        const displayInf = s.infinite && TRADE_CONFIG.showInf;
-                        targetNamesArr.push(`${c}${displayInf ? '(∞)' : ''}`);
-                    }
-                }
-            });
-
-            const prefix = TRADE_CONFIG.prefix ? TRADE_CONFIG.prefix + "\n" : "";
-            const suffix = TRADE_CONFIG.suffix ? "\n" + TRADE_CONFIG.suffix : "";
-            const copyStr = `${prefix}${seriesTitle} ${item.type}\n譲：${tradeNamesArr.join('、') || 'なし'}\n求：${targetNamesArr.join('、') || '完遂'}${suffix}`;
-            
-            div.innerHTML = `
-                <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
-                <div style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; padding-right:60px;">
-                    <div><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div>
-                    <div style="display:flex; gap:5px;">
-                        <button onclick="duplicateItem(${idx}, event)" style="background:#f0f0f0; border:none; color:var(--text-main); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">複製</button>
-                        <button onclick="event.stopPropagation(); copyTradeText(\`${copyStr}\`)" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">コピー</button>
-                    </div>
-                </div>
-                <div class="inventory-grid" onclick="openItemEditor(${idx})">
-                    <div class="inv-box"><span class="inv-label">保管</span><div class="inv-content">${ownChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
-                    <div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content"><span class="trade-text-small">${tradeTextArr.join('<br>') || '<span style="color:#ccc;">－</span>'}</span></div></div>
-                    <div class="inv-box"><span class="inv-label">不足</span><div class="inv-content">
-                        ${list.filter(c => (item.targets || list).includes(c) && ((item.stocks[c]?.own || 0) + (item.stocks[c]?.trade || 0) === 0 || item.stocks[c]?.infinite)).map(c => `<span class="char-chip c-${c.trim()} ${(!item.stocks[c] || (item.stocks[c].own+item.stocks[c].trade===0)) ? '' : 'is-infinite-collected'}">${c}</span>`).join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}
-                    </div></div>
-                </div>
-                <div class="inv-summary-row">
-                    <div class="summary-item">保管合計<span>${totalOwn}</span></div>
-                    <div class="summary-item">譲渡合計<span>${totalTrade}</span></div>
-                    <div class="summary-item">総所有数<span>${totalOwn + totalTrade}</span></div>
-                </div>
-                <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <div class="inf-status-container">
-                        ${infiniteStatusChips.join('')}
-                    </div>
-                    <span onclick="event.stopPropagation(); openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px; white-space:nowrap;">✨ 開封モード</span>
-                </div>`;
-            swipeWrapper.appendChild(deleteBtn); swipeWrapper.appendChild(div); container.appendChild(swipeWrapper);
-        });
-    }
-
-    function renderEditorGrid(targets) { 
-        const grid = document.getElementById('editorGrid'); 
-        grid.innerHTML = ""; 
-        activeCharList.forEach(c => { 
-            if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0, infinite: false }; 
-            const isTarget = targets.includes(c); 
-            const ownVal = tempStocks[c].own;
-            const tradeVal = tempStocks[c].trade;
-            const isInf = tempStocks[c].infinite || false;
-            const ownClass = ownVal > 0 ? 'qty-has' : 'qty-zero';
-            const tradeClass = tradeVal > 0 ? 'qty-has' : 'qty-zero';
-            const row = document.createElement('div'); 
-            row.className = 'editor-row'; 
-            row.style.opacity = isTarget ? "1" : "0.5"; 
-            row.innerHTML = `
-                <div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem; position:relative;">
-                    <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
-                    <button class="inf-btn ${isInf?'active':''}" onclick="toggleInfinite('${c}')" style="display:block; margin:5px auto 0;">${isInf?'∞':'∞'}</button>
-                </div>
-                <div style="display:flex; justify-content:space-around;">
-                    <div style="text-align:center;">
-                        <span style="font-size:0.6rem; color:var(--text-sub);">保管</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <button class="btn-qty" onclick="updateQty('${c}','own',-1)">-</button>
-                            <input type="number" inputmode="numeric" class="qty-display ${ownClass}" value="${ownVal}" onchange="directInputQty('${c}','own',this.value)" onclick="this.select()">
-                            <button class="btn-qty" onclick="updateQty('${c}','own',1)">+</button>
-                        </div>
-                    </div>
-                    <div style="text-align:center;">
-                        <span style="font-size:0.6rem; color:var(--text-sub);">譲渡</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <button class="btn-qty" onclick="updateQty('${c}','trade',-1)">-</button>
-                            <input type="number" inputmode="numeric" class="qty-display ${tradeClass}" value="${tradeVal}" onchange="directInputQty('${c}','trade',this.value)" onclick="this.select()">
-                            <button class="btn-qty" onclick="updateQty('${c}','trade',1)">+</button>
-                        </div>
-                    </div>
-                </div>`; 
-            grid.appendChild(row); 
-        }); 
-    }
-
-    function toggleInfinite(char) { tempStocks[char].infinite = !tempStocks[char].infinite; renderEditorGrid(getSelectedTargets()); }
-    function updateQty(char, key, delta) { tempStocks[char][key] = Math.max(0, tempStocks[char][key] + delta); renderEditorGrid(getSelectedTargets()); }
-    function directInputQty(char, key, val) { let n = parseInt(val); if(isNaN(n) || n < 0) n = 0; tempStocks[char][key] = n; renderEditorGrid(getSelectedTargets()); }
-    function getSelectedTargets() { const cbs = document.querySelectorAll('#editorGrid input[type="checkbox"]'); let selected = []; cbs.forEach((cb, i) => { if(cb.checked) selected.push(activeCharList[i]); }); return selected; }
-    function refreshEditorTargets() { renderEditorGrid(getSelectedTargets()); }
-    function changeCharSet(setName) { activeCharList = CHAR_SETS[setName] || DEFAULT_CHARS; renderEditorGrid([...activeCharList]); }
-    function bulkToggleTargets(s) { renderEditorGrid(s ? [...activeCharList] : []); }
-    function bulkIncrementOwn() { activeCharList.forEach(c => { if(!tempStocks[c]) tempStocks[c] = { own: 0, trade: 0, infinite: false }; tempStocks[c].own += 1; }); renderEditorGrid(getSelectedTargets()); showToast("保管を+1しました"); }
-    function bulkResetCounts() { if(confirm("カウントをすべて削除しますがよろしいですか？")) { Object.keys(tempStocks).forEach(c => { tempStocks[c].own = 0; tempStocks[c].trade = 0; tempStocks[c].infinite = false; }); renderEditorGrid(getSelectedTargets()); showToast("リセットしました"); } }
-    function copyTradeText(text) { navigator.clipboard.writeText(text).then(() => showToast("コピーしました")); }
-    function deleteItem(idx) { if(confirm("削除しますか？")) { DB[currentSeriesId].items.splice(idx,1); save(); renderItemList(); } }
-    function deleteSeries(id) { if(confirm("削除しますか？")) { delete DB[id]; ORDER = ORDER.filter(oid => oid !== id); save(); renderSeriesList(); } }
-    function deleteAllItems() { if(confirm("全削除しますか？")) { DB[currentSeriesId].items = []; save(); renderItemList(); } }
-    
-    function openUnboxing(idx) { currentItemIdx = idx; document.getElementById('unboxingTitle').textContent = DB[currentSeriesId].items[idx].type; renderUnboxingGrid(); document.getElementById('unboxingModal').style.display = 'flex'; }
-    function renderUnboxingGrid() { 
-        const grid = document.getElementById('unboxingGrid'); 
-        grid.innerHTML = ""; 
-        const item = DB[currentSeriesId].items[currentItemIdx]; 
-        const list = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; 
-        let tOwn = 0, tTrade = 0; 
-        list.forEach(c => { 
-            const s = item.stocks[c] || { own: 0, trade: 0, infinite: false }; 
-            tOwn += s.own; tTrade += s.trade; 
-            const panel = document.createElement('div'); 
-            panel.className = `unboxing-panel c-${c.trim()}`; 
-            const createHandler = (type) => { 
-                let timer; 
-                return { 
-                    onpointerdown: (e) => { e.preventDefault(); timer = setTimeout(() => { updateUnboxingCount(c, type, -1); timer = null; }, 500); }, 
-                    onpointerup: (e) => { e.preventDefault(); if(timer) { clearTimeout(timer); updateUnboxingCount(c, type, 1); } }, 
-                    oncontextmenu: (e) => { e.preventDefault(); } 
-                }; 
-            }; 
-            panel.innerHTML = `
-                <div class="ub-char-label">${c}</div>
-                <div class="ub-area ub-area-left"><span id="ubc-own-${c}" class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div>
-                <div class="ub-area ub-area-right"><span id="ubc-trade-${c}" class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`; 
-            Object.assign(panel.querySelector('.ub-area-left'), createHandler('own')); 
-            Object.assign(panel.querySelector('.ub-area-right'), createHandler('trade')); 
-            grid.appendChild(panel); 
-        }); 
-        updateUnboxingFooter(tOwn, tTrade); 
-    }
-    function updateUnboxingCount(char, type, delta) { const item = DB[currentSeriesId].items[currentItemIdx]; if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0, infinite: false }; item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta); const oldStatus = item.status; item.status = autoDetermineStatus(item); if (oldStatus !== item.status) showToast(item.status === 'comp' ? "コンプリート！" : "未コンプに戻りました"); save(); renderUnboxingGrid(); }
-    function updateUnboxingFooter(own, trade) { document.getElementById('unboxingTotalCount').innerHTML = `保管: ${own} / 譲渡: ${trade} / 合計: ${own+trade}`; }
-    function closeUnboxing() { document.getElementById('unboxingModal').style.display = 'none'; renderItemList(); }
-
-    function openSeriesModal() { document.getElementById('msTitle').value=""; document.getElementById('seriesModal').style.display='flex'; }
-    function closeSeriesModal() { document.getElementById('seriesModal').style.display='none'; }
-    function saveSeriesModal() { const title = document.getElementById('msTitle').value.trim(); if(!title) return; const id = "s" + Date.now(); const useTemp = document.getElementById('msUseTemplate').checked; let items = []; if(useTemp) TEMPLATES.forEach(t => items.push({ type: t, stocks: {}, targets: [...DEFAULT_CHARS], status: "not", charSetName: "デフォルト" })); DB[id] = { title, date: document.getElementById('msDate').value, tags: document.getElementById('msTags').value, items: items, fav: false }; ORDER.unshift(id); save(); closeSeriesModal(); openDetail(id); }
-    
-    function toggleSettings(s) { 
-        document.getElementById('settingsOverlay').style.display=s?'block':'none'; 
-        document.getElementById('settingsPanel').style.right=s?'0':'-85%'; 
-        if(s) { 
-            document.getElementById('charSettingsInput').value = Object.keys(CHAR_SETS).map(n => `${n}:${CHAR_SETS[n].join(',')}`).join('\n'); 
-            document.getElementById('tempSettingsInput').value = TEMPLATES.join('\n');
-            document.getElementById('tradePrefixInput').value = TRADE_CONFIG.prefix || "";
-            document.getElementById('tradeSuffixInput').value = TRADE_CONFIG.suffix || "";
-            document.getElementById('tradeShowInfMark').checked = TRADE_CONFIG.showInf !== false;
-            document.getElementById('presetSettingsInput').value = PRESETS.map(p => `${p.name},${p.charSet},${p.targets.join('|')}`).join('\n');
-        } 
-    }
-    function saveSettings() { 
-        const lines = document.getElementById('charSettingsInput').value.split('\n'); let newSets = {}; 
-        lines.forEach(line => { const p = line.split(':'); if(p.length >= 2) newSets[p[0].trim()] = p[1].split(',').map(c => c.trim()).filter(c => c); }); 
-        CHAR_SETS = Object.keys(newSets).length ? newSets : { "デフォルト": DEFAULT_CHARS }; 
-        TEMPLATES = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n); 
-        
-        const pLines = document.getElementById('presetSettingsInput').value.split('\n'); let newPresets = [];
-        pLines.forEach(l => { const p = l.split(','); if(p.length >= 3) newPresets.push({ name: p[0].trim(), charSet: p[1].trim(), targets: p[2].split('|').map(c => c.trim()) }); });
-        PRESETS = newPresets;
-
-        TRADE_CONFIG = {
-            prefix: document.getElementById('tradePrefixInput').value,
-            suffix: document.getElementById('tradeSuffixInput').value,
-            showInf: document.getElementById('tradeShowInfMark').checked
+        const type = document.getElementById('editItemType').value.trim() || '未設定';
+        const newItem = {
+            type,
+            status: document.getElementById('editItemStatus').value,
+            charSet: document.getElementById('editCharSetName').value,
+            list: activeCharList
         };
-        save(); location.reload(); 
+        if(currentItemIdx !== null) DB[currentSeriesId].items[currentItemIdx] = newItem;
+        else DB[currentSeriesId].items.push(newItem);
+        
+        LAST_ITEM = JSON.parse(JSON.stringify(newItem));
+        localStorage.setItem('gap_last_item', JSON.stringify(LAST_ITEM));
+        save();
+        closeEditor();
+        renderItemList();
     }
-    function exportBackup() { const data = { gap_db: DB, gap_order: ORDER, gap_char_sets: CHAR_SETS, gap_temps: TEMPLATES, gap_sort_mode: SORT_MODE, gap_trade_config: TRADE_CONFIG, gap_presets: PRESETS }; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'})); a.download=`backup.json`; a.click(); }
-    function importBackup(e) { const reader = new FileReader(); reader.onload = (ev) => { const data = JSON.parse(ev.target.result); if(confirm("上書きしますか？")) { localStorage.setItem('gap_db', JSON.stringify(data.gap_db)); localStorage.setItem('gap_order', JSON.stringify(data.gap_order)); localStorage.setItem('gap_char_sets', JSON.stringify(data.gap_char_sets || { "デフォルト": DEFAULT_CHARS })); localStorage.setItem('gap_trade_config', JSON.stringify(data.gap_trade_config || { prefix: "", suffix: "", showInf: true })); localStorage.setItem('gap_sort_mode', data.gap_sort_mode || 'new'); localStorage.setItem('gap_presets', JSON.stringify(data.gap_presets || [])); location.reload(); } }; reader.readAsText(e.target.files[0]); }
-    
-    function jumpToEditorFromMissing(sId, itemIdx, charName) {
-        currentSeriesId = sId;
-        openItemEditor(itemIdx, true); 
-        setTimeout(() => {
-            const rows = document.querySelectorAll('.editor-row');
-            for(let row of rows) {
-                if(row.innerText.includes(charName)) {
-                    row.scrollIntoView({behavior: 'smooth', block: 'center'});
-                    row.style.outline = "2px solid var(--gold)";
-                    setTimeout(() => row.style.outline = "none", 2000);
-                    break;
-                }
+
+    function closeEditor() {
+        document.getElementById('editorView').style.display = 'none';
+        if(editorFromMissing) { editorFromMissing = false; renderMissingList(); }
+    }
+
+    function deleteAllItems() {
+        if(confirm('このシリーズ内の全アイテムを削除しますか？')) {
+            DB[currentSeriesId].items = [];
+            save();
+            renderItemList();
+        }
+    }
+
+    function openUnboxing(idx) {
+        currentItemIdx = idx;
+        const it = DB[currentSeriesId].items[idx];
+        document.getElementById('unboxingTitle').textContent = it.type;
+        tempStocks = JSON.parse(JSON.stringify(it.list));
+        renderUnboxingGrid();
+        document.getElementById('unboxingModal').style.display = 'flex';
+    }
+
+    function renderUnboxingGrid() {
+        const grid = document.getElementById('unboxingGrid');
+        grid.innerHTML = tempStocks.map((li, i) => `
+            <div class="unboxing-panel">
+                <div class="ub-char-label">${li.name}${li.isInf?'<span style="color:var(--gold); font-size:0.5rem;">∞</span>':''}</div>
+                <div class="ub-area ub-area-left" onpointerdown="startCount(${i}, 'own', 1, event)" onpointerup="stopCount()" onpointerleave="stopCount()">
+                    <div class="unboxing-count-badge ${li.own>0?'has-count':'is-zero'}">${li.own}</div>
+                    <div style="font-size:0.55rem; opacity:0.6;">保管</div>
+                </div>
+                <div class="ub-area ub-area-right" onpointerdown="startCount(${i}, 'trade', 1, event)" onpointerup="stopCount()" onpointerleave="stopCount()">
+                    <div class="unboxing-count-badge ${li.trade>0?'has-count':'is-zero'}">${li.trade}</div>
+                    <div style="font-size:0.55rem; opacity:0.6;">譲渡</div>
+                </div>
+            </div>
+        `).join('');
+        const total = tempStocks.reduce((a,b)=>a+b.own+b.trade, 0);
+        document.getElementById('unboxingTotalCount').textContent = `合計開封数: ${total}`;
+    }
+
+    let countTimer = null;
+    function startCount(idx, field, diff, e) {
+        e.preventDefault();
+        const start = Date.now();
+        countTimer = setTimeout(() => {
+            tempStocks[idx][field] = Math.max(0, tempStocks[idx][field] - 1);
+            renderUnboxingGrid();
+            countTimer = 'done';
+        }, 600);
+        
+        const endHandler = () => {
+            if(countTimer !== 'done') {
+                clearTimeout(countTimer);
+                tempStocks[idx][field] += diff;
+                renderUnboxingGrid();
             }
-        }, 300);
+            window.removeEventListener('pointerup', endHandler);
+        };
+        window.addEventListener('pointerup', endHandler);
+    }
+    function stopCount() { clearTimeout(countTimer); }
+
+    function closeUnboxing() {
+        DB[currentSeriesId].items[currentItemIdx].list = tempStocks;
+        save();
+        document.getElementById('unboxingModal').style.display = 'none';
+        renderItemList();
+    }
+
+    function copyTradeText(idx, e) {
+        e.stopPropagation();
+        const it = DB[currentSeriesId].items[idx];
+        const tradeIn = it.list.filter(li => li.trade > 0).map(li => `${li.name}${li.trade>1?li.trade:''}`).join(' ');
+        const tradeOut = it.list.filter(li => li.target && li.own === 0).map(li => `${li.name}${li.isInf && TRADE_CONFIG.showInf ? '(∞)':''}`).join(' ');
+        
+        const text = `${TRADE_CONFIG.prefix || '【交換】'}\n${DB[currentSeriesId].title} ${it.type}\n\n譲：${tradeIn || 'なし'}\n求：${tradeOut || 'なし'}\n\n${TRADE_CONFIG.suffix || '郵送希望です。検索からお気軽にどうぞ。'}`;
+        navigator.clipboard.writeText(text).then(() => showToast('募集文をコピーしました'));
     }
 
     function renderMissingList() {
-        const container = document.getElementById('missingListContainer'); container.innerHTML = "";
-        let found = false; let allChars = new Set(); Object.values(CHAR_SETS).forEach(list => list.forEach(c => allChars.add(c)));
-        Array.from(allChars).forEach(char => {
-            let list = [];
-            ORDER.forEach(sId => { (DB[sId].items || []).forEach((item, itemIdx) => { 
-                const charList = CHAR_SETS[item.charSetName || "デフォルト"] || DEFAULT_CHARS; 
-                if(!charList.includes(char)) return; 
-                if(!(item.targets || charList).includes(char)) return; 
-                const s = item.stocks[char] || {own: 0, trade: 0, infinite: false}; 
-                const isMissing = (s.own === 0 && s.trade === 0);
-                if (item.status === 'not' && (isMissing || s.infinite)) {
-                    list.push({ series: DB[sId].title, seriesId: sId, type: item.type, itemIdx: itemIdx, isInf: s.infinite, isOwn: !isMissing }); 
-                }
-            }); });
-            if (list.length > 0) { 
-                found = true; 
-                const group = document.createElement('div'); 
-                group.className = 'card'; group.id = `missing-group-${char}`; group.style.marginBottom = "15px"; 
+        const container = document.getElementById('missingListContainer');
+        container.innerHTML = '';
+        let found = false;
+
+        ORDER.forEach(sid => {
+            const s = DB[sid];
+            const missingInSeries = s.items.filter(it => it.status !== 'none' && it.list.some(li => li.target && li.own === 0));
+            
+            if (missingInSeries.length > 0) {
+                found = true;
+                const group = document.createElement('div');
+                group.style.marginBottom = '25px';
                 group.innerHTML = `
-                    <div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div>
-                        <span style="color:var(--gold-light);">▼</span>
+                    <div style="font-size:0.7rem; color:var(--gold); font-weight:bold; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                        <span style="background:var(--gold); color:white; padding:2px 8px; border-radius:4px;">${s.date || 'DATE'}</span> ${s.title}
                     </div>
-                    <div style="display:none; margin-top:10px;">
-                        ${list.map(li => `
-                            <div onclick="jumpToEditorFromMissing('${li.seriesId}', ${li.itemIdx}, '${char}')" style="font-size:0.75rem; padding:12px 0; border-top:1px solid #eee; ${li.isOwn ? 'opacity:0.5;' : ''} cursor:pointer;">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type} ${li.isInf ? '<span style="color:var(--gold); font-size:0.6rem;">(∞)</span>' : ''}</span>
-                                    <span style="color:var(--gold-light); font-size:0.8rem;">✎</span>
+                    <div style="display:grid; grid-template-columns:1fr; gap:10px;">
+                        ${missingInSeries.map(it => {
+                            const idx = s.items.indexOf(it);
+                            return `
+                            <div class="card" style="padding:15px; border-style:dashed;" onclick="editorFromMissing=true; currentSeriesId='${sid}'; openItemEditor(${idx})">
+                                <div style="font-size:0.75rem; font-weight:bold; color:var(--text-main); margin-bottom:8px;">${it.type}</div>
+                                <div style="display:flex; flex-wrap:wrap; gap:5px;">
+                                    ${it.list.filter(li => li.target && li.own === 0).map(li => `
+                                        <span class="char-chip ${li.isInf ? 'is-infinite-collected' : 'c-default'}" style="font-size:0.65rem; margin:0;">
+                                            ${li.name}${li.isInf?'(∞)':''}
+                                        </span>
+                                    `).join('')}
                                 </div>
-                            </div>`).join('')}
+                                <div style="margin-top:10px; text-align:right; display:flex; justify-content:flex-end; align-items:center;">
+                                    <span><span style="color:var(--gold); font-weight:bold;">${it.charSet}</span> / ${it.type}</span>
+                                    <span style="color:var(--gold-light); font-size:0.8rem; margin-left:8px;">✎</span>
+                                </div>
+                            </div>`;
+                        }).join('')}
                     </div>`; 
                 container.appendChild(group); 
             }
@@ -897,6 +835,82 @@
     function toggleDateFilter() { const p = document.getElementById('dateFilterPanel'); p.style.display = p.style.display==='none'?'block':'none'; }
     function clearDateFilter() { document.getElementById('filterStart').value=""; document.getElementById('filterEnd').value=""; renderSeriesList(); }
     function filterByTag(t) { document.getElementById('searchBar').value=t; renderSeriesList(); window.scrollTo({top:0, behavior:'smooth'}); }
+
+    function toggleSettings(show) {
+        const panel = document.getElementById('settingsPanel');
+        const overlay = document.getElementById('settingsOverlay');
+        if(show) {
+            document.getElementById('tradePrefixInput').value = TRADE_CONFIG.prefix;
+            document.getElementById('tradeSuffixInput').value = TRADE_CONFIG.suffix;
+            document.getElementById('tradeShowInfMark').checked = TRADE_CONFIG.showInf;
+            document.getElementById('charSettingsInput').value = Object.entries(CHAR_SETS).map(([k,v]) => `${k}:${v.join(',')}`).join('\n');
+            document.getElementById('tempSettingsInput').value = TEMPLATES.join('\n');
+            document.getElementById('presetSettingsInput').value = PRESETS.map(p => `${p.name},${p.charSet},${p.targets.join('|')}`).join('\n');
+            overlay.style.display = 'block';
+            setTimeout(() => panel.style.right = '0', 10);
+        } else {
+            panel.style.right = '-85%';
+            setTimeout(() => overlay.style.display = 'none', 300);
+        }
+    }
+
+    function saveSettings() {
+        TRADE_CONFIG.prefix = document.getElementById('tradePrefixInput').value;
+        TRADE_CONFIG.suffix = document.getElementById('tradeSuffixInput').value;
+        TRADE_CONFIG.showInf = document.getElementById('tradeShowInfMark').checked;
+        
+        const charLines = document.getElementById('charSettingsInput').value.split('\n').filter(l => l.includes(':'));
+        const newSets = {};
+        charLines.forEach(l => {
+            const [k, v] = l.split(':');
+            newSets[k.trim()] = v.split(',').map(n => n.trim()).filter(n => n);
+        });
+        if(Object.keys(newSets).length > 0) CHAR_SETS = newSets;
+
+        TEMPLATES = document.getElementById('tempSettingsInput').value.split('\n').map(t => t.trim()).filter(t => t);
+        
+        const presetLines = document.getElementById('presetSettingsInput').value.split('\n').filter(l => l.trim());
+        PRESETS = presetLines.map(l => {
+            const [name, charSet, targets] = l.split(',');
+            return { name: name?.trim(), charSet: charSet?.trim(), targets: targets?.split('|').map(t => t.trim()) || [] };
+        }).filter(p => p.name && p.charSet);
+
+        save();
+        toggleSettings(false);
+        renderSeriesList();
+        showToast("設定を保存しました");
+    }
+
+    function exportBackup() {
+        const data = { db: DB, order: ORDER, charSets: CHAR_SETS, config: TRADE_CONFIG, presets: PRESETS };
+        const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `collection_archive_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    function importBackup(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (re) => {
+            try {
+                const data = JSON.parse(re.target.result);
+                if(data.db && data.order) {
+                    DB = data.db; ORDER = data.order;
+                    if(data.charSets) CHAR_SETS = data.charSets;
+                    if(data.config) TRADE_CONFIG = data.config;
+                    if(data.presets) PRESETS = data.presets;
+                    save();
+                    renderSeriesList();
+                    showToast("バックアップを読み込みました");
+                }
+            } catch(err) { alert("無効なファイルです"); }
+        };
+        reader.readAsText(file);
+    }
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
