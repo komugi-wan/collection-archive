@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <style>
-        /* CSSセクションは変更なしのため、提供されたスタイルをそのまま維持します */
+        /* CSSセクションは変更ありません（元のデザインを完全維持） */
         :root {
             --bg-color: #fefaf9;
             --card-bg: #ffffff;
@@ -26,6 +26,7 @@
             --safe-bottom: env(safe-area-inset-bottom);
             --safe-top: env(safe-area-inset-top);
         }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { overflow-x: hidden; width: 100%; position: relative; overscroll-behavior-y: none; }
         body {
@@ -157,7 +158,6 @@
             font-weight: bold; margin: 4px; cursor: pointer;
         }
 
-        /* Character Colors */
         .c-default { background: #eee; color: #666; }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
         .c-是国 { background: #000000 !important; color: #ffffff !important; }
@@ -385,6 +385,7 @@
             font-size: 0.9rem; margin-left: 8px; vertical-align: middle;
         }
         
+        /* Utility */
         .flex { display: flex; }
         .align-center { align-items: center; }
         .justify-between { justify-content: space-between; }
@@ -395,9 +396,7 @@
         .label-sm { font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px; display: block; }
     </style>
 </head>
-<body onload="App.init()">
-
-<div id="splash-screen">
+<body> <div id="splash-screen">
     <div style="color:var(--gold); font-size:1rem; letter-spacing:4px; font-weight:600; margin-bottom:25px;">COLLECTION ARCHIVE</div>
     <div style="width:24px; height:24px; border:2px solid var(--gold-light); border-top:2px solid var(--gold); border-radius:50%; animation: spin 0.8s linear infinite;"></div>
 </div>
@@ -415,7 +414,8 @@
 <div id="seriesView" class="container">
     <div class="flex align-center gap-10 mb-15">
         <input type="text" id="searchBar" placeholder="シリーズ・タグを検索..." oninput="Render.seriesList()" style="flex:1;">
-        <button id="btnToggleDate" onclick="App.toggleDateFilter()" style="background:var(--card-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold);">📅</button>
+        <button id="btnToggleDate" onclick="App.toggleDateFilter()" style="background:var(--card-bg);
+            border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold);">📅</button>
     </div>
 
     <div class="sort-controls">
@@ -424,7 +424,8 @@
         <button class="sort-btn" id="sort-custom" onclick="App.setSortMode('custom')">カスタム順</button>
     </div>
 
-    <div id="dateFilterPanel" style="display:none; background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light);">
+    <div id="dateFilterPanel" style="display:none;
+        background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light);">
         <p class="label-sm">表示期間を指定</p>
         <div class="flex align-center gap-10">
             <input type="month" id="filterStart" onchange="Render.seriesList()" style="padding:8px; font-size:0.85rem;">
@@ -550,6 +551,84 @@
  */
 
 // =========================================
+// 0. IndexedDB Wrapper
+// =========================================
+const DB = {
+    name: 'CollectionArchiveDB',
+    version: 1,
+    store: 'app_data',
+    instance: null,
+
+    async init() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.name, this.version);
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains(this.store)) {
+                    db.createObjectStore(this.store);
+                }
+            };
+            request.onsuccess = async (e) => {
+                this.instance = e.target.result;
+                // マイグレーション実行
+                await this.migrateFromLocalStorage();
+                resolve();
+            };
+            request.onerror = (e) => reject(e);
+        });
+    },
+
+    async migrateFromLocalStorage() {
+        const keys = Object.values(CONSTANTS.KEYS);
+        let hasData = false;
+        
+        // localStorageにデータがあるかチェック
+        for (const key of keys) {
+            if (localStorage.getItem(key)) {
+                hasData = true;
+                break;
+            }
+        }
+
+        if (hasData) {
+            console.log("Migration: localStorage data found. Copying to IndexedDB...");
+            for (const key of keys) {
+                const val = localStorage.getItem(key);
+                if (val !== null) {
+                    try {
+                        const parsed = JSON.parse(val);
+                        await this.set(key, parsed);
+                    } catch(e) {
+                        await this.set(key, val); // JSONでない場合は文字列として保存
+                    }
+                }
+            }
+            // 移行後にlocalStorageをクリア
+            keys.forEach(k => localStorage.removeItem(k));
+            console.log("Migration: Success.");
+        }
+    },
+
+    async get(key, defaultValue = null) {
+        return new Promise((resolve) => {
+            const tx = this.instance.transaction(this.store, 'readonly');
+            const request = tx.objectStore(this.store).get(key);
+            request.onsuccess = () => resolve(request.result !== undefined ? request.result : defaultValue);
+            request.onerror = () => resolve(defaultValue);
+        });
+    },
+
+    async set(key, value) {
+        return new Promise((resolve, reject) => {
+            const tx = this.instance.transaction(this.store, 'readwrite');
+            const request = tx.objectStore(this.store).put(value, key);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    }
+};
+
+// =========================================
 // 1. Constants & Configuration
 // =========================================
 const CONSTANTS = {
@@ -568,71 +647,7 @@ const CONSTANTS = {
 };
 
 // =========================================
-// 2. Native IndexedDB Wrapper Class
-// =========================================
-class IDB {
-    constructor(dbName = 'CollectionArchiveDB', version = 1) {
-        this.dbName = dbName;
-        this.version = version;
-        this.db = null;
-    }
-
-    async open() {
-        if (this.db) return this.db;
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.dbName, this.version);
-            request.onupgradeneeded = (e) => {
-                const db = e.target.result;
-                if (!db.objectStoreNames.contains('settings')) {
-                    db.createObjectStore('settings');
-                }
-            };
-            request.onsuccess = (e) => {
-                this.db = e.target.result;
-                resolve(this.db);
-            };
-            request.onerror = (e) => reject(e.target.error);
-        });
-    }
-
-    async get(key) {
-        const db = await this.open();
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction('settings', 'readonly');
-            const store = transaction.objectStore('settings');
-            const request = store.get(key);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
-    }
-
-    async set(key, value) {
-        const db = await this.open();
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction('settings', 'readwrite');
-            const store = transaction.objectStore('settings');
-            const request = store.put(value, key);
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
-        });
-    }
-
-    async clear() {
-        const db = await this.open();
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction('settings', 'readwrite');
-            const store = transaction.objectStore('settings');
-            const request = store.clear();
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
-        });
-    }
-}
-
-const idb = new IDB();
-
-// =========================================
-// 3. State Management (Store) - Async Refactor
+// 2. State Management (Store)
 // =========================================
 const Store = {
     db: {},
@@ -652,62 +667,33 @@ const Store = {
     editorFromMissing: false,
 
     async init() {
-        // Migration Check: localStorage exists?
-        const hasLegacyData = localStorage.getItem(CONSTANTS.KEYS.DB);
-        
-        if (hasLegacyData) {
-            console.log("Migration: Legacy data found. Moving to IndexedDB...");
-            this.db = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.DB)) || {};
-            this.order = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.ORDER)) || [];
-            this.charSets = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.SETS)) || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
-            this.templates = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TEMPLATES)) || CONSTANTS.DEFAULT_TEMPLATES;
-            this.presets = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.PRESETS)) || [];
-            this.tradeConfig = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TRADE)) || { prefix: "", suffix: "", showInf: true };
-            this.sortMode = localStorage.getItem(CONSTANTS.KEYS.SORT) || 'new';
-            this.lastItem = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.LAST_ITEM)) || null;
-
-            // Save to IndexedDB
-            await this.save();
-            await idb.set(CONSTANTS.KEYS.LAST_ITEM, this.lastItem);
-
-            // Clear localStorage
-            localStorage.clear();
-            console.log("Migration: Completed.");
-        } else {
-            // Load from IndexedDB
-            this.db = (await idb.get(CONSTANTS.KEYS.DB)) || {};
-            this.order = (await idb.get(CONSTANTS.KEYS.ORDER)) || [];
-            this.charSets = (await idb.get(CONSTANTS.KEYS.SETS)) || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
-            this.templates = (await idb.get(CONSTANTS.KEYS.TEMPLATES)) || CONSTANTS.DEFAULT_TEMPLATES;
-            this.presets = (await idb.get(CONSTANTS.KEYS.PRESETS)) || [];
-            this.tradeConfig = (await idb.get(CONSTANTS.KEYS.TRADE)) || { prefix: "", suffix: "", showInf: true };
-            this.sortMode = (await idb.get(CONSTANTS.KEYS.SORT)) || 'new';
-            this.lastItem = (await idb.get(CONSTANTS.KEYS.LAST_ITEM)) || null;
-        }
+        await DB.init();
+        this.db = await DB.get(CONSTANTS.KEYS.DB, {});
+        this.order = await DB.get(CONSTANTS.KEYS.ORDER, []);
+        this.charSets = await DB.get(CONSTANTS.KEYS.SETS, { "デフォルト": CONSTANTS.DEFAULT_CHARS });
+        this.templates = await DB.get(CONSTANTS.KEYS.TEMPLATES, CONSTANTS.DEFAULT_TEMPLATES);
+        this.presets = await DB.get(CONSTANTS.KEYS.PRESETS, []);
+        this.tradeConfig = await DB.get(CONSTANTS.KEYS.TRADE, { prefix: "", suffix: "", showInf: true });
+        this.sortMode = await DB.get(CONSTANTS.KEYS.SORT, 'new');
+        this.lastItem = await DB.get(CONSTANTS.KEYS.LAST_ITEM, null);
     },
 
     async save() {
-        try {
-            await idb.set(CONSTANTS.KEYS.DB, this.db);
-            await idb.set(CONSTANTS.KEYS.ORDER, this.order);
-            await idb.set(CONSTANTS.KEYS.SETS, this.charSets);
-            await idb.set(CONSTANTS.KEYS.TEMPLATES, this.templates);
-            await idb.set(CONSTANTS.KEYS.PRESETS, this.presets);
-            await idb.set(CONSTANTS.KEYS.TRADE, this.tradeConfig);
-            await idb.set(CONSTANTS.KEYS.SORT, this.sortMode);
-        } catch (e) {
-            console.error("Save Error:", e);
-            Utils.showToast("保存に失敗しました");
-        }
+        await DB.set(CONSTANTS.KEYS.DB, this.db);
+        await DB.set(CONSTANTS.KEYS.ORDER, this.order);
+        await DB.set(CONSTANTS.KEYS.SETS, this.charSets);
+        await DB.set(CONSTANTS.KEYS.TRADE, this.tradeConfig);
+        await DB.set(CONSTANTS.KEYS.SORT, this.sortMode);
+        await DB.set(CONSTANTS.KEYS.PRESETS, this.presets);
     },
 
     async saveLastItem() {
-        await idb.set(CONSTANTS.KEYS.LAST_ITEM, this.lastItem);
+        await DB.set(CONSTANTS.KEYS.LAST_ITEM, this.lastItem);
     }
 };
 
 // =========================================
-// 4. Utilities
+// 3. Utilities
 // =========================================
 const Utils = {
     showToast(msg) {
@@ -727,65 +713,292 @@ const Utils = {
         });
         return isAllCollected ? "comp" : "not";
     },
+
     attachSwipe(element, actionCallback, isCustomSort) {
-        let startX = 0, isSwiping = false;
+        let startX = 0, isSwiping = false, isTicking = false;
         element.addEventListener('touchstart', (e) => {
             if (Store.sortMode === 'custom' && isCustomSort) return;
             const rect = element.getBoundingClientRect();
             const touchX = e.touches[0].clientX;
-            if (touchX < rect.right - (rect.width * 0.25)) { isSwiping = false; return; }
-            startX = touchX; isSwiping = true;
-            element.classList.add('swiping');
+            if (touchX < rect.right - 80) return; 
+            startX = touchX;
+            isSwiping = true;
         }, {passive: true});
+
         element.addEventListener('touchmove', (e) => {
-            if (!isSwiping) return;
-            const delta = e.touches[0].clientX - startX;
-            if (delta < 0) {
-                const move = Math.max(delta, -100);
-                element.style.transform = `translateX(${move}px)`;
+            if (!isSwiping || isTicking) return;
+            const currentX = e.touches[0].clientX;
+            const diff = Math.max(0, startX - currentX);
+            if (diff > 10) {
+                isTicking = true;
+                requestAnimationFrame(() => {
+                    element.style.transform = `translateX(-${Math.min(diff, 100)}px)`;
+                    element.classList.add('swiping');
+                    isTicking = false;
+                });
             }
         }, {passive: true});
+
         element.addEventListener('touchend', (e) => {
             if (!isSwiping) return;
-            element.classList.remove('swiping');
-            const delta = e.changedTouches[0].clientX - startX;
-            if (delta < -60) {
-                element.style.transform = 'translateX(-100%)';
-                setTimeout(() => actionCallback(), 300);
-            } else {
-                element.style.transform = '';
-            }
             isSwiping = false;
+            const currentX = e.changedTouches[0].clientX;
+            if (startX - currentX > 60) {
+                actionCallback();
+            }
+            element.style.transform = '';
+            element.classList.remove('swiping');
         });
     }
 };
 
 // =========================================
-// 5. Actions (Controller) - Async Refactor
+// 4. Rendering Logic
+// =========================================
+const Render = {
+    seriesList() {
+        const container = document.getElementById('seriesListContainer');
+        const q = document.getElementById('searchBar').value.toLowerCase();
+        const startF = document.getElementById('filterStart').value;
+        const endF = document.getElementById('filterEnd').value;
+
+        let displayOrder = [...Store.order];
+        if (Store.sortMode === 'date') {
+            displayOrder.sort((a,b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
+        } else if (Store.sortMode === 'new') {
+            displayOrder.reverse();
+        }
+
+        container.innerHTML = '';
+        displayOrder.forEach(id => {
+            const s = Store.db[id];
+            if (!s) return;
+            const tags = (s.tags || []).join(' ');
+            if (q && !s.title.toLowerCase().includes(q) && !tags.toLowerCase().includes(q)) return;
+            if (startF && s.date && s.date < startF) return;
+            if (endF && s.date && s.date > endF) return;
+
+            const div = document.createElement('div');
+            div.className = 'swipe-container';
+            if (Store.sortMode === 'custom') div.classList.add('sort-custom');
+            
+            const isComp = s.items.length > 0 && s.items.every(i => i.status === 'comp' || i.status === 'none');
+
+            div.innerHTML = `
+                <div class="delete-btn-overlay">DELETE</div>
+                <div class="card" onclick="App.openDetail('${id}')">
+                    <div class="handle">⠿</div>
+                    <div style="font-size:0.6rem; color:var(--text-sub); margin-bottom:4px;">${s.date || '日付未設定'}</div>
+                    <div style="font-size:0.95rem; font-weight:bold; margin-bottom:8px;">
+                        ${s.title} ${isComp ? '<span class="series-comp-mark">✔</span>' : ''}
+                    </div>
+                    <div id="tags-${id}"></div>
+                    <div class="inventory-grid" id="grid-${id}"></div>
+                </div>
+            `;
+            container.appendChild(div);
+
+            const tagsDiv = div.querySelector(`#tags-${id}`);
+            (s.tags || []).forEach(t => {
+                const span = document.createElement('span');
+                span.className = 'tag-chip';
+                span.textContent = `#${t}`;
+                span.onclick = (e) => { e.stopPropagation(); Actions.filterByTag(t); };
+                tagsDiv.appendChild(span);
+            });
+
+            const gridDiv = div.querySelector(`#grid-${id}`);
+            const summary = { total: 0, comp: 0 };
+            s.items.forEach(item => {
+                summary.total++;
+                if (item.status === 'comp') summary.comp++;
+                const box = document.createElement('div');
+                box.className = 'inv-box';
+                const statusClass = `st-${item.status}`;
+                box.innerHTML = `
+                    <span class="status-tag ${statusClass}">${item.status.toUpperCase()}</span>
+                    <span class="inv-label">${item.type}</span>
+                    <div class="inv-content"></div>
+                `;
+                const content = box.querySelector('.inv-content');
+                
+                if (item.status === 'none') {
+                    content.innerHTML = '<span style="color:#eee; font-size:1.2rem;">-</span>';
+                } else {
+                    const sortedChars = (item.targets || []).sort((a,b) => {
+                        const stockA = item.stocks[a] || {own:0, trade:0};
+                        const stockB = item.stocks[b] || {own:0, trade:0};
+                        return (stockB.own + stockB.trade) - (stockA.own + stockA.trade);
+                    });
+                    
+                    sortedChars.slice(0, 5).forEach(char => {
+                        const st = item.stocks[char] || {own:0, trade:0, infinite: false};
+                        if ((st.own + st.trade) > 0 || st.infinite) {
+                            const chip = document.createElement('span');
+                            chip.className = `char-chip c-${char} ${st.infinite ? 'is-infinite-collected' : ''}`;
+                            chip.textContent = char;
+                            content.appendChild(chip);
+                        }
+                    });
+                    if (sortedChars.length > 5) {
+                        content.insertAdjacentHTML('beforeend', `<span style="font-size:0.5rem; color:var(--text-sub);">+${sortedChars.length-5}</span>`);
+                    }
+                }
+                gridDiv.appendChild(box);
+            });
+            Utils.attachSwipe(div.querySelector('.card'), () => Actions.deleteSeries(id), true);
+        });
+    },
+
+    missingList() {
+        const container = document.getElementById('missingListContainer');
+        container.innerHTML = '';
+        let hasData = false;
+
+        const tradeData = [];
+        Store.order.forEach(sId => {
+            const s = Store.db[sId];
+            s.items.forEach((item, idx) => {
+                if (item.status === 'none') return;
+                const need = [];
+                const haveTrade = [];
+                (item.targets || []).forEach(char => {
+                    const st = item.stocks[char] || {own:0, trade:0, infinite:false};
+                    if (st.own === 0 && st.trade === 0 && !st.infinite) need.push(char);
+                    if (st.trade > 0) haveTrade.push({name: char, qty: st.trade});
+                });
+                if (need.length > 0 || haveTrade.length > 0) {
+                    tradeData.push({ sId, sTitle: s.title, item, idx, need, haveTrade });
+                }
+            });
+        });
+
+        tradeData.forEach(data => {
+            hasData = true;
+            const div = document.createElement('div');
+            div.className = 'card mb-15';
+            div.style.padding = '15px';
+            
+            let tradeStr = `${Store.tradeConfig.prefix || '【交換】'}\n${data.sTitle} ${data.item.type}\n`;
+            if (data.haveTrade.length > 0) {
+                tradeStr += `譲：${data.haveTrade.map(x => `${x.name}${x.qty > 1 ? `(${x.qty})` : ''}`).join('、')}\n`;
+            }
+            if (data.need.length > 0) {
+                tradeStr += `求：${data.need.join('、')}\n`;
+            }
+            tradeStr += (Store.tradeConfig.suffix || "郵送希望です。検索からお気軽にどうぞ。");
+
+            div.innerHTML = `
+                <div style="font-size:0.6rem; color:var(--gold); font-weight:bold; margin-bottom:5px;">${data.sTitle}</div>
+                <div class="flex justify-between align-center mb-15">
+                    <div style="font-size:0.85rem; font-weight:bold;">${data.item.type}</div>
+                    <button class="bulk-btn" onclick="Actions.copyToClipboard(\`${tradeStr.replace(/`/g, '\\`')}\`)">募集文コピー</button>
+                </div>
+                <div class="flex gap-10">
+                    <div style="flex:1;">
+                        <p class="label-sm" style="color:var(--danger)">MISSING</p>
+                        <div id="missing-chars-${data.sId}-${data.idx}"></div>
+                    </div>
+                    <div style="flex:1;">
+                        <p class="label-sm" style="color:var(--trade-text)">OFFERING</p>
+                        <div id="offering-chars-${data.sId}-${data.idx}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+
+            const missDiv = div.querySelector(`#missing-chars-${data.sId}-${data.idx}`);
+            data.need.forEach(c => {
+                const span = document.createElement('span');
+                span.className = `char-chip c-${c}`;
+                span.textContent = c;
+                span.onclick = () => Actions.jumpToEditorFromMissing(data.sId, data.idx, c);
+                missDiv.appendChild(span);
+            });
+
+            const offDiv = div.querySelector(`#offering-chars-${data.sId}-${data.idx}`);
+            data.haveTrade.forEach(obj => {
+                const span = document.createElement('span');
+                span.className = `char-chip c-${obj.name}`;
+                span.innerHTML = `${obj.name} <span>x${obj.qty}</span>`;
+                span.onclick = () => Actions.jumpToEditorFromMissing(data.sId, data.idx, obj.name);
+                offDiv.appendChild(span);
+            });
+        });
+
+        if (!hasData) {
+            container.innerHTML = '<p style="text-align:center; color:var(--text-sub); margin-top:50px; font-size:0.8rem;">不足しているアイテムはありません</p>';
+        }
+    },
+
+    itemList() {
+        const container = document.getElementById('itemListContainer');
+        const s = Store.db[Store.currentSeriesId];
+        container.innerHTML = '';
+        if (!s) return;
+
+        s.items.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'swipe-container';
+            const statusClass = `st-${item.status}`;
+            
+            let charHtml = '';
+            if (item.status === 'none') {
+                charHtml = '<p style="color:var(--text-sub); font-size:0.75rem; text-align:center; margin:10px 0;">予定なし</p>';
+            } else {
+                const infChars = [];
+                const ownChars = [];
+                (item.targets || []).forEach(c => {
+                    const st = item.stocks[c] || {own:0, trade:0, infinite:false};
+                    if (st.infinite) infChars.push({name: c, own: st.own, trade: st.trade});
+                    else if (st.own > 0 || st.trade > 0) ownChars.push({name: c, own: st.own, trade: st.trade});
+                });
+
+                charHtml += '<div style="margin-bottom:10px;">';
+                infChars.forEach(obj => {
+                    charHtml += `<span class="char-chip c-${obj.name} is-infinite-collected">${obj.name}${Store.tradeConfig.showInf ? '(∞)' : ''} x${obj.own + obj.trade}</span>`;
+                });
+                ownChars.forEach(obj => {
+                    charHtml += `<span class="char-chip c-${obj.name}">${obj.name} x${obj.own + obj.trade}</span>`;
+                });
+                charHtml += '</div>';
+            }
+
+            div.innerHTML = `
+                <div class="delete-btn-overlay">DELETE</div>
+                <div class="card" onclick="App.openItemEditor(${idx})">
+                    <span class="status-tag ${statusClass}">${item.status.toUpperCase()}</span>
+                    <div style="font-size:0.9rem; font-weight:bold; margin-bottom:10px;">${item.type}</div>
+                    ${charHtml}
+                    <div class="flex gap-10">
+                        <button class="secondary-btn" style="margin-top:0; font-size:0.75rem; padding:8px;" onclick="event.stopPropagation(); App.openUnboxing(${idx})">UNBOXING</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+            Utils.attachSwipe(div.querySelector('.card'), () => Actions.deleteItem(idx));
+        });
+    }
+};
+
+// =========================================
+// 5. Actions & Event Handlers
 // =========================================
 const Actions = {
     async saveSeriesModal() {
-        const title = document.getElementById('msTitle').value.trim();
+        const title = document.getElementById('msTitle').value;
+        if (!title) return;
+        const id = 's_' + Date.now();
         const date = document.getElementById('msDate').value;
-        const tags = document.getElementById('msTags').value.split(/[,、]/).map(t => t.trim()).filter(t => t);
+        const tags = document.getElementById('msTags').value.split(/[,、\s]+/).filter(x => x);
         const useTemp = document.getElementById('msUseTemplate').checked;
 
-        if (!title) return alert("シリーズ名を入力してください");
-
-        const sId = 's_' + Date.now();
-        const newSeries = {
-            id: sId,
-            title, date, tags,
-            items: [],
-            isFav: false,
-            createdAt: Date.now()
-        };
-
-        if (useTemp && Store.templates.length > 0) {
-            Store.templates.forEach(tName => {
-                newSeries.items.push({
-                    type: tName,
-                    charSet: "デフォルト",
+        const items = [];
+        if (useTemp) {
+            Store.templates.forEach(t => {
+                items.push({
+                    type: t,
+                    charSetName: "デフォルト",
                     targets: [...CONSTANTS.DEFAULT_CHARS],
                     stocks: {},
                     status: "not"
@@ -793,153 +1006,98 @@ const Actions = {
             });
         }
 
-        Store.db[sId] = newSeries;
-        Store.order.unshift(sId);
+        Store.db[id] = { title, date, tags, items };
+        Store.order.push(id);
         await Store.save();
-        
         App.closeSeriesModal();
         Render.seriesList();
-        Utils.showToast("シリーズを登録しました");
     },
 
-    async deleteSeries(sId) {
-        if (!confirm("このシリーズを削除しますか？アイテムもすべて削除されます。")) {
-            Render.seriesList();
-            return;
-        }
-        delete Store.db[sId];
-        Store.order = Store.order.filter(id => id !== sId);
+    async deleteSeries(id) {
+        if (!confirm('シリーズを削除しますか？')) return;
+        delete Store.db[id];
+        Store.order = Store.order.filter(x => x !== id);
         await Store.save();
         Render.seriesList();
-    },
-
-    async toggleFavorite(sId) {
-        if (Store.db[sId]) {
-            Store.db[sId].isFav = !Store.db[sId].isFav;
-            await Store.save();
-            Render.seriesList();
-        }
     },
 
     async saveItem() {
-        const type = document.getElementById('editItemType').value.trim();
-        const status = document.getElementById('editItemStatus').value;
+        const type = document.getElementById('editItemType').value;
+        if (!type) return;
         const charSetName = document.getElementById('editCharSetName').value;
-        
-        if (!type) return alert("アイテム名を入力してください");
+        const status = document.getElementById('editItemStatus').value;
 
         const targets = [];
-        const stocks = {};
-        const rows = document.querySelectorAll('.editor-row');
-        rows.forEach(row => {
-            const char = row.dataset.char;
-            const isTarget = row.querySelector('.target-check').checked;
-            if (isTarget) {
-                targets.push(char);
-                stocks[char] = {
-                    own: parseInt(row.querySelector('.qty-own').value) || 0,
-                    trade: parseInt(row.querySelector('.qty-trade').value) || 0,
-                    infinite: row.querySelector('.inf-btn').classList.contains('active')
-                };
-            }
+        document.querySelectorAll('.target-check').forEach(chk => {
+            if (chk.checked) targets.push(chk.dataset.char);
         });
 
-        const itemData = { type, charSet: charSetName, targets, stocks, status };
-        itemData.status = Utils.autoDetermineStatus(itemData);
+        const item = { type, charSetName, targets, stocks: Store.tempStocks, status };
+        item.status = Utils.autoDetermineStatus(item);
 
-        const series = Store.db[Store.currentSeriesId];
+        const s = Store.db[Store.currentSeriesId];
         if (Store.currentItemIdx !== null) {
-            series.items[Store.currentItemIdx] = itemData;
+            s.items[Store.currentItemIdx] = item;
         } else {
-            series.items.push(itemData);
+            s.items.push(item);
         }
 
-        Store.lastItem = { type, charSet: charSetName, targets };
+        Store.lastItem = { type, charSetName, targets };
         await Store.save();
         await Store.saveLastItem();
-
         App.closeEditor();
         Render.itemList();
-        Render.seriesList();
-        Utils.showToast("保存しました");
     },
 
     async deleteItem(idx) {
-        if (!confirm("このアイテムを削除しますか？")) {
-            Render.itemList();
-            return;
-        }
-        const series = Store.db[Store.currentSeriesId];
-        series.items.splice(idx, 1);
+        if (!confirm('このアイテムを削除しますか？')) return;
+        Store.db[Store.currentSeriesId].items.splice(idx, 1);
         await Store.save();
         Render.itemList();
-        Render.seriesList();
     },
 
     async deleteAllItems() {
-        if (!confirm("すべてのアイテムを削除しますか？")) return;
+        if (!confirm('シリーズ内のすべてのアイテムを削除しますか？')) return;
         Store.db[Store.currentSeriesId].items = [];
         await Store.save();
         Render.itemList();
-        Render.seriesList();
-    },
-
-    async updateStocks(sId, itemIdx, stocks) {
-        const item = Store.db[sId].items[itemIdx];
-        item.stocks = stocks;
-        item.status = Utils.autoDetermineStatus(item);
-        await Store.save();
-        Render.seriesList();
-        Render.missingList();
     },
 
     async saveSettings() {
-        const charInput = document.getElementById('charSettingsInput').value.trim();
+        const charInput = document.getElementById('charSettingsInput').value;
+        const lines = charInput.split('\n');
         const newSets = {};
-        charInput.split('\n').forEach(line => {
-            const [name, chars] = line.split(':');
-            if (name && chars) {
-                newSets[name.trim()] = chars.split(',').map(c => c.trim()).filter(c => c);
-            }
+        lines.forEach(l => {
+            const [name, chars] = l.split(':');
+            if (name && chars) newSets[name.trim()] = chars.split(',').map(c => c.trim());
         });
-        if (Object.keys(newSets).length > 0) Store.charSets = newSets;
+        Store.charSets = newSets;
 
-        const presetInput = document.getElementById('presetSettingsInput').value.trim();
-        Store.presets = presetInput.split('\n').map(line => {
-            const [type, setName, targetsStr] = line.split(',');
-            if (type && setName && targetsStr) {
-                return { type: type.trim(), charSet: setName.trim(), targets: targetsStr.split('|').map(t => t.trim()) };
-            }
-            return null;
-        }).filter(p => p);
-
-        const tempInput = document.getElementById('tempSettingsInput').value.trim();
-        Store.templates = tempInput.split(/[,、\n]/).map(t => t.trim()).filter(t => t);
+        Store.templates = document.getElementById('tempSettingsInput').value.split(/[,、\s\n]+/).filter(x => x);
+        
+        const presetInput = document.getElementById('presetSettingsInput').value;
+        Store.presets = presetInput.split('\n').filter(x => x).map(line => {
+            const [type, setName, targetStr] = line.split(',');
+            return { type: type.trim(), setName: setName.trim(), targets: targetStr ? targetStr.trim().split('|') : [] };
+        });
 
         Store.tradeConfig.prefix = document.getElementById('tradePrefixInput').value;
         Store.tradeConfig.suffix = document.getElementById('tradeSuffixInput').value;
         Store.tradeConfig.showInf = document.getElementById('tradeShowInfMark').checked;
 
         await Store.save();
+        Utils.showToast('設定を保存しました');
         App.toggleSettings(false);
-        location.reload();
+        Render.seriesList();
     },
 
     async exportBackup() {
-        const data = {
-            db: Store.db,
-            order: Store.order,
-            charSets: Store.charSets,
-            templates: Store.templates,
-            presets: Store.presets,
-            tradeConfig: Store.tradeConfig,
-            exportAt: new Date().toLocaleString()
-        };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const data = { db: Store.db, order: Store.order, charSets: Store.charSets, templates: Store.templates, presets: Store.presets, tradeConfig: Store.tradeConfig };
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `archive_backup_${Date.now()}.json`;
+        a.download = `archive_backup_${new Date().toISOString().slice(0,10)}.json`;
         a.click();
     },
 
@@ -947,296 +1105,24 @@ const Actions = {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = async (event) => {
+        reader.onload = async (ev) => {
             try {
-                const data = JSON.parse(event.target.result);
-                if (confirm("データを上書き読み込みしますか？現在のデータは消去されます。")) {
-                    Store.db = data.db || {};
-                    Store.order = data.order || [];
-                    Store.charSets = data.charSets || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
-                    Store.templates = data.templates || CONSTANTS.DEFAULT_TEMPLATES;
-                    Store.presets = data.presets || [];
-                    Store.tradeConfig = data.tradeConfig || { prefix: "", suffix: "", showInf: true };
-                    await Store.save();
-                    location.reload();
-                }
-            } catch (err) {
-                alert("ファイルの読み込みに失敗しました。");
-            }
+                const data = JSON.parse(ev.target.result);
+                Store.db = data.db || {};
+                Store.order = data.order || [];
+                Store.charSets = data.charSets || {};
+                Store.templates = data.templates || [];
+                Store.presets = data.presets || [];
+                Store.tradeConfig = data.tradeConfig || { prefix: "", suffix: "", showInf: true };
+                await Store.save();
+                location.reload();
+            } catch (err) { alert('バックアップの読み込みに失敗しました'); }
         };
         reader.readAsText(file);
     },
 
-    // Bulk Actions in Editor
-    bulkToggleTargets(val) {
-        document.querySelectorAll('.target-check').forEach(chk => chk.checked = val);
-    },
-    bulkIncrementOwn() {
-        document.querySelectorAll('.qty-own').forEach(input => {
-            if (input.closest('.editor-row').querySelector('.target-check').checked) {
-                input.value = (parseInt(input.value) || 0) + 1;
-                input.className = 'qty-display qty-has';
-            }
-        });
-    },
-    bulkResetCounts() {
-        if (!confirm("すべての個数をリセットしますか？")) return;
-        document.querySelectorAll('.qty-own, .qty-trade').forEach(input => {
-            input.value = 0;
-            input.className = 'qty-display qty-zero';
-        });
-        document.querySelectorAll('.inf-btn').forEach(btn => btn.classList.remove('active'));
-    }
-};
-
-// =========================================
-// 6. App Logic (UI Controller)
-// =========================================
-const App = {
-    async init() {
-        const splash = document.getElementById('splash-screen');
-        
-        // 1. Initialize DB and Store (Async)
-        await Store.init();
-        
-        // 2. Initial Render
-        Render.seriesList();
-        
-        // 3. Hide Splash
-        setTimeout(() => {
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 500);
-        }, 300);
-    },
-
-    switchMainTab(tab) {
-        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
-        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
-        document.getElementById('tab-list').classList.toggle('active', tab === 'list');
-        document.getElementById('tab-missing').classList.toggle('active', tab === 'missing');
-        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
-        if (tab === 'missing') Render.missingList();
-    },
-
-    openSeriesModal() {
-        document.getElementById('msTitle').value = "";
-        document.getElementById('msDate').value = new Date().toISOString().slice(0, 7);
-        document.getElementById('msTags').value = "";
-        document.getElementById('seriesModal').style.display = 'flex';
-    },
-    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
-
-    openDetail(sId) {
-        Store.currentSeriesId = sId;
-        const series = Store.db[sId];
-        document.getElementById('detailHeaderTitle').textContent = series.title;
-        document.getElementById('detailView').style.display = 'block';
-        Render.itemList();
-        window.history.pushState({view: 'detail'}, '');
-    },
-    closeDetail() {
-        document.getElementById('detailView').style.display = 'none';
-        Store.currentSeriesId = null;
-        Render.seriesList();
-    },
-
-    openItemEditor(idx = null, fromMissing = false) {
-        Store.currentItemIdx = idx;
-        Store.editorFromMissing = fromMissing;
-        const series = Store.db[Store.currentSeriesId];
-        const item = idx !== null ? series.items[idx] : null;
-
-        document.getElementById('editItemType').value = item ? item.type : "";
-        document.getElementById('editItemStatus').value = item ? item.status : "not";
-        
-        // Setup CharSets Dropdown
-        const setSelect = document.getElementById('editCharSetName');
-        setSelect.innerHTML = Object.keys(Store.charSets).map(s => `<option value="${s}">${s}</option>`).join('');
-        setSelect.value = item ? item.charSet : (Store.lastItem ? Store.lastItem.charSet : "デフォルト");
-
-        this.changeCharSet(setSelect.value, item);
-
-        // Preset area
-        const pArea = document.getElementById('presetArea');
-        const pGrid = document.getElementById('presetChips');
-        if (Store.presets.length > 0 && idx === null) {
-            pArea.style.display = 'block';
-            pGrid.innerHTML = Store.presets.map(p => `
-                <div class="preset-chip" onclick="App.applyPreset('${p.type}', '${p.charSet}', '${p.targets.join('|')}')">
-                    ${p.type} (${p.charSet})
-                </div>
-            `).join('');
-        } else {
-            pArea.style.display = 'none';
-        }
-
-        document.getElementById('historyBanner').style.display = (idx === null && Store.lastItem) ? 'flex' : 'none';
-        document.getElementById('editorView').style.display = 'block';
-        window.history.pushState({view: 'editor'}, '');
-    },
-
-    closeEditor() {
-        document.getElementById('editorView').style.display = 'none';
-        if (Store.editorFromMissing) {
-            Store.editorFromMissing = false;
-            Render.missingList();
-        }
-    },
-
-    applyHistory() {
-        if (!Store.lastItem) return;
-        document.getElementById('editItemType').value = Store.lastItem.type;
-        document.getElementById('editCharSetName').value = Store.lastItem.charSet;
-        this.changeCharSet(Store.lastItem.charSet, { targets: Store.lastItem.targets });
-        document.getElementById('historyBanner').style.display = 'none';
-    },
-
-    applyPreset(type, charSet, targetsStr) {
-        document.getElementById('editItemType').value = type;
-        document.getElementById('editCharSetName').value = charSet;
-        this.changeCharSet(charSet, { targets: targetsStr.split('|') });
-    },
-
-    changeCharSet(setName, item = null) {
-        const chars = Store.charSets[setName] || CONSTANTS.DEFAULT_CHARS;
-        const grid = document.getElementById('editorGrid');
-        grid.innerHTML = chars.map(c => {
-            const s = (item && item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0, infinite:false};
-            const isTarget = item ? item.targets.includes(c) : true;
-            return `
-                <div class="editor-row" data-char="${c}">
-                    <div class="flex flex-direction-column align-center">
-                        <input type="checkbox" class="target-check" ${isTarget ? 'checked' : ''} style="width:20px; height:20px; margin-bottom:5px;">
-                        <span class="char-chip c-${c}">${c}</span>
-                    </div>
-                    <div class="flex align-center justify-between">
-                        <div class="flex align-center gap-10">
-                            <div>
-                                <label class="label-sm">保有</label>
-                                <div class="flex align-center">
-                                    <button class="btn-qty" onclick="this.nextElementSibling.value=Math.max(0,parseInt(this.nextElementSibling.value)-1); App.updateQtyStyle(this.nextElementSibling)">-</button>
-                                    <input type="number" class="qty-display qty-own ${s.own>0?'qty-has':'qty-zero'}" value="${s.own}" oninput="App.updateQtyStyle(this)">
-                                    <button class="btn-qty" onclick="this.previousElementSibling.value=parseInt(this.previousElementSibling.value)+1; App.updateQtyStyle(this.previousElementSibling)">+</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="label-sm">譲渡</label>
-                                <div class="flex align-center">
-                                    <button class="btn-qty" onclick="this.nextElementSibling.value=Math.max(0,parseInt(this.nextElementSibling.value)-1); App.updateQtyStyle(this.nextElementSibling)">-</button>
-                                    <input type="number" class="qty-display qty-trade ${s.trade>0?'qty-has':'qty-zero'}" value="${s.trade}" oninput="App.updateQtyStyle(this)">
-                                    <button class="btn-qty" onclick="this.previousElementSibling.value=parseInt(this.previousElementSibling.value)+1; App.updateQtyStyle(this.previousElementSibling)">+</button>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="inf-btn ${s.infinite?'active':''}" onclick="this.classList.toggle('active')">∞</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    },
-
-    updateQtyStyle(input) {
-        const val = parseInt(input.value) || 0;
-        input.className = `qty-display ${val > 0 ? 'qty-has' : 'qty-zero'}`;
-    },
-
-    openUnboxing(sId, itemIdx) {
-        const item = Store.db[sId].items[itemIdx];
-        Store.currentSeriesId = sId;
-        Store.currentItemIdx = itemIdx;
-        Store.tempStocks = JSON.parse(JSON.stringify(item.stocks));
-        
-        document.getElementById('unboxingTitle').textContent = `${item.type} (${item.charSet})`;
-        this.renderUnboxingGrid(item);
-        document.getElementById('unboxingModal').style.display = 'flex';
-    },
-
-    renderUnboxingGrid(item) {
-        const grid = document.getElementById('unboxingGrid');
-        let total = 0;
-        grid.innerHTML = item.targets.map(c => {
-            const s = Store.tempStocks[c] || {own:0, trade:0, infinite:false};
-            total += (s.own + s.trade);
-            return `
-                <div class="unboxing-panel">
-                    <div class="ub-char-label c-${c}">${c}</div>
-                    <div class="ub-area ub-area-left" 
-                         onclick="App.modStock('${c}', 'own', 1)" 
-                         oncontextmenu="event.preventDefault(); App.modStock('${c}', 'own', -1)">
-                        <div class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</div>
-                    </div>
-                    <div class="ub-area ub-area-right" 
-                         onclick="App.modStock('${c}', 'trade', 1)" 
-                         oncontextmenu="event.preventDefault(); App.modStock('${c}', 'trade', -1)">
-                        <div class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-        document.getElementById('unboxingTotalCount').textContent = `合計獲得数: ${total}`;
-    },
-
-    modStock(char, type, val) {
-        if (!Store.tempStocks[char]) Store.tempStocks[char] = {own:0, trade:0, infinite:false};
-        Store.tempStocks[char][type] = Math.max(0, Store.tempStocks[char][type] + val);
-        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
-        this.renderUnboxingGrid(item);
-    },
-
-    async closeUnboxing() {
-        await Actions.updateStocks(Store.currentSeriesId, Store.currentItemIdx, Store.tempStocks);
-        document.getElementById('unboxingModal').style.display = 'none';
-    },
-
-    toggleSettings(open) {
-        const panel = document.getElementById('settingsPanel');
-        const overlay = document.getElementById('settingsOverlay');
-        if (open) {
-            document.getElementById('charSettingsInput').value = Object.entries(Store.charSets).map(([k,v]) => `${k}:${v.join(',')}`).join('\n');
-            document.getElementById('presetSettingsInput').value = Store.presets.map(p => `${p.type},${p.charSet},${p.targets.join('|')}`).join('\n');
-            document.getElementById('tempSettingsInput').value = Store.templates.join(',');
-            document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix;
-            document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix;
-            document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf;
-            overlay.style.display = 'block';
-            panel.style.right = '0';
-        } else {
-            overlay.style.display = 'none';
-            panel.style.right = '-85%';
-        }
-    },
-
-    async setSortMode(mode) {
-        Store.sortMode = mode;
-        document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.id === `sort-${mode}`));
-        await Store.save();
-        Render.seriesList();
-    },
-
-    toggleDateFilter() {
-        const p = document.getElementById('dateFilterPanel');
-        p.style.display = p.style.display === 'none' ? 'block' : 'none';
-        document.getElementById('btnToggleDate').style.background = p.style.display === 'block' ? 'var(--gold-light)' : 'var(--card-bg)';
-    },
-
-    clearDateFilter() {
-        document.getElementById('filterStart').value = "";
-        document.getElementById('filterEnd').value = "";
-        Render.seriesList();
-    },
-
-    copyTradeText(sId, itemIdx) {
-        const item = Store.db[sId].items[itemIdx];
-        const have = [], want = [];
-        item.targets.forEach(c => {
-            const s = item.stocks[c] || {own:0, trade:0, infinite:false};
-            if (s.trade > 0) have.push(`${c}${s.trade>1?s.trade:''}`);
-            if (s.infinite || (s.own + s.trade === 0)) {
-                want.push(`${c}${s.infinite && Store.tradeConfig.showInf ? '(∞)':''}`);
-            }
-        });
-        const text = `${Store.tradeConfig.prefix}\n【譲】${have.join(', ')}\n【求】${want.join(', ')}\n\n${Store.tradeConfig.suffix}`;
-        navigator.clipboard.writeText(text).then(() => Utils.showToast("募集文をコピーしました"));
+    copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => Utils.showToast('コピーしました'));
     },
 
     filterByTag(t) {
@@ -1259,169 +1145,282 @@ const App = {
                 }
             }
         }, 300);
+    },
+
+    bulkToggleTargets(val) {
+        document.querySelectorAll('.target-check').forEach(c => c.checked = val);
+    },
+    bulkIncrementOwn() {
+        Store.activeCharList.forEach(c => {
+            if (!Store.tempStocks[c]) Store.tempStocks[c] = { own: 0, trade: 0, infinite: false };
+            Store.tempStocks[c].own++;
+        });
+        App.renderEditorGrid();
+    },
+    bulkResetCounts() {
+        if (!confirm('すべての個数を0にしますか？')) return;
+        Object.keys(Store.tempStocks).forEach(c => {
+            Store.tempStocks[c].own = 0;
+            Store.tempStocks[c].trade = 0;
+        });
+        App.renderEditorGrid();
     }
 };
 
 // =========================================
-// 7. Render (View)
+// 6. Application Controller (App)
 // =========================================
-const Render = {
-    seriesList() {
-        const container = document.getElementById('seriesListContainer');
-        const query = document.getElementById('searchBar').value.toLowerCase();
-        const start = document.getElementById('filterStart').value;
-        const end = document.getElementById('filterEnd').value;
-
-        let list = Store.order.map(id => Store.db[id]).filter(s => s);
-
-        // Filter
-        if (query) {
-            list = list.filter(s => s.title.toLowerCase().includes(query) || s.tags.some(t => t.toLowerCase().includes(query)));
-        }
-        if (start) list = list.filter(s => s.date >= start);
-        if (end) list = list.filter(s => s.date <= end);
-
-        // Sort
-        if (Store.sortMode === 'date') {
-            list.sort((a,b) => (b.date || "").localeCompare(a.date || "") || b.createdAt - a.createdAt);
-        } else if (Store.sortMode === 'new') {
-            list.sort((a,b) => b.createdAt - a.createdAt);
-        }
-
-        if (list.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding:50px; color:var(--text-sub); font-size:0.8rem;">シリーズがありません</div>`;
-            return;
-        }
-
-        container.innerHTML = list.map(s => {
-            const isComp = s.items.length > 0 && s.items.every(i => i.status === "comp" || i.status === "none");
-            return `
-                <div class="swipe-container">
-                    <div class="delete-btn-overlay">削除</div>
-                    <div class="card" onclick="App.openDetail('${s.id}')">
-                        <div class="flex justify-between align-center mb-15">
-                            <div style="font-size:0.95rem; font-weight:800; color:var(--text-main); flex:1;">
-                                ${s.title}${isComp ? '<span class="series-comp-mark">✔</span>' : ''}
-                            </div>
-                            <button class="fav-btn ${s.isFav?'active':''}" onclick="event.stopPropagation(); Actions.toggleFavorite('${s.id}')">★</button>
-                        </div>
-                        <div class="flex align-center gap-10">
-                            <span style="font-size:0.7rem; color:var(--gold); font-weight:bold;">${s.date || '日付未設定'}</span>
-                            <div>${s.tags.map(t => `<span class="tag-chip" onclick="event.stopPropagation(); App.filterByTag('${t}')">${t}</span>`).join('')}</div>
-                        </div>
-                        <div style="margin-top:12px; font-size:0.65rem; color:var(--text-sub); display:flex; gap:10px;">
-                            <span>アイテム: ${s.items.length}</span>
-                            <span>未コンプ: ${s.items.filter(i => i.status === 'not').length}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Attach Swipe
-        container.querySelectorAll('.swipe-container').forEach((el, idx) => {
-            Utils.attachSwipe(el.querySelector('.card'), () => Actions.deleteSeries(list[idx].id), true);
-        });
-    },
-
-    itemList() {
-        const container = document.getElementById('itemListContainer');
-        const series = Store.db[Store.currentSeriesId];
-        if (!series || series.items.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding:50px; color:var(--text-sub); font-size:0.8rem;">アイテムが登録されていません</div>`;
-            return;
-        }
-
-        container.innerHTML = series.items.map((item, idx) => {
-            const have = [], trade = [], infs = [];
-            item.targets.forEach(c => {
-                const s = item.stocks[c] || {own:0, trade:0, infinite:false};
-                if (s.own > 0) have.push(`<span class="char-chip c-${c}">${c}${s.own>1?` x${s.own}`:''}</span>`);
-                if (s.trade > 0) trade.push(`<span class="char-chip c-${c}">${c}${s.trade>1?` x${s.trade}`:''}</span>`);
-                if (s.infinite) infs.push(`<span class="inf-status-chip c-${c}">${c}<span>∞</span></span>`);
-            });
-
-            return `
-                <div class="swipe-container">
-                    <div class="delete-btn-overlay">削除</div>
-                    <div class="card" onclick="App.openItemEditor(${idx})">
-                        <div class="status-tag st-${item.status}">${item.status === 'comp' ? 'COMPLETE' : (item.status === 'none' ? '予定なし' : '未コンプ')}</div>
-                        <div class="flex justify-between align-center">
-                            <div class="text-bold" style="font-size:0.9rem;">${item.type}</div>
-                            <div class="flex gap-10">
-                                <button class="bulk-btn" onclick="event.stopPropagation(); App.openUnboxing('${series.id}', ${idx})">UNBOX</button>
-                                <button class="bulk-btn" onclick="event.stopPropagation(); App.copyTradeText('${series.id}', ${idx})">COPY</button>
-                            </div>
-                        </div>
-                        <div class="inventory-grid">
-                            <div class="inv-box">
-                                <span class="inv-label">保有</span>
-                                <div class="inv-content">${have.join('')}</div>
-                            </div>
-                            <div class="inv-box">
-                                <span class="inv-label">譲渡可</span>
-                                <div class="inv-content">${trade.join('')}</div>
-                            </div>
-                            <div class="inv-box" style="background:var(--trade-bg);">
-                                <span class="inv-label" style="color:var(--trade-text)">求(未所持)</span>
-                                <div class="inv-content">
-                                    <div class="trade-text-small">${item.targets.filter(c => {
-                                        const s = item.stocks[c] || {own:0, trade:0, infinite:false};
-                                        return s.own + s.trade === 0;
-                                    }).join(', ')}</div>
-                                </div>
-                            </div>
-                        </div>
-                        ${infs.length > 0 ? `<div class="flex align-center mt-10"><div class="inf-status-container">${infs.join('')}</div></div>` : ''}
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        container.querySelectorAll('.swipe-container').forEach((el, idx) => {
-            Utils.attachSwipe(el.querySelector('.card'), () => Actions.deleteItem(idx), false);
-        });
-    },
-
-    missingList() {
-        const container = document.getElementById('missingListContainer');
-        const missingMap = {};
+const App = {
+    async init() {
+        // DB初期化待ち
+        await Store.init();
         
-        Object.values(Store.db).forEach(s => {
-            s.items.forEach((item, idx) => {
-                if (item.status !== 'not') return;
-                item.targets.forEach(c => {
-                    const stock = item.stocks[c] || {own:0, trade:0, infinite:false};
-                    if (stock.own + stock.trade === 0) {
-                        if (!missingMap[c]) missingMap[c] = [];
-                        missingMap[c].push({ seriesTitle: s.title, sId: s.id, itemType: item.type, itemIdx: idx });
-                    }
-                });
-            });
+        this.initSettingsFields();
+        Render.seriesList();
+        
+        // ローディングアニメーションを少し見せるためのディレイ（任意）
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0';
+            setTimeout(() => splash.style.display = 'none', 500);
+        }, 300);
+    },
+
+    initSettingsFields() {
+        const charInput = document.getElementById('charSettingsInput');
+        charInput.value = Object.entries(Store.charSets).map(([k,v]) => `${k}:${v.join(',')}`).join('\n');
+        document.getElementById('tempSettingsInput').value = Store.templates.join(',');
+        document.getElementById('presetSettingsInput').value = Store.presets.map(p => `${p.type},${p.setName},${p.targets.join('|')}`).join('\n');
+        document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix || "";
+        document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix || "";
+        document.getElementById('tradeShowInfMark').checked = !!Store.tradeConfig.showInf;
+    },
+
+    switchMainTab(tab) {
+        document.getElementById('tab-list').classList.toggle('active', tab === 'list');
+        document.getElementById('tab-missing').classList.toggle('active', tab === 'missing');
+        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
+        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
+        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+        if (tab === 'missing') Render.missingList();
+    },
+
+    openSeriesModal() { document.getElementById('seriesModal').style.display = 'flex'; },
+    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
+
+    openDetail(id) {
+        Store.currentSeriesId = id;
+        document.getElementById('detailHeaderTitle').textContent = Store.db[id].title;
+        document.getElementById('detailView').style.display = 'block';
+        Render.itemList();
+        window.history.pushState({view: 'detail'}, '');
+    },
+    closeDetail() {
+        document.getElementById('detailView').style.display = 'none';
+        Render.seriesList();
+    },
+
+    openItemEditor(idx = null, fromMissing = false) {
+        Store.currentItemIdx = idx;
+        Store.editorFromMissing = fromMissing;
+        const item = idx !== null ? Store.db[Store.currentSeriesId].items[idx] : null;
+
+        document.getElementById('editItemType').value = item ? item.type : "";
+        document.getElementById('editItemStatus').value = item ? item.status : "not";
+        Store.tempStocks = item ? JSON.parse(JSON.stringify(item.stocks)) : {};
+
+        // キャラセット選択肢
+        const sel = document.getElementById('editCharSetName');
+        sel.innerHTML = '';
+        Object.keys(Store.charSets).forEach(k => {
+            const opt = document.createElement('option');
+            opt.value = k; opt.textContent = k;
+            sel.appendChild(opt);
         });
+        sel.value = item ? item.charSetName : "デフォルト";
 
-        const sortedChars = Object.keys(missingMap).sort();
-        if (sortedChars.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding:50px; color:var(--text-sub); font-size:0.8rem;">未コンプのアイテムはありません</div>`;
-            return;
-        }
+        // プリセット
+        const pArea = document.getElementById('presetArea');
+        const pChips = document.getElementById('presetChips');
+        pChips.innerHTML = '';
+        if (Store.presets.length > 0) {
+            pArea.style.display = 'block';
+            Store.presets.forEach(p => {
+                const span = document.createElement('span');
+                span.className = 'preset-chip';
+                span.textContent = p.type;
+                span.onclick = () => this.applyPreset(p);
+                pChips.appendChild(span);
+            });
+        } else { pArea.style.display = 'none'; }
 
-        container.innerHTML = sortedChars.map(char => `
-            <div class="card mb-15" style="padding:15px;">
-                <div class="char-chip c-${char} mb-15" style="font-size:0.9rem; padding:6px 15px;">${char}</div>
-                ${missingMap[char].map(m => `
-                    <div style="padding:10px; border-bottom:1px solid var(--border-color); font-size:0.75rem;" onclick="App.jumpToEditorFromMissing('${m.sId}', ${m.itemIdx}, '${char}')">
-                        <div class="text-gold" style="font-weight:bold;">${m.seriesTitle}</div>
-                        <div style="color:var(--text-main); margin-top:4px;">${m.itemType}</div>
+        document.getElementById('historyBanner').style.display = (!item && Store.lastItem) ? 'flex' : 'none';
+        this.changeCharSet(sel.value, item ? item.targets : null);
+        document.getElementById('editorView').style.display = 'block';
+        window.history.pushState({view: 'editor'}, '');
+    },
+    closeEditor() {
+        document.getElementById('editorView').style.display = 'none';
+    },
+
+    applyPreset(p) {
+        document.getElementById('editItemType').value = p.type;
+        document.getElementById('editCharSetName').value = p.setName;
+        this.changeCharSet(p.setName, p.targets);
+    },
+    applyHistory() {
+        if (!Store.lastItem) return;
+        document.getElementById('editItemType').value = Store.lastItem.type;
+        document.getElementById('editCharSetName').value = Store.lastItem.charSetName;
+        this.changeCharSet(Store.lastItem.charSetName, Store.lastItem.targets);
+        document.getElementById('historyBanner').style.display = 'none';
+    },
+
+    changeCharSet(setName, selectedTargets = null) {
+        Store.activeCharList = Store.charSets[setName] || [];
+        this.renderEditorGrid(selectedTargets);
+    },
+
+    renderEditorGrid(selectedTargets = null) {
+        const grid = document.getElementById('editorGrid');
+        grid.innerHTML = '';
+        Store.activeCharList.forEach(char => {
+            if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
+            const st = Store.tempStocks[char];
+            const isChecked = selectedTargets ? selectedTargets.includes(char) : true;
+
+            const row = document.createElement('div');
+            row.className = 'editor-row';
+            row.innerHTML = `
+                <div style="text-align:center;">
+                    <label style="display:block; margin-bottom:8px;">
+                        <input type="checkbox" class="target-check" data-char="${char}" ${isChecked ? 'checked' : ''} style="width:18px; height:18px;">
+                    </label>
+                    <span class="char-chip c-${char}" style="margin:0;">${char}</span>
+                </div>
+                <div>
+                    <div class="flex align-center justify-between mb-15">
+                        <span class="label-sm" style="margin:0;">保管数</span>
+                        <div class="flex align-center gap-10">
+                            <button class="btn-qty" onclick="App.updateQty('${char}', 'own', -1)">-</button>
+                            <input type="number" class="qty-display ${st.own > 0 ? 'qty-has' : 'qty-zero'}" value="${st.own}" onchange="App.updateQty('${char}', 'own', 0, this.value)">
+                            <button class="btn-qty" onclick="App.updateQty('${char}', 'own', 1)">+</button>
+                        </div>
                     </div>
-                `).join('')}
-            </div>
-        `).join('');
+                    <div class="flex align-center justify-between">
+                        <span class="label-sm" style="margin:0;">譲渡可能</span>
+                        <div class="flex align-center gap-10">
+                            <button class="inf-btn ${st.infinite ? 'active' : ''}" onclick="App.toggleInf('${char}')">∞</button>
+                            <button class="btn-qty" onclick="App.updateQty('${char}', 'trade', -1)">-</button>
+                            <input type="number" class="qty-display ${st.trade > 0 ? 'qty-has' : 'qty-zero'}" value="${st.trade}" onchange="App.updateQty('${char}', 'trade', 0, this.value)">
+                            <button class="btn-qty" onclick="App.updateQty('${char}', 'trade', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(row);
+        });
+    },
+
+    updateQty(char, field, delta, exact = null) {
+        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
+        if (exact !== null) Store.tempStocks[char][field] = Math.max(0, parseInt(exact) || 0);
+        else Store.tempStocks[char][field] = Math.max(0, Store.tempStocks[char][field] + delta);
+        this.renderEditorGrid();
+    },
+    toggleInf(char) {
+        Store.tempStocks[char].infinite = !Store.tempStocks[char].infinite;
+        this.renderEditorGrid();
+    },
+
+    openUnboxing(idx) {
+        Store.currentItemIdx = idx;
+        const item = Store.db[Store.currentSeriesId].items[idx];
+        document.getElementById('unboxingTitle').textContent = `${item.type} - 開封`;
+        this.renderUnboxingGrid();
+        document.getElementById('unboxingModal').style.display = 'flex';
+    },
+    async closeUnboxing() {
+        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        item.status = Utils.autoDetermineStatus(item);
+        await Store.save();
+        document.getElementById('unboxingModal').style.display = 'none';
+        Render.itemList();
+    },
+
+    renderUnboxingGrid() {
+        const grid = document.getElementById('unboxingGrid');
+        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        grid.innerHTML = '';
+        let total = 0;
+
+        (item.targets || []).forEach(char => {
+            const st = item.stocks[char] || { own: 0, trade: 0, infinite: false };
+            total += (st.own + st.trade);
+            const panel = document.createElement('div');
+            panel.className = 'unboxing-panel';
+            panel.innerHTML = `
+                <div class="ub-char-label c-${char}">${char}</div>
+                <div class="ub-area ub-area-left" id="ub-own-${char}">
+                    <div class="unboxing-count-badge ${st.own > 0 ? 'has-count' : 'is-zero'}">${st.own}</div>
+                </div>
+                <div class="ub-area ub-area-right" id="ub-trade-${char}">
+                    <div class="unboxing-count-badge ${st.trade > 0 ? 'has-count' : 'is-zero'}">${st.trade}</div>
+                </div>
+            `;
+            grid.appendChild(panel);
+
+            const handleTap = (field, delta) => {
+                st[field] = Math.max(0, st[field] + delta);
+                this.renderUnboxingGrid();
+            };
+
+            const left = panel.querySelector('.ub-area-left');
+            const right = panel.querySelector('.ub-area-right');
+
+            let timer;
+            const setupEvents = (el, field) => {
+                el.onpointerdown = (e) => {
+                    timer = setTimeout(() => { handleTap(field, -1); timer = null; }, 600);
+                };
+                el.onpointerup = (e) => {
+                    if (timer) { clearTimeout(timer); handleTap(field, 1); }
+                };
+            };
+            setupEvents(left, 'own');
+            setupEvents(right, 'trade');
+        });
+        document.getElementById('unboxingTotalCount').textContent = `合計獲得数: ${total}`;
+    },
+
+    async setSortMode(m) {
+        Store.sortMode = m;
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.id === `sort-${m}`));
+        await Store.save();
+        Render.seriesList();
+    },
+
+    toggleDateFilter() {
+        const p = document.getElementById('dateFilterPanel');
+        p.style.display = p.style.display === 'none' ? 'block' : 'none';
+    },
+    clearDateFilter() {
+        document.getElementById('filterStart').value = '';
+        document.getElementById('filterEnd').value = '';
+        Render.seriesList();
+    },
+
+    toggleSettings(show) {
+        const p = document.getElementById('settingsPanel');
+        const o = document.getElementById('settingsOverlay');
+        p.style.right = show ? '0' : '-85%';
+        o.style.display = show ? 'block' : 'none';
     }
 };
 
-// Browser History Handling
+// ブラウザ履歴管理
 window.onpopstate = function(e) {
+    const state = e.state || {};
     const editor = document.getElementById('editorView');
     const detail = document.getElementById('detailView');
 
@@ -1433,10 +1432,13 @@ window.onpopstate = function(e) {
         }
     } else if (detail.style.display === 'block') {
         detail.style.display = 'none';
-        Store.currentSeriesId = null;
         Render.seriesList();
     }
 };
+
+// アプリの起動
+App.init();
+
 </script>
 </body>
 </html>
