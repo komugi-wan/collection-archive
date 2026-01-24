@@ -48,17 +48,20 @@
            ========================================= */
         .container { padding: 15px; max-width: 600px; margin: auto; }
         .full-view {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-color); z-index: 200; overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
         .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
             z-index: 1000; align-items: center; justify-content: center;
         }
         .modal-content {
-            background: white; width: 95%; max-width: 450px; padding: 15px;
+            background: white;
+            width: 95%; max-width: 450px; padding: 15px;
             border-radius: 20px; max-height: 95vh; overflow-y: auto;
         }
 
@@ -66,36 +69,44 @@
            3. Headers & Navigation
            ========================================= */
         header {
-            background: var(--card-bg); padding: var(--safe-top) 15px 15px;
+            background: var(--card-bg);
+            padding: var(--safe-top) 15px 15px;
             text-align: center; border-bottom: 1px solid var(--gold-light);
             position: sticky; top: 0; z-index: 100;
         }
         header h1 {
-            margin: 15px 0 0; font-size: 0.85rem; letter-spacing: 4px;
+            margin: 15px 0 0;
+            font-size: 0.85rem; letter-spacing: 4px;
             color: var(--gold); font-weight: 600;
         }
         .header-btn-right {
-            position: absolute; right: 15px; top: calc(15px + var(--safe-top));
+            position: absolute;
+            right: 15px; top: calc(15px + var(--safe-top));
             background: none; border: none; font-size: 1.4rem; color: var(--gold);
         }
         .nav-tabs {
-            display: flex; background: var(--card-bg); position: sticky;
+            display: flex;
+            background: var(--card-bg); position: sticky;
             top: 58px; z-index: 90; border-bottom: 1px solid var(--border-color);
         }
         .nav-tab {
-            flex: 1; padding: 15px; text-align: center; font-size: 0.8rem;
+            flex: 1;
+            padding: 15px; text-align: center; font-size: 0.8rem;
             color: var(--text-sub); cursor: pointer; letter-spacing: 2px; transition: 0.2s;
         }
         .nav-tab.active {
-            color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold;
+            color: var(--gold);
+            border-bottom: 3px solid var(--gold); font-weight: bold;
         }
         .view-header {
-            background: var(--card-bg); padding: var(--safe-top) 15px 15px;
+            background: var(--card-bg);
+            padding: var(--safe-top) 15px 15px;
             display: flex; align-items: center; border-bottom: 1px solid var(--border-color);
             position: sticky; top: 0; z-index: 210; height: 50px;
         }
         .view-header-title {
-            flex: 1; text-align: center; font-weight: bold; color: var(--text-main);
+            flex: 1;
+            text-align: center; font-weight: bold; color: var(--text-main);
             font-size: 0.9rem; white-space: nowrap; overflow: hidden;
             text-overflow: ellipsis; padding: 0 10px;
         }
@@ -104,21 +115,25 @@
            4. Components: Cards & Swipe
            ========================================= */
         .swipe-container {
-            position: relative; margin-bottom: 15px; overflow: hidden;
+            position: relative;
+            margin-bottom: 15px; overflow: hidden;
             border-radius: 20px; touch-action: pan-y; background: transparent;
         }
         .swipe-container.dragging { opacity: 0.5; }
         .card {
-            background: var(--card-bg); padding: 20px;
+            background: var(--card-bg);
+            padding: 20px;
             box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08);
             border: 1px solid rgba(197, 160, 89, 0.1);
-            position: relative; z-index: 2; width: 100%; border-radius: 20px;
+            position: relative;
+            z-index: 2; width: 100%; border-radius: 20px;
             transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
             will-change: transform; touch-action: pan-y;
         }
         .card.swiping { transition: none; }
         .delete-btn-overlay {
-            position: absolute; top: 0; right: 0; width: 100px; height: 100%;
+            position: absolute;
+            top: 0; right: 0; width: 100px; height: 100%;
             background: var(--danger); color: white; display: flex;
             align-items: center; justify-content: center; font-weight: bold;
             font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0;
@@ -128,27 +143,31 @@
            5. Components: Chips & Status
            ========================================= */
         .char-chip {
-            font-size: 0.75rem; padding: 4px 10px; border-radius: 8px;
+            font-size: 0.75rem;
+            padding: 4px 10px; border-radius: 8px;
             margin-right: 6px; margin-bottom: 6px; display: inline-block;
             font-weight: bold; border: 1px solid rgba(0,0,0,0.03);
         }
         .char-chip.is-infinite-collected { opacity: 0.4; transform: scale(0.9); }
         .tag-chip {
-            font-size: 0.65rem; background: var(--gold-light); color: var(--text-main);
+            font-size: 0.65rem;
+            background: var(--gold-light); color: var(--text-main);
             padding: 4px 10px; border-radius: 8px; margin-right: 6px;
             font-weight: bold; cursor: pointer; display: inline-block;
             transition: 0.2s;
         }
         .tag-chip:active { opacity: 0.6; }
         .status-tag {
-            position: absolute; top: 0; right: 0; font-size: 0.65rem;
+            position: absolute;
+            top: 0; right: 0; font-size: 0.65rem;
             padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold;
         }
         .st-comp { background: #fce4ec; color: var(--dark-pink); }
         .st-not { background: #f5f5f5; color: #999; }
         .st-none { background: transparent; color: #ddd; border: 1px solid #eee; }
         .preset-chip {
-            display: inline-block; background: var(--gold-light); color: var(--gold);
+            display: inline-block;
+            background: var(--gold-light); color: var(--gold);
             padding: 8px 12px; border-radius: 12px; font-size: 0.75rem;
             font-weight: bold; margin: 4px; cursor: pointer;
         }
@@ -174,40 +193,49 @@
            6. Components: Inventory Grid
            ========================================= */
         .inventory-grid {
-            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; gap: 8px;
             margin-top: 12px; cursor: pointer;
         }
         .inv-box {
-            background: #fafafa; border: 1px solid #f0f0f0; border-radius: 12px;
+            background: #fafafa;
+            border: 1px solid #f0f0f0; border-radius: 12px;
             padding: 8px 4px; text-align: center; min-height: 70px;
             display: flex; flex-direction: column; pointer-events: none;
         }
         .inv-label {
-            font-size: 0.6rem; font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block;
+            font-size: 0.6rem;
+            font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block;
         }
         .inv-content {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 2px;
+            display: flex;
+            flex-wrap: wrap; justify-content: center; gap: 2px;
             flex: 1; align-items: center;
         }
         .inv-content .char-chip {
-            font-size: 0.6rem; padding: 2px 5px; margin-right: 2px; margin-bottom: 2px;
+            font-size: 0.6rem;
+            padding: 2px 5px; margin-right: 2px; margin-bottom: 2px;
         }
         .inv-summary-row {
-            display: flex; justify-content: space-around; margin-top: 8px;
+            display: flex;
+            justify-content: space-around; margin-top: 8px;
             padding: 6px 10px; background: #fdfaf5; border-radius: 10px;
             border: 1px dashed var(--gold-light);
         }
         .summary-item { font-size: 0.65rem; color: var(--text-main); font-weight: bold; }
         .summary-item span { color: var(--gold); font-size: 0.75rem; margin-left: 2px; }
         .trade-text-small {
-            font-size: 0.65rem; color: var(--trade-text); word-break: break-all;
+            font-size: 0.65rem;
+            color: var(--trade-text); word-break: break-all;
             font-weight: bold; line-height: 1.2;
         }
         .inf-status-container {
-            display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex: 1; margin-right: 10px;
+            display: flex;
+            flex-wrap: wrap; gap: 4px; align-items: center; flex: 1; margin-right: 10px;
         }
         .inf-status-chip {
-            font-size: 0.6rem; padding: 2px 6px; border-radius: 6px;
+            font-size: 0.6rem;
+            padding: 2px 6px; border-radius: 6px;
             font-weight: bold; display: flex; align-items: center; gap: 3px;
         }
         .inf-status-chip span { font-size: 0.7rem; opacity: 0.8; }
@@ -216,18 +244,21 @@
            7. Components: Editor
            ========================================= */
         .editor-row {
-            display: grid; grid-template-columns: 80px 1fr; gap: 10px;
+            display: grid;
+            grid-template-columns: 80px 1fr; gap: 10px;
             align-items: center; padding: 15px; border-radius: 16px;
             margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color);
         }
         .btn-qty {
-            width: 36px; height: 36px; border-radius: 50%;
+            width: 36px;
+            height: 36px; border-radius: 50%;
             border: 1px solid var(--gold-light); background: #fff;
             font-size: 1.2rem; color: var(--gold); display: flex;
             align-items: center; justify-content: center;
         }
         .qty-display {
-            width: 40px; border: none; border-bottom: 1px solid var(--gold-light);
+            width: 40px;
+            border: none; border-bottom: 1px solid var(--gold-light);
             background: transparent; text-align: center; font-size: 1rem;
             padding: 2px 0; -moz-appearance: textfield; transition: 0.2s;
         }
@@ -235,23 +266,27 @@
         .qty-display.qty-has { color: var(--gold); font-weight: 800; border-bottom-color: var(--gold); }
         .qty-display::-webkit-inner-spin-button, .qty-display::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .inf-btn {
-            background: none; border: none; font-size: 1.1rem; color: #ddd;
+            background: none;
+            border: none; font-size: 1.1rem; color: #ddd;
             cursor: pointer; padding: 0; line-height: 1; transition: 0.2s;
         }
         .inf-btn.active { color: var(--gold); }
         .editor-bulk-actions {
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex;
+            justify-content: space-between; align-items: center;
             margin-bottom: 10px; padding: 0 5px;
         }
         .bulk-group-left { display: flex; gap: 8px; flex-wrap: wrap; }
         .bulk-btn {
-            background: none; border: 1px solid var(--gold-light);
+            background: none;
+            border: 1px solid var(--gold-light);
             color: var(--gold); font-size: 0.65rem; padding: 5px 10px;
             border-radius: 8px; font-weight: bold;
         }
         .bulk-btn-danger { color: var(--danger); border-color: #ffcdd2; }
         .history-banner {
-            background: #fff9f0; border: 1px dashed var(--gold); padding: 10px;
+            background: #fff9f0;
+            border: 1px dashed var(--gold); padding: 10px;
             border-radius: 12px; margin-bottom: 15px; display: flex;
             justify-content: space-between; align-items: center;
         }
@@ -260,33 +295,40 @@
            8. Components: Unboxing
            ========================================= */
         .unboxing-panel {
-            display: grid; grid-template-columns: 1fr 1fr; padding: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr; padding: 0;
             border-radius: 12px; position: relative; font-weight: bold;
             font-size: 0.9rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             user-select: none; -webkit-user-select: none; touch-action: none;
             height: 54px; overflow: visible; margin-bottom: 6px; background: #eee;
         }
         .ub-area {
-            display: flex; flex-direction: column; justify-content: center;
+            display: flex;
+            flex-direction: column; justify-content: center;
             align-items: center; position: relative; transition: all 0.1s;
             touch-action: none; -webkit-touch-callout: none; z-index: 1;
         }
         .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px; }
         .ub-area-right { border-radius: 0 12px 12px 0; }
         .ub-area:active {
-            background: rgba(0,0,0,0.1); transform: scale(0.96);
+            background: rgba(0,0,0,0.1);
+            transform: scale(0.96);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); z-index: 2;
         }
         .ub-char-label {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: white; padding: 1px 6px; border-radius: 6px;
-            font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 0.6rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none;
         }
         .unboxing-count-badge {
-            min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px;
+            min-width: 24px;
+            height: 24px; padding: 0 6px; border-radius: 12px;
             font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
-            margin-bottom: 2px; font-weight: 800; transition: all 0.15s; pointer-events: none;
+            margin-bottom: 2px; font-weight: 800;
+            transition: all 0.15s; pointer-events: none;
         }
         .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none; }
         .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
@@ -295,38 +337,46 @@
            9. UI Elements (Inputs, Buttons, FAB)
            ========================================= */
         input[type="text"], input[type="month"], select {
-            border: 1px solid var(--border-color); border-radius: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             padding: 14px; font-size: 16px !important; background: #fff;
             color: var(--text-main); width: 100%;
         }
         .primary-btn {
-            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            width: 100%;
+            padding: 16px; border: none; border-radius: 14px;
             background: var(--gold); color: white; font-weight: bold;
             font-size: 1rem; margin-top: 10px;
         }
         .danger-btn {
-            color: var(--danger); background: none; border: none; font-size: 0.8rem;
+            color: var(--danger);
+            background: none; border: none; font-size: 0.8rem;
         }
         .secondary-btn {
-            width: 100%; padding: 12px; border: 1px solid var(--gold);
+            width: 100%;
+            padding: 12px; border: 1px solid var(--gold);
             border-radius: 14px; background: white; color: var(--gold);
             font-weight: bold; font-size: 0.9rem; margin-top: 10px;
         }
         .fab {
-            position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px;
+            position: fixed;
+            bottom: calc(30px + var(--safe-bottom)); right: 20px;
             width: 64px; height: 64px; border-radius: 50%; background: var(--gold);
             color: white; border: none; font-size: 2rem;
             box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4); z-index: 150;
             display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
         #toast {
-            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            position: fixed;
+            bottom: 100px; left: 50%; transform: translateX(-50%);
             background: rgba(0,0,0,0.8); color: white; padding: 12px 24px;
-            border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none;
+            border-radius: 25px; font-size: 0.85rem; z-index: 2000;
+            display: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;
         }
         #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.5s ease;
@@ -337,27 +387,32 @@
            10. Sorting & Filtering
            ========================================= */
         .sort-controls {
-            display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto;
+            display: flex;
+            gap: 8px; margin-bottom: 15px; overflow-x: auto;
             padding-bottom: 5px; -webkit-overflow-scrolling: touch;
         }
         .sort-btn {
-            white-space: nowrap; padding: 6px 12px; border-radius: 20px;
+            white-space: nowrap;
+            padding: 6px 12px; border-radius: 20px;
             border: 1px solid var(--gold-light); background: #fff;
             color: var(--gold); font-size: 0.7rem; font-weight: bold;
         }
         .sort-btn.active { background: var(--gold); color: #fff; }
         .handle {
-            color: var(--gold-light); cursor: grab; padding: 10px;
+            color: var(--gold-light);
+            cursor: grab; padding: 10px;
             font-size: 1.2rem; display: none;
         }
         .sort-custom .handle { display: block; }
         .fav-btn {
-            background: none; border: none; font-size: 1.2rem;
+            background: none;
+            border: none; font-size: 1.2rem;
             color: #ddd; padding: 0 5px; transition: 0.2s;
         }
         .fav-btn.active { color: #fbc02d; }
         .series-comp-mark {
-            color: var(--gold); font-size: 0.9rem; margin-left: 8px; vertical-align: middle;
+            color: var(--gold);
+            font-size: 0.9rem; margin-left: 8px; vertical-align: middle;
         }
         
         /* Utility */
@@ -506,14 +561,15 @@
 
     <label class="label-sm" style="margin-top:20px;">キャラクターセット（セット名:名,名...）</label>
     <textarea id="charSettingsInput" rows="5" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; font-size: 0.75rem !important; padding:10px;"></textarea>
-    
+
     <label class="label-sm" style="margin-top:20px;">プリセット（アイテム名,セット名,対象キャラ1|対象キャラ2...）</label>
     <textarea id="presetSettingsInput" rows="5" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; font-size: 0.75rem !important; padding:10px;" placeholder="缶バッジ,デフォルト,北門|是国|金城"></textarea>
 
     <label class="label-sm" style="margin-top:20px;">新規登録テンプレート</label>
     <textarea id="tempSettingsInput" rows="3" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; padding:10px;"></textarea>
-    
+
     <button class="primary-btn" onclick="Actions.saveSettings()" style="margin-top:30px;">設定を保存して更新</button>
+
     <div style="margin-top:40px; border-top:1px solid var(--border-color); padding-top:20px;">
         <button class="secondary-btn" onclick="Actions.exportBackup()">バックアップを書き出し</button>
         <button class="secondary-btn" onclick="document.getElementById('importFile').click()">バックアップを読み込み</button>
@@ -527,7 +583,7 @@
 <script>
 /**
  * COLLECTION ARCHIVE v1.0
- * Refactored Version
+ * IndexedDB Migrated Version
  */
 
 // =========================================
@@ -544,12 +600,55 @@ const CONSTANTS = {
         SORT: 'gap_sort_mode',
         LAST_ITEM: 'gap_last_item'
     },
+    IDB_NAME: 'CollectionArchiveDB',
+    IDB_VERSION: 1,
+    IDB_STORE: 'app_data',
     DEFAULT_CHARS: ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"],
     DEFAULT_TEMPLATES: ["缶バッジ", "アクスタ", "ブロマイド"],
 };
 
 // =========================================
-// 2. State Management (Store)
+// 2. IndexedDB Engine
+// =========================================
+const IDB = {
+    db: null,
+    init() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(CONSTANTS.IDB_NAME, CONSTANTS.IDB_VERSION);
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains(CONSTANTS.IDB_STORE)) {
+                    db.createObjectStore(CONSTANTS.IDB_STORE);
+                }
+            };
+            request.onsuccess = (e) => {
+                this.db = e.target.result;
+                resolve();
+            };
+            request.onerror = (e) => reject(e);
+        });
+    },
+    get(key) {
+        return new Promise((resolve) => {
+            const transaction = this.db.transaction([CONSTANTS.IDB_STORE], 'readonly');
+            const store = transaction.objectStore(CONSTANTS.IDB_STORE);
+            const request = store.get(key);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => resolve(null);
+        });
+    },
+    set(key, value) {
+        return new Promise((resolve) => {
+            const transaction = this.db.transaction([CONSTANTS.IDB_STORE], 'readwrite');
+            const store = transaction.objectStore(CONSTANTS.IDB_STORE);
+            const request = store.put(value, key);
+            request.onsuccess = () => resolve();
+        });
+    }
+};
+
+// =========================================
+// 3. State Management (Store)
 // =========================================
 const Store = {
     db: {},
@@ -568,45 +667,62 @@ const Store = {
     tempStocks: {},
     editorFromMissing: false,
 
-    init() {
-        this.db = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.DB)) || {};
-        this.order = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.ORDER)) || [];
-        this.charSets = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.SETS)) || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
-        this.templates = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TEMPLATES)) || CONSTANTS.DEFAULT_TEMPLATES;
-        this.presets = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.PRESETS)) || [];
-        this.tradeConfig = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TRADE)) || { prefix: "", suffix: "", showInf: true };
-        this.sortMode = localStorage.getItem(CONSTANTS.KEYS.SORT) || 'new';
-        this.lastItem = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.LAST_ITEM)) || null;
+    async init() {
+        await IDB.init();
+        
+        // Try loading from IndexedDB
+        this.db = await IDB.get(CONSTANTS.KEYS.DB);
+        this.order = await IDB.get(CONSTANTS.KEYS.ORDER);
+        this.charSets = await IDB.get(CONSTANTS.KEYS.SETS);
+        this.templates = await IDB.get(CONSTANTS.KEYS.TEMPLATES);
+        this.presets = await IDB.get(CONSTANTS.KEYS.PRESETS);
+        this.tradeConfig = await IDB.get(CONSTANTS.KEYS.TRADE);
+        this.sortMode = await IDB.get(CONSTANTS.KEYS.SORT) || 'new';
+        this.lastItem = await IDB.get(CONSTANTS.KEYS.LAST_ITEM);
+
+        // Fallback to localStorage (Migration)
+        if (!this.db) {
+            this.db = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.DB)) || {};
+            this.order = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.ORDER)) || [];
+            this.charSets = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.SETS)) || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
+            this.templates = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TEMPLATES)) || CONSTANTS.DEFAULT_TEMPLATES;
+            this.presets = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.PRESETS)) || [];
+            this.tradeConfig = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TRADE)) || { prefix: "", suffix: "", showInf: true };
+            this.lastItem = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.LAST_ITEM)) || null;
+            await this.save();
+        }
     },
 
-    save() {
-        localStorage.setItem(CONSTANTS.KEYS.DB, JSON.stringify(this.db));
-        localStorage.setItem(CONSTANTS.KEYS.ORDER, JSON.stringify(this.order));
-        localStorage.setItem(CONSTANTS.KEYS.SETS, JSON.stringify(this.charSets));
-        localStorage.setItem(CONSTANTS.KEYS.TRADE, JSON.stringify(this.tradeConfig));
-        localStorage.setItem(CONSTANTS.KEYS.SORT, this.sortMode);
-        localStorage.setItem(CONSTANTS.KEYS.PRESETS, JSON.stringify(this.presets));
+    async save() {
+        await IDB.set(CONSTANTS.KEYS.DB, this.db);
+        await IDB.set(CONSTANTS.KEYS.ORDER, this.order);
+        await IDB.set(CONSTANTS.KEYS.SETS, this.charSets);
+        await IDB.set(CONSTANTS.KEYS.TRADE, this.tradeConfig);
+        await IDB.set(CONSTANTS.KEYS.SORT, this.sortMode);
+        await IDB.set(CONSTANTS.KEYS.PRESETS, this.presets);
+        await IDB.set(CONSTANTS.KEYS.TEMPLATES, this.templates);
     },
 
-    saveLastItem() {
-        localStorage.setItem(CONSTANTS.KEYS.LAST_ITEM, JSON.stringify(this.lastItem));
+    async saveLastItem() {
+        await IDB.set(CONSTANTS.KEYS.LAST_ITEM, this.lastItem);
     }
 };
 
 // =========================================
-// 3. Utilities
+// 4. Utilities
 // =========================================
 const Utils = {
     showToast(msg) {
         const t = document.getElementById('toast');
-        t.textContent = msg; t.style.display = 'block';
+        t.textContent = msg;
+        t.style.display = 'block';
         setTimeout(() => t.style.display = 'none', 2000);
     },
-    
     autoDetermineStatus(item) {
         if (item.status === "none") return "none";
         const targets = item.targets || [];
         if (targets.length === 0) return item.status;
+        
         const isAllCollected = targets.every(char => {
             const s = item.stocks[char] || { own: 0, trade: 0, infinite: false };
             if (s.infinite) return false;
@@ -615,7 +731,6 @@ const Utils = {
         return isAllCollected ? "comp" : "not";
     },
 
-    // Swipe & Drag Helpers
     attachSwipe(element, actionCallback, isCustomSort) {
         let startX = 0, isSwiping = false, isTicking = false;
         
@@ -623,8 +738,10 @@ const Utils = {
             if (Store.sortMode === 'custom' && isCustomSort) return;
             const rect = element.getBoundingClientRect();
             const touchX = e.touches[0].clientX;
-            // Only trigger if swipe starts from right side
-            if (touchX < rect.right - (rect.width * 0.25)) { isSwiping = false; return; }
+            if (touchX < rect.right - (rect.width * 0.25)) {
+                isSwiping = false;
+                return;
+            }
             startX = touchX;
             isSwiping = true;
             element.classList.add('swiping');
@@ -662,747 +779,616 @@ const Utils = {
             if (element.style.transform === 'translateX(-100px)') {
                 element.style.transform = 'translateX(0)';
                 e.stopPropagation();
-            } else if (originalOnClick) { originalOnClick(e); }
+            } else if (originalOnClick) {
+                originalOnClick(e);
+            }
         };
-
-        // Attach delete action to the background layer button, not here
     }
 };
 
 // =========================================
-// 4. Rendering Logic (View)
+// 5. Rendering Logic (View)
 // =========================================
 const Render = {
     seriesList() {
         const container = document.getElementById('seriesListContainer');
-        container.innerHTML = "";
-        const term = document.getElementById('searchBar').value.toLowerCase();
+        const q = document.getElementById('searchBar').value.toLowerCase();
         const start = document.getElementById('filterStart').value;
         const end = document.getElementById('filterEnd').value;
         
-        container.className = Store.sortMode === 'custom' ? 'sort-custom' : '';
-        let displayOrder = [...Store.order];
+        container.innerHTML = '';
 
+        let list = [...Store.order];
         if (Store.sortMode === 'date') {
-            displayOrder.sort((a, b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
+            list.sort((a,b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
+        } else if (Store.sortMode === 'new') {
+            // Keep order as is (newest top assumed)
         }
-        // Always fav on top unless custom (fav sort logic from original)
-        displayOrder.sort((a, b) => (Store.db[b].fav ? 1 : 0) - (Store.db[a].fav ? 1 : 0));
 
-        displayOrder.forEach((id) => {
+        list.forEach(id => {
             const s = Store.db[id];
-            if (!s) return;
+            const tags = (s.tags || "").toLowerCase();
+            const title = s.title.toLowerCase();
+            const date = s.date || "";
+
+            if (q && !title.includes(q) && !tags.includes(q)) return;
+            if (start && date < start) return;
+            if (end && date > end) return;
+
+            const isComp = s.items.length > 0 && s.items.every(it => it.status === 'comp' || it.status === 'none');
             
-            // Filter Logic
-            const titleMatch = s.title.toLowerCase().includes(term);
-            const tagsMatch = s.tags ? s.tags.toLowerCase().includes(term) : false;
-            let dateMatch = true;
-            if (start || end) {
-                if (!s.date) dateMatch = false;
-                else {
-                    if (start && s.date < start) dateMatch = false;
-                    if (end && s.date > end) dateMatch = false;
-                }
-            }
+            const outer = document.createElement('div');
+            outer.className = 'swipe-container';
+            if (Store.sortMode === 'custom') outer.classList.add('sort-custom');
 
-            if ((titleMatch || tagsMatch) && dateMatch) {
-                const items = s.items || [];
-                const isSeriesComp = items.length > 0 && items.every(it => it.status === 'comp' || it.status === 'none');
-                const compMark = isSeriesComp ? '<span class="series-comp-mark">✦</span>' : '';
-                const favActive = s.fav ? 'active' : '';
-
-                const swipeWrapper = document.createElement('div');
-                swipeWrapper.className = 'swipe-container';
-                if (Store.sortMode === 'custom') {
-                    swipeWrapper.draggable = true;
-                    swipeWrapper.ondragstart = (e) => Actions.handleDragStart(e, id);
-                    swipeWrapper.ondragover = Actions.handleDragOver;
-                    swipeWrapper.ondrop = (e) => Actions.handleDrop(e, id);
-                }
-
-                // Delete Button Layer
-                const deleteBtn = document.createElement('div');
-                deleteBtn.className = 'delete-btn-overlay';
-                deleteBtn.textContent = '削除';
-                deleteBtn.onclick = (e) => { e.stopPropagation(); Actions.deleteSeries(id); };
-
-                // Card Layer
-                const card = document.createElement('div');
-                card.className = 'card';
-                
-                const tagsHtml = s.tags ? s.tags.split(/[、, ]/).filter(t => t).map(t => 
-                    `<span onclick="event.stopPropagation(); App.filterByTag('${t.trim()}')" class="tag-chip">#${t.trim()}</span>`
-                ).join('') : '';
-
-                card.innerHTML = `
-                    <div style="display:flex; align-items:flex-start;">
-                        <div class="handle">⋮⋮</div>
-                        <div style="flex:1;">
-                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                                <b style="color:var(--text-main); font-size:1rem; flex:1;">${s.title}${compMark}</b>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date || ''}</span>
-                                    <button class="fav-btn ${favActive}" onclick="Actions.toggleFavorite('${id}', event)">★</button>
-                                </div>
-                            </div>
-                            <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:4px;">${tagsHtml}</div>
+            outer.innerHTML = `
+                <div class="delete-btn-overlay" onclick="Actions.deleteSeries('${id}')">削除</div>
+                <div class="card" onclick="App.openDetail('${id}')">
+                    <div class="flex justify-between align-center">
+                        <div style="font-size:0.9rem; font-weight:bold; color:var(--text-main); flex:1;">
+                            ${s.title} ${isComp ? '<span class="series-comp-mark">✔</span>' : ''}
                         </div>
-                    </div>`;
-
-                card.onclick = (e) => {
-                    if (e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') App.openDetail(id);
-                };
-
-                Utils.attachSwipe(card, null, true);
-                
-                swipeWrapper.appendChild(deleteBtn);
-                swipeWrapper.appendChild(card);
-                container.appendChild(swipeWrapper);
-            }
-        });
-    },
-
-    itemList() {
-        const container = document.getElementById('itemListContainer');
-        container.innerHTML = "";
-        const items = Store.db[Store.currentSeriesId].items || [];
-        const seriesTitle = Store.db[Store.currentSeriesId].title;
-
-        items.forEach((item, idx) => {
-            const swipeWrapper = document.createElement('div');
-            swipeWrapper.className = 'swipe-container';
-            swipeWrapper.style.marginBottom = "15px";
-
-            const deleteBtn = document.createElement('div');
-            deleteBtn.className = 'delete-btn-overlay';
-            deleteBtn.textContent = '削除';
-            deleteBtn.onclick = (e) => { e.stopPropagation(); Actions.deleteItem(idx); };
-
-            const card = document.createElement('div');
-            card.className = 'card item-card';
-            Utils.attachSwipe(card, null, false);
-
-            const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
-            
-            // Stats Calculation
-            let ownChips = [], tradeTextArr = [], tradeNamesArr = [], targetNamesArr = [], infiniteStatusChips = [];
-            let totalOwn = 0, totalTrade = 0;
-            const list = Store.charSets[item.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
-
-            list.forEach(c => {
-                const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0, infinite:false};
-                const isTarget = (item.targets || list).includes(c);
-                totalOwn += s.own;
-                totalTrade += s.trade;
-
-                if (s.own > 0) ownChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
-                if (s.trade > 0) {
-                    tradeTextArr.push(`${c}${s.trade}`);
-                    tradeNamesArr.push(`${c}${s.trade > 1 ? s.trade : ''}`);
-                }
-                if (s.infinite) {
-                    infiniteStatusChips.push(`<span class="inf-status-chip c-${c.trim()}">${c}<span>:${s.own}</span></span>`);
-                }
-                if (isTarget) {
-                    const isMissing = (s.own === 0 && s.trade === 0);
-                    if (isMissing || s.infinite) {
-                        const displayInf = s.infinite && Store.tradeConfig.showInf;
-                        targetNamesArr.push(`${c}${displayInf ? '(∞)' : ''}`);
-                    }
-                }
-            });
-
-            // Trade Text construction
-            const prefix = Store.tradeConfig.prefix ? Store.tradeConfig.prefix + "\n" : "";
-            const suffix = Store.tradeConfig.suffix ? "\n" + Store.tradeConfig.suffix : "";
-            const copyStr = `${prefix}${seriesTitle} ${item.type}\n譲：${tradeNamesArr.join('、') || 'なし'}\n求：${targetNamesArr.join('、') || '完遂'}${suffix}`;
-
-            // Missing chips rendering
-            const missingChips = list.filter(c => 
-                (item.targets || list).includes(c) && 
-                ((item.stocks[c]?.own || 0) + (item.stocks[c]?.trade || 0) === 0 || item.stocks[c]?.infinite)
-            ).map(c => {
-                const isInf = item.stocks[c]?.infinite;
-                const isMissing = !item.stocks[c] || (item.stocks[c].own + item.stocks[c].trade === 0);
-                return `<span class="char-chip c-${c.trim()} ${isMissing ? '' : 'is-infinite-collected'}">${c}</span>`;
-            }).join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>';
-
-            card.innerHTML = `
-                <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
-                <div style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; padding-right:60px;">
-                    <div><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div>
-                    <div style="display:flex; gap:5px;">
-                        <button onclick="Actions.duplicateItem(${idx}, event)" style="background:#f0f0f0; border:none; color:var(--text-main); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">複製</button>
-                        <button onclick="event.stopPropagation(); Actions.copyTradeText(\`${copyStr}\`)" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">コピー</button>
+                        <div class="handle">≡</div>
+                    </div>
+                    <div style="margin-top:6px; display:flex; align-items:center; flex-wrap:wrap;">
+                        <span style="font-size:0.65rem; color:var(--gold); font-weight:bold; margin-right:10px;">${s.date || '日付未設定'}</span>
+                        ${(s.tags || "").split(/[,，\s]+/).filter(t=>t).map(t => `<span class="tag-chip" onclick="Actions.filterByTag('${t}'); event.stopPropagation();">#${t}</span>`).join('')}
                     </div>
                 </div>
-                <div class="inventory-grid" onclick="App.openItemEditor(${idx})">
-                    <div class="inv-box"><span class="inv-label">保管</span><div class="inv-content">${ownChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
-                    <div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content"><span class="trade-text-small">${tradeTextArr.join('<br>') || '<span style="color:#ccc;">－</span>'}</span></div></div>
-                    <div class="inv-box"><span class="inv-label">不足</span><div class="inv-content">${missingChips}</div></div>
-                </div>
-                <div class="inv-summary-row">
-                    <div class="summary-item">保管合計<span>${totalOwn}</span></div>
-                    <div class="summary-item">譲渡合計<span>${totalTrade}</span></div>
-                    <div class="summary-item">総所有数<span>${totalOwn + totalTrade}</span></div>
-                </div>
-                <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <div class="inf-status-container">${infiniteStatusChips.join('')}</div>
-                    <span onclick="event.stopPropagation(); App.openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px; white-space:nowrap;">✨ 開封モード</span>
-                </div>`;
-            
-            swipeWrapper.appendChild(deleteBtn);
-            swipeWrapper.appendChild(card);
-            container.appendChild(swipeWrapper);
+            `;
+            container.appendChild(outer);
+            Utils.attachSwipe(outer.querySelector('.card'), null, true);
         });
-    },
-
-    editorGrid(targets) {
-        const grid = document.getElementById('editorGrid');
-        grid.innerHTML = "";
         
-        Store.activeCharList.forEach(c => {
-            if (!Store.tempStocks[c]) Store.tempStocks[c] = { own: 0, trade: 0, infinite: false };
-            const isTarget = targets.includes(c);
-            const { own, trade, infinite } = Store.tempStocks[c];
-
-            const ownClass = own > 0 ? 'qty-has' : 'qty-zero';
-            const tradeClass = trade > 0 ? 'qty-has' : 'qty-zero';
-
-            const row = document.createElement('div');
-            row.className = 'editor-row';
-            row.style.opacity = isTarget ? "1" : "0.5";
-            row.innerHTML = `
-                <div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem; position:relative;">
-                    <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="Actions.refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
-                    <button class="inf-btn ${infinite ? 'active' : ''}" onclick="Actions.toggleInfinite('${c}')" style="display:block; margin:5px auto 0;">∞</button>
-                </div>
-                <div style="display:flex; justify-content:space-around;">
-                    <div style="text-align:center;">
-                        <span style="font-size:0.6rem; color:var(--text-sub);">保管</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <button class="btn-qty" onclick="Actions.updateQty('${c}','own',-1)">-</button>
-                            <input type="number" inputmode="numeric" class="qty-display ${ownClass}" value="${own}" onchange="Actions.directInputQty('${c}','own',this.value)" onclick="this.select()">
-                            <button class="btn-qty" onclick="Actions.updateQty('${c}','own',1)">+</button>
-                        </div>
-                    </div>
-                    <div style="text-align:center;">
-                        <span style="font-size:0.6rem; color:var(--text-sub);">譲渡</span>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <button class="btn-qty" onclick="Actions.updateQty('${c}','trade',-1)">-</button>
-                            <input type="number" inputmode="numeric" class="qty-display ${tradeClass}" value="${trade}" onchange="Actions.directInputQty('${c}','trade',this.value)" onclick="this.select()">
-                            <button class="btn-qty" onclick="Actions.updateQty('${c}','trade',1)">+</button>
-                        </div>
-                    </div>
-                </div>`;
-            grid.appendChild(row);
-        });
+        if (Store.sortMode === 'custom') {
+            // Placeholder for sortable logic if needed
+        }
     },
 
     missingList() {
         const container = document.getElementById('missingListContainer');
-        container.innerHTML = "";
-        let found = false;
-        let allChars = new Set();
-        Object.values(Store.charSets).forEach(list => list.forEach(c => allChars.add(c)));
+        container.innerHTML = '';
+        let hasContent = false;
 
-        Array.from(allChars).forEach(char => {
-            let list = [];
-            Store.order.forEach(sId => {
-                (Store.db[sId].items || []).forEach((item, itemIdx) => {
-                    const charList = Store.charSets[item.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
-                    if (!charList.includes(char)) return;
-                    if (!(item.targets || charList).includes(char)) return;
+        Store.order.forEach(sId => {
+            const s = Store.db[sId];
+            s.items.forEach((item, idx) => {
+                if (item.status === 'not') {
+                    hasContent = true;
+                    const targets = item.targets || [];
+                    const missing = targets.filter(c => {
+                        const stock = item.stocks[c] || {own:0, trade:0};
+                        return (stock.own + stock.trade) === 0;
+                    });
+                    const trades = targets.filter(c => (item.stocks[c]?.trade || 0) > 0);
 
-                    const s = item.stocks[char] || { own: 0, trade: 0, infinite: false };
-                    const isMissing = (s.own === 0 && s.trade === 0);
-                    if (item.status === 'not' && (isMissing || s.infinite)) {
-                        list.push({
-                            series: Store.db[sId].title,
-                            seriesId: sId,
-                            type: item.type,
-                            itemIdx: itemIdx,
-                            isInf: s.infinite,
-                            isOwn: !isMissing
-                        });
+                    if (missing.length === 0 && trades.length === 0) return;
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style.marginBottom = '15px';
+                    
+                    let tradeStr = "";
+                    if (trades.length > 0) {
+                        const tradeNames = trades.map(c => {
+                            const count = item.stocks[c].trade;
+                            return `${c}${count > 1 ? count : ''}`;
+                        }).join('、');
+                        tradeStr = `<div class="trade-text-small" style="margin-top:8px; padding-top:8px; border-top:1px dashed var(--border-color);">
+                            譲：${tradeNames}
+                        </div>`;
                     }
-                });
+
+                    card.innerHTML = `
+                        <div class="flex justify-between">
+                            <span style="font-size:0.65rem; color:var(--gold); font-weight:bold;">${s.title}</span>
+                            <span class="status-tag st-not">未コンプ</span>
+                        </div>
+                        <div style="font-size:0.85rem; font-weight:bold; margin:5px 0 10px;">${item.type}</div>
+                        <div class="inventory-grid" onclick="Actions.jumpToEditorFromMissing('${sId}', ${idx}, '${missing[0] || ''}')">
+                            <div class="inv-box">
+                                <span class="inv-label">求</span>
+                                <div class="inv-content">
+                                    ${missing.map(c => `<span class="char-chip c-${c}">${c}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        ${tradeStr}
+                    `;
+                    container.appendChild(card);
+                }
+            });
+        });
+
+        if (!hasContent) {
+            container.innerHTML = '<div style="text-align:center; padding:50px; color:var(--text-sub); font-size:0.8rem;">未コンプのアイテムはありません</div>';
+        }
+    },
+
+    itemList() {
+        const container = document.getElementById('itemListContainer');
+        const s = Store.db[Store.currentSeriesId];
+        container.innerHTML = '';
+
+        if (!s) return;
+
+        s.items.forEach((item, idx) => {
+            const targets = item.targets || [];
+            const collected = targets.filter(c => {
+                const stock = item.stocks[c] || {own:0, trade:0};
+                return (stock.own + stock.trade) >= 1;
             });
 
-            if (list.length > 0) {
-                found = true;
-                const group = document.createElement('div');
-                group.className = 'card';
-                group.style.marginBottom = "15px";
-                group.innerHTML = `
-                    <div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;">
-                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div>
-                        <span style="color:var(--gold-light);">▼</span>
-                    </div>
-                    <div style="display:none; margin-top:10px;">
-                        ${list.map(li => `
-                            <div onclick="App.jumpToEditorFromMissing('${li.seriesId}', ${li.itemIdx}, '${char}')" style="font-size:0.75rem; padding:12px 0; border-top:1px solid #eee; ${li.isOwn ? 'opacity:0.5;' : ''} cursor:pointer;">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type} ${li.isInf ? '<span style="color:var(--gold); font-size:0.6rem;">(∞)</span>' : ''}</span>
-                                    <span style="color:var(--gold-light); font-size:0.8rem;">✎</span>
-                                </div>
-                            </div>`).join('')}
-                    </div>`;
-                container.appendChild(group);
-            }
-        });
-        if (!found) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px;">不足はありません。</div>`;
-    },
-
-    unboxingGrid() {
-        const grid = document.getElementById('unboxingGrid');
-        grid.innerHTML = "";
-        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
-        const list = Store.charSets[item.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
-        let tOwn = 0, tTrade = 0;
-
-        list.forEach(c => {
-            const s = item.stocks[c] || { own: 0, trade: 0, infinite: false };
-            tOwn += s.own; tTrade += s.trade;
-
-            const panel = document.createElement('div');
-            panel.className = `unboxing-panel c-${c.trim()}`;
-            panel.innerHTML = `
-                <div class="ub-char-label">${c}</div>
-                <div class="ub-area ub-area-left"><span class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div>
-                <div class="ub-area ub-area-right"><span class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`;
+            const card = document.createElement('div');
+            card.className = 'swipe-container';
             
-            // Interaction Handlers (Long press logic)
-            const attachHandler = (area, type) => {
-                let timer;
-                area.onpointerdown = (e) => { e.preventDefault(); timer = setTimeout(() => { Actions.updateUnboxingCount(c, type, -1); timer = null; }, 500); };
-                area.onpointerup = (e) => { e.preventDefault(); if(timer) { clearTimeout(timer); Actions.updateUnboxingCount(c, type, 1); } };
-                area.oncontextmenu = (e) => e.preventDefault();
-            };
+            const stClass = item.status === 'comp' ? 'st-comp' : (item.status === 'none' ? 'st-none' : 'st-not');
+            const stText = item.status === 'comp' ? 'コンプ済' : (item.status === 'none' ? '予定なし' : '未コンプ');
 
-            attachHandler(panel.querySelector('.ub-area-left'), 'own');
-            attachHandler(panel.querySelector('.ub-area-right'), 'trade');
-            grid.appendChild(panel);
-        });
-        document.getElementById('unboxingTotalCount').innerHTML = `保管: ${tOwn} / 譲渡: ${tTrade} / 合計: ${tOwn+tTrade}`;
-    }
-};
-
-// =========================================
-// 5. App Actions (Logic)
-// =========================================
-const Actions = {
-    // --- Series ---
-    saveSeriesModal() {
-        const title = document.getElementById('msTitle').value.trim();
-        if(!title) return;
-        const id = "s" + Date.now();
-        const useTemp = document.getElementById('msUseTemplate').checked;
-        let items = [];
-        if(useTemp) Store.templates.forEach(t => items.push({ type: t, stocks: {}, targets: [...CONSTANTS.DEFAULT_CHARS], status: "not", charSetName: "デフォルト" }));
-        
-        Store.db[id] = { 
-            title, 
-            date: document.getElementById('msDate').value, 
-            tags: document.getElementById('msTags').value, 
-            items: items, 
-            fav: false 
-        };
-        Store.order.unshift(id);
-        Store.save();
-        App.closeSeriesModal();
-        App.openDetail(id);
-    },
-    deleteSeries(id) {
-        if(confirm("削除しますか？")) {
-            delete Store.db[id];
-            Store.order = Store.order.filter(oid => oid !== id);
-            Store.save();
-            Render.seriesList();
-        }
-    },
-    toggleFavorite(id, e) {
-        e.stopPropagation();
-        Store.db[id].fav = !Store.db[id].fav;
-        Store.save();
-        Render.seriesList();
-    },
-
-    // --- Items ---
-    saveItem() {
-        const type = document.getElementById('editItemType').value.trim();
-        if (!type) return alert("名前を入力してください");
-        
-        let data = {
-            type,
-            stocks: Store.tempStocks,
-            targets: Actions.getSelectedTargets(),
-            status: document.getElementById('editItemStatus').value,
-            charSetName: document.getElementById('editCharSetName').value
-        };
-        data.status = Utils.autoDetermineStatus(data);
-        
-        // Save History
-        Store.lastItem = { type: data.type, charSetName: data.charSetName, targets: data.targets };
-        Store.saveLastItem();
-
-        if (Store.currentItemIdx === null) Store.db[Store.currentSeriesId].items.push(data);
-        else Store.db[Store.currentSeriesId].items[Store.currentItemIdx] = data;
-
-        Store.save();
-        Utils.showToast("保存しました");
-        history.back();
-        document.getElementById('editorView').style.display = 'none';
-        
-        if (!Store.editorFromMissing) Render.itemList();
-        else { Store.editorFromMissing = false; Render.missingList(); }
-    },
-    deleteItem(idx) {
-        if(confirm("削除しますか？")) {
-            Store.db[Store.currentSeriesId].items.splice(idx,1);
-            Store.save();
-            Render.itemList();
-        }
-    },
-    deleteAllItems() {
-        if(confirm("全削除しますか？")) {
-            Store.db[Store.currentSeriesId].items = [];
-            Store.save();
-            Render.itemList();
-        }
-    },
-    duplicateItem(idx, e) {
-        e.stopPropagation();
-        const base = Store.db[Store.currentSeriesId].items[idx];
-        const newItem = {
-            type: base.type,
-            charSetName: base.charSetName || "デフォルト",
-            targets: JSON.parse(JSON.stringify(base.targets)),
-            stocks: {}, // reset counts
-            status: "not"
-        };
-        Store.db[Store.currentSeriesId].items.push(newItem);
-        Store.save();
-        Render.itemList();
-        Utils.showToast("複製しました");
-    },
-
-    // --- Editor Interaction ---
-    updateQty(char, key, delta) {
-        Store.tempStocks[char][key] = Math.max(0, Store.tempStocks[char][key] + delta);
-        Render.editorGrid(Actions.getSelectedTargets());
-    },
-    directInputQty(char, key, val) {
-        let n = parseInt(val);
-        if(isNaN(n) || n < 0) n = 0;
-        Store.tempStocks[char][key] = n;
-        Render.editorGrid(Actions.getSelectedTargets());
-    },
-    toggleInfinite(char) {
-        Store.tempStocks[char].infinite = !Store.tempStocks[char].infinite;
-        Render.editorGrid(Actions.getSelectedTargets());
-    },
-    getSelectedTargets() {
-        const cbs = document.querySelectorAll('#editorGrid input[type="checkbox"]');
-        let selected = [];
-        cbs.forEach((cb, i) => { if(cb.checked) selected.push(Store.activeCharList[i]); });
-        return selected;
-    },
-    refreshEditorTargets() { Render.editorGrid(Actions.getSelectedTargets()); },
-    bulkToggleTargets(s) { Render.editorGrid(s ? [...Store.activeCharList] : []); },
-    bulkIncrementOwn() {
-        Store.activeCharList.forEach(c => {
-            if(!Store.tempStocks[c]) Store.tempStocks[c] = { own: 0, trade: 0, infinite: false };
-            Store.tempStocks[c].own += 1;
-        });
-        Render.editorGrid(Actions.getSelectedTargets());
-        Utils.showToast("保管を+1しました");
-    },
-    bulkResetCounts() {
-        if(confirm("カウントをすべて削除しますがよろしいですか？")) {
-            Object.keys(Store.tempStocks).forEach(c => { Store.tempStocks[c].own = 0; Store.tempStocks[c].trade = 0; Store.tempStocks[c].infinite = false; });
-            Render.editorGrid(Actions.getSelectedTargets());
-            Utils.showToast("リセットしました");
-        }
-    },
-
-    // --- Unboxing ---
-    updateUnboxingCount(char, type, delta) {
-        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
-        if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0, infinite: false };
-        item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta);
-        
-        const oldStatus = item.status;
-        item.status = Utils.autoDetermineStatus(item);
-        if (oldStatus !== item.status) Utils.showToast(item.status === 'comp' ? "コンプリート！" : "未コンプに戻りました");
-        
-        Store.save();
-        Render.unboxingGrid();
-    },
-
-    // --- Drag & Drop ---
-    dragSrcId: null,
-    handleDragStart(e, id) {
-        if(Store.sortMode !== 'custom') return;
-        Actions.dragSrcId = id;
-        e.target.classList.add('dragging');
-    },
-    handleDragOver(e) { e.preventDefault(); },
-    handleDrop(e, targetId) {
-        e.preventDefault();
-        if(!Actions.dragSrcId || Actions.dragSrcId === targetId) return;
-        let newOrder = [...Store.order];
-        const srcIdx = newOrder.indexOf(Actions.dragSrcId);
-        const targetIdx = newOrder.indexOf(targetId);
-        newOrder.splice(srcIdx, 1);
-        newOrder.splice(targetIdx, 0, Actions.dragSrcId);
-        Store.order = newOrder;
-        Store.save();
-        Render.seriesList();
-    },
-
-    // --- Settings & Utils ---
-    saveSettings() {
-        // Parse Chars
-        const lines = document.getElementById('charSettingsInput').value.split('\n');
-        let newSets = {};
-        lines.forEach(line => {
-            const p = line.split(':');
-            if(p.length >= 2) newSets[p[0].trim()] = p[1].split(',').map(c => c.trim()).filter(c => c);
-        });
-        Store.charSets = Object.keys(newSets).length ? newSets : { "デフォルト": CONSTANTS.DEFAULT_CHARS };
-        
-        // Parse Templates
-        Store.templates = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
-        
-        // Parse Presets
-        const pLines = document.getElementById('presetSettingsInput').value.split('\n');
-        let newPresets = [];
-        pLines.forEach(l => {
-            const p = l.split(',');
-            if(p.length >= 3) newPresets.push({ name: p[0].trim(), charSet: p[1].trim(), targets: p[2].split('|').map(c => c.trim()) });
-        });
-        Store.presets = newPresets;
-
-        // Config
-        Store.tradeConfig = {
-            prefix: document.getElementById('tradePrefixInput').value,
-            suffix: document.getElementById('tradeSuffixInput').value,
-            showInf: document.getElementById('tradeShowInfMark').checked
-        };
-        Store.save();
-        location.reload();
-    },
-    exportBackup() {
-        const data = {
-            [CONSTANTS.KEYS.DB]: Store.db,
-            [CONSTANTS.KEYS.ORDER]: Store.order,
-            [CONSTANTS.KEYS.SETS]: Store.charSets,
-            [CONSTANTS.KEYS.TEMPLATES]: Store.templates,
-            [CONSTANTS.KEYS.SORT]: Store.sortMode,
-            [CONSTANTS.KEYS.TRADE]: Store.tradeConfig,
-            [CONSTANTS.KEYS.PRESETS]: Store.presets
-        };
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'}));
-        a.download=`backup.json`;
-        a.click();
-    },
-    importBackup(e) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            try {
-                const data = JSON.parse(ev.target.result);
-                if(confirm("上書きしますか？")) {
-                    localStorage.setItem(CONSTANTS.KEYS.DB, JSON.stringify(data[CONSTANTS.KEYS.DB]));
-                    localStorage.setItem(CONSTANTS.KEYS.ORDER, JSON.stringify(data[CONSTANTS.KEYS.ORDER]));
-                    localStorage.setItem(CONSTANTS.KEYS.SETS, JSON.stringify(data[CONSTANTS.KEYS.SETS] || { "デフォルト": CONSTANTS.DEFAULT_CHARS }));
-                    localStorage.setItem(CONSTANTS.KEYS.TRADE, JSON.stringify(data[CONSTANTS.KEYS.TRADE] || { prefix: "", suffix: "", showInf: true }));
-                    localStorage.setItem(CONSTANTS.KEYS.SORT, data[CONSTANTS.KEYS.SORT] || 'new');
-                    localStorage.setItem(CONSTANTS.KEYS.PRESETS, JSON.stringify(data[CONSTANTS.KEYS.PRESETS] || []));
-                    location.reload();
+            // Infinity icons
+            let infIcons = "";
+            if (Store.tradeConfig.showInf) {
+                const infs = targets.filter(c => item.stocks[c]?.infinite);
+                if (infs.length > 0) {
+                    infIcons = `<div class="inf-status-container">
+                        ${infs.map(c => `<span class="inf-status-chip c-${c}"><span>∞</span>${c}</span>`).join('')}
+                    </div>`;
                 }
-            } catch(e) { alert("無効なファイルです"); }
-        };
-        reader.readAsText(e.target.files[0]);
+            }
+
+            card.innerHTML = `
+                <div class="delete-btn-overlay" onclick="Actions.deleteItem(${idx})">削除</div>
+                <div class="card" onclick="App.openItemEditor(${idx})">
+                    <span class="status-tag ${stClass}">${stText}</span>
+                    <div style="font-size:0.9rem; font-weight:bold; margin-bottom:12px; display:flex; align-items:center;">
+                        <span style="flex:1;">${item.type}</span>
+                    </div>
+                    
+                    <div class="inventory-grid">
+                        <div class="inv-box" onclick="Actions.openUnboxing(event, ${idx})">
+                            <span class="inv-label">所有</span>
+                            <div class="inv-content">
+                                ${targets.map(c => {
+                                    const count = (item.stocks[c]?.own || 0) + (item.stocks[c]?.trade || 0);
+                                    const isInf = item.stocks[c]?.infinite && Store.tradeConfig.showInf;
+                                    if (count === 0 && !isInf) return '';
+                                    return `<span class="char-chip c-${c} ${isInf ? 'is-infinite-collected' : ''}">${c}${count > 1 ? count : ''}</span>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="inv-summary-row">
+                        ${infIcons}
+                        <div class="summary-item">COMP <span>${collected.length}/${targets.length}</span></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+            Utils.attachSwipe(card.querySelector('.card'), null, false);
+        });
     },
-    copyTradeText(text) {
-        navigator.clipboard.writeText(text).then(() => Utils.showToast("コピーしました"));
+
+    editor() {
+        const grid = document.getElementById('editorGrid');
+        grid.innerHTML = '';
+        
+        Store.activeCharList.forEach(char => {
+            const stock = Store.tempStocks[char] || { own: 0, trade: 0, infinite: false };
+            const row = document.createElement('div');
+            row.className = 'editor-row';
+            row.innerHTML = `
+                <div class="char-chip c-${char}" style="margin:0; text-align:center; width:100%; padding:10px 0; font-size:0.8rem;">${char}</div>
+                <div class="flex align-center justify-between">
+                    <div class="flex align-center gap-10">
+                        <button class="btn-qty" onclick="Actions.stepQty('${char}', -1)">−</button>
+                        <input type="number" class="qty-display ${stock.own + stock.trade > 0 ? 'qty-has' : 'qty-zero'}" 
+                            value="${stock.own + stock.trade}" 
+                            onchange="Actions.updateQty('${char}', this.value)">
+                        <button class="btn-qty" onclick="Actions.stepQty('${char}', 1)">＋</button>
+                    </div>
+                    <button class="inf-btn ${stock.infinite ? 'active' : ''}" onclick="Actions.toggleInf('${char}')">∞</button>
+                </div>
+            `;
+            grid.appendChild(row);
+        });
     }
 };
 
 // =========================================
-// 6. Main App Controller
+// 6. Controller Logic (App & Actions)
 // =========================================
 const App = {
-    init() {
-        Store.init();
+    async init() {
+        await Store.init();
+        this.updateSettingsUI();
         Render.seriesList();
         
-        // SW Register
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW fail', err));
-        }
-
         // Hide Splash
         setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            if (splash) {
-                splash.style.opacity = '0';
-                setTimeout(() => splash.remove(), 500);
-            }
-        }, 600);
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 500);
+        }, 800);
     },
 
-    // Navigation & Routing
     switchMainTab(tab) {
+        document.getElementById('seriesView').style.display = (tab === 'list') ? 'block' : 'none';
+        document.getElementById('missingView').style.display = (tab === 'missing') ? 'block' : 'none';
+        document.getElementById('mainFab').style.display = (tab === 'list') ? 'flex' : 'none';
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(`tab-${tab}`).classList.add('active');
-        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
-        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
-        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+        document.getElementById('tab-' + tab).classList.add('active');
+        if (tab === 'list') Render.seriesList();
         if (tab === 'missing') Render.missingList();
+    },
+
+    openSeriesModal() {
+        document.getElementById('seriesModal').style.display = 'flex';
+        document.getElementById('msTitle').focus();
+    },
+    closeSeriesModal() {
+        document.getElementById('seriesModal').style.display = 'none';
+        document.getElementById('msTitle').value = '';
+        document.getElementById('msDate').value = '';
+        document.getElementById('msTags').value = '';
     },
 
     openDetail(id) {
         Store.currentSeriesId = id;
         document.getElementById('detailHeaderTitle').textContent = Store.db[id].title;
         document.getElementById('detailView').style.display = 'block';
-        history.pushState({view: 'detail', seriesId: id}, '');
         Render.itemList();
+        window.history.pushState({view: 'detail'}, '');
     },
     closeDetail() {
         document.getElementById('detailView').style.display = 'none';
-        if (history.state && history.state.view === 'detail') history.back();
         Render.seriesList();
     },
 
     openItemEditor(idx = null, fromMissing = false) {
         Store.currentItemIdx = idx;
         Store.editorFromMissing = fromMissing;
+        const s = Store.db[Store.currentSeriesId];
         
-        // Restore/Preset UI logic
-        const presetArea = document.getElementById('presetArea');
-        const historyBanner = document.getElementById('historyBanner');
-        
-        historyBanner.style.display = (idx === null && Store.lastItem) ? 'flex' : 'none';
-        
-        if (idx === null && Store.presets.length > 0) {
-            presetArea.style.display = 'block';
-            document.getElementById('presetChips').innerHTML = Store.presets.map((p, i) => 
-                `<span class="preset-chip" onclick="App.applyPreset(${i})">${p.name}</span>`
-            ).join('');
+        // Character set dropdown
+        const sel = document.getElementById('editCharSetName');
+        sel.innerHTML = Object.keys(Store.charSets).map(k => `<option value="${k}">${k}</option>`).join('');
+
+        if (idx !== null) {
+            const it = s.items[idx];
+            document.getElementById('editItemType').value = it.type;
+            document.getElementById('editItemStatus').value = it.status;
+            sel.value = it.charSet || "デフォルト";
+            Store.activeCharList = Store.charSets[sel.value] || [];
+            Store.tempStocks = JSON.parse(JSON.stringify(it.stocks));
+            document.getElementById('presetArea').style.display = 'none';
         } else {
-            presetArea.style.display = 'none';
+            document.getElementById('editItemType').value = '';
+            document.getElementById('editItemStatus').value = 'not';
+            sel.value = "デフォルト";
+            Store.activeCharList = Store.charSets["デフォルト"] || [];
+            Store.tempStocks = {};
+            this.renderPresets();
         }
 
-        // Populate Fields
-        const setSelect = document.getElementById('editCharSetName');
-        setSelect.innerHTML = Object.keys(Store.charSets).map(n => `<option value="${n}">${n}</option>`).join('');
-        
-        const item = idx !== null ? Store.db[Store.currentSeriesId].items[idx] : 
-            { type: "", stocks: {}, targets: [], status: "not", charSetName: "デフォルト" };
+        // History banner
+        document.getElementById('historyBanner').style.display = (idx === null && Store.lastItem) ? 'flex' : 'none';
 
-        document.getElementById('editItemType').value = item.type;
-        document.getElementById('editItemStatus').value = item.status || "not";
-        document.getElementById('editCharSetName').value = item.charSetName || "デフォルト";
-        
-        Store.tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
-        Store.activeCharList = Store.charSets[document.getElementById('editCharSetName').value] || CONSTANTS.DEFAULT_CHARS;
-        
-        Render.editorGrid(item.targets && item.targets.length > 0 ? item.targets : [...Store.activeCharList]);
-        
         document.getElementById('editorView').style.display = 'block';
-        history.pushState({view: 'editor'}, '');
+        Render.editor();
+        window.history.pushState({view: 'editor'}, '');
     },
+
     closeEditor() {
         document.getElementById('editorView').style.display = 'none';
-        if (history.state && history.state.view === 'editor') history.back();
-        if (Store.editorFromMissing) { Store.editorFromMissing = false; Render.missingList(); }
-    },
-
-    // Helper Actions
-    applyHistory() {
-        if (!Store.lastItem) return;
-        document.getElementById('editItemType').value = Store.lastItem.type;
-        document.getElementById('editCharSetName').value = Store.lastItem.charSetName;
-        Store.activeCharList = Store.charSets[Store.lastItem.charSetName] || CONSTANTS.DEFAULT_CHARS;
-        Store.tempStocks = {};
-        Render.editorGrid(Store.lastItem.targets);
-        Utils.showToast("履歴を適用しました");
-    },
-    applyPreset(idx) {
-        const p = Store.presets[idx];
-        document.getElementById('editItemType').value = p.name;
-        document.getElementById('editCharSetName').value = p.charSet;
-        Store.activeCharList = Store.charSets[p.charSet] || CONSTANTS.DEFAULT_CHARS;
-        Store.tempStocks = {};
-        Render.editorGrid(p.targets);
-        Utils.showToast(`プリセット: ${p.name} を適用`);
-    },
-    changeCharSet(setName) {
-        Store.activeCharList = Store.charSets[setName] || CONSTANTS.DEFAULT_CHARS;
-        Render.editorGrid([...Store.activeCharList]);
-    },
-    
-    // Modals
-    openSeriesModal() {
-        document.getElementById('msTitle').value = "";
-        document.getElementById('seriesModal').style.display = 'flex';
-    },
-    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
-    
-    openUnboxing(idx) {
-        Store.currentItemIdx = idx;
-        document.getElementById('unboxingTitle').textContent = Store.db[Store.currentSeriesId].items[idx].type;
-        Render.unboxingGrid();
-        document.getElementById('unboxingModal').style.display = 'flex';
-    },
-    closeUnboxing() {
-        document.getElementById('unboxingModal').style.display = 'none';
-        Render.itemList();
-    },
-
-    toggleSettings(s) {
-        const panel = document.getElementById('settingsPanel');
-        const overlay = document.getElementById('settingsOverlay');
-        overlay.style.display = s ? 'block' : 'none';
-        panel.style.right = s ? '0' : '-85%';
-
-        if(s) {
-            document.getElementById('charSettingsInput').value = Object.keys(Store.charSets).map(n => `${n}:${Store.charSets[n].join(',')}`).join('\n');
-            document.getElementById('tempSettingsInput').value = Store.templates.join('\n');
-            document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix || "";
-            document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix || "";
-            document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf !== false;
-            document.getElementById('presetSettingsInput').value = Store.presets.map(p => `${p.name},${p.charSet},${p.targets.join('|')}`).join('\n');
+        if (Store.editorFromMissing) {
+            Store.editorFromMissing = false;
+            Render.missingList();
+        } else {
+            Render.itemList();
         }
     },
 
-    // Sort & Filter UI
+    renderPresets() {
+        const area = document.getElementById('presetArea');
+        const container = document.getElementById('presetChips');
+        container.innerHTML = '';
+        if (Store.presets.length === 0) {
+            area.style.display = 'none';
+            return;
+        }
+        area.style.display = 'block';
+        Store.presets.forEach(p => {
+            const chip = document.createElement('div');
+            chip.className = 'preset-chip';
+            chip.textContent = p.name;
+            chip.onclick = () => Actions.applyPreset(p);
+            container.appendChild(chip);
+        });
+    },
+
+    changeCharSet(setName) {
+        Store.activeCharList = Store.charSets[setName] || [];
+        Render.editor();
+    },
+
+    applyHistory() {
+        if (!Store.lastItem) return;
+        const it = Store.lastItem;
+        document.getElementById('editItemType').value = it.type;
+        document.getElementById('editCharSetName').value = it.charSet;
+        this.changeCharSet(it.charSet);
+        Store.tempStocks = JSON.parse(JSON.stringify(it.stocks));
+        Render.editor();
+        Utils.showToast("履歴を復元しました");
+    },
+
+    toggleSettings(show) {
+        const panel = document.getElementById('settingsPanel');
+        const overlay = document.getElementById('settingsOverlay');
+        if (show) {
+            overlay.style.display = 'block';
+            panel.style.right = '0';
+        } else {
+            overlay.style.display = 'none';
+            panel.style.right = '-85%';
+        }
+    },
+
+    updateSettingsUI() {
+        document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix;
+        document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix;
+        document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf;
+
+        const charStr = Object.entries(Store.charSets).map(([k,v]) => `${k}:${v.join(',')}`).join('\n');
+        document.getElementById('charSettingsInput').value = charStr;
+
+        const presetStr = Store.presets.map(p => `${p.name},${p.charSet},${p.targets.join('|')}`).join('\n');
+        document.getElementById('presetSettingsInput').value = presetStr;
+
+        document.getElementById('tempSettingsInput').value = Store.templates.join(',');
+    },
+
     setSortMode(mode) {
         Store.sortMode = mode;
         document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`sort-${mode}`).classList.add('active');
+        document.getElementById('sort-' + mode).classList.add('active');
         Store.save();
         Render.seriesList();
     },
+
     toggleDateFilter() {
         const p = document.getElementById('dateFilterPanel');
-        p.style.display = p.style.display === 'none' ? 'block' : 'none';
-    },
-    clearDateFilter() {
-        document.getElementById('filterStart').value = "";
-        document.getElementById('filterEnd').value = "";
-        Render.seriesList();
-    },
-    filterByTag(t) {
-        document.getElementById('searchBar').value = t;
-        Render.seriesList();
-        window.scrollTo({top:0, behavior:'smooth'});
+        p.style.display = (p.style.display === 'none') ? 'block' : 'none';
     },
 
-    // Deep Link Logic
+    clearDateFilter() {
+        document.getElementById('filterStart').value = '';
+        document.getElementById('filterEnd').value = '';
+        Render.seriesList();
+    },
+
+    openUnboxing(e, idx) {
+        e.stopPropagation();
+        const it = Store.db[Store.currentSeriesId].items[idx];
+        Store.currentItemIdx = idx;
+        Store.tempStocks = JSON.parse(JSON.stringify(it.stocks));
+        Store.activeCharList = Store.charSets[it.charSet || "デフォルト"] || [];
+        
+        document.getElementById('unboxingTitle').textContent = it.type;
+        const grid = document.getElementById('unboxingGrid');
+        grid.innerHTML = '';
+
+        Store.activeCharList.forEach(char => {
+            const stock = Store.tempStocks[char] || {own:0, trade:0};
+            const panel = document.createElement('div');
+            panel.className = 'unboxing-panel';
+            panel.innerHTML = `
+                <div class="ub-char-label">${char}</div>
+                <div class="ub-area ub-area-left" id="ub-own-${char}">
+                    <div class="unboxing-count-badge ${stock.own>0?'has-count':'is-zero'}">${stock.own}</div>
+                    <div style="font-size:0.55rem; color:var(--text-sub);">保管</div>
+                </div>
+                <div class="ub-area ub-area-right" id="ub-trade-${char}">
+                    <div class="unboxing-count-badge ${stock.trade>0?'has-count':'is-zero'}">${stock.trade}</div>
+                    <div style="font-size:0.55rem; color:var(--text-sub);">譲渡</div>
+                </div>
+            `;
+            grid.appendChild(panel);
+
+            // Add click events
+            this.attachUnboxingEvents(panel.querySelector('.ub-area-left'), char, 'own');
+            this.attachUnboxingEvents(panel.querySelector('.ub-area-right'), char, 'trade');
+        });
+
+        this.updateUnboxingTotal();
+        document.getElementById('unboxingModal').style.display = 'flex';
+    },
+
+    attachUnboxingEvents(el, char, key) {
+        let timer;
+        const updateUI = () => {
+            const badge = el.querySelector('.unboxing-count-badge');
+            const val = Store.tempStocks[char][key];
+            badge.textContent = val;
+            badge.className = `unboxing-count-badge ${val>0?'has-count':'is-zero'}`;
+            this.updateUnboxingTotal();
+        };
+
+        el.onpointerdown = (e) => {
+            timer = setTimeout(() => {
+                if(Store.tempStocks[char][key] > 0) {
+                    Store.tempStocks[char][key]--;
+                    updateUI();
+                    if (window.navigator.vibrate) navigator.vibrate(10);
+                }
+                timer = null;
+            }, 600);
+        };
+        el.onpointerup = () => {
+            if(timer) {
+                clearTimeout(timer);
+                if(!Store.tempStocks[char]) Store.tempStocks[char] = {own:0, trade:0, infinite:false};
+                Store.tempStocks[char][key]++;
+                updateUI();
+            }
+        };
+    },
+
+    updateUnboxingTotal() {
+        let total = 0;
+        Object.values(Store.tempStocks).forEach(s => total += (s.own + s.trade));
+        document.getElementById('unboxingTotalCount').textContent = `合計：${total} 点`;
+    },
+
+    async closeUnboxing() {
+        const it = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        it.stocks = Store.tempStocks;
+        it.status = Utils.autoDetermineStatus(it);
+        await Store.save();
+        document.getElementById('unboxingModal').style.display = 'none';
+        Render.itemList();
+    }
+};
+
+const Actions = {
+    async saveSeriesModal() {
+        const title = document.getElementById('msTitle').value.trim();
+        const date = document.getElementById('msDate').value;
+        const tags = document.getElementById('msTags').value.trim();
+        const useTemp = document.getElementById('msUseTemplate').checked;
+
+        if (!title) return alert("シリーズ名を入力してください");
+
+        const id = 's_' + Date.now();
+        const items = [];
+        if (useTemp) {
+            Store.templates.forEach(t => {
+                items.push({
+                    type: t, status: 'not', charSet: "デフォルト",
+                    targets: [...Store.charSets["デフォルト"]],
+                    stocks: {}
+                });
+            });
+        }
+
+        Store.db[id] = { title, date, tags, items };
+        Store.order.unshift(id);
+        await Store.save();
+        App.closeSeriesModal();
+        Render.seriesList();
+    },
+
+    async deleteSeries(id) {
+        if (!confirm("このシリーズを削除しますか？")) return;
+        delete Store.db[id];
+        Store.order = Store.order.filter(i => i !== id);
+        await Store.save();
+        Render.seriesList();
+    },
+
+    async saveItem() {
+        const type = document.getElementById('editItemType').value.trim();
+        const status = document.getElementById('editItemStatus').value;
+        const charSet = document.getElementById('editCharSetName').value;
+        
+        if (!type) return alert("アイテム名を入力してください");
+
+        const targets = Store.activeCharList.filter(c => {
+            const s = Store.tempStocks[c];
+            return s && (s.own > 0 || s.trade > 0 || s.infinite);
+        });
+
+        const newItem = { type, status, charSet, targets, stocks: Store.tempStocks };
+        newItem.status = Utils.autoDetermineStatus(newItem);
+
+        const s = Store.db[Store.currentSeriesId];
+        if (Store.currentItemIdx !== null) {
+            s.items[Store.currentItemIdx] = newItem;
+        } else {
+            s.items.push(newItem);
+        }
+
+        Store.lastItem = { type, charSet, stocks: Store.tempStocks };
+        await Store.save();
+        await Store.saveLastItem();
+        App.closeEditor();
+    },
+
+    async deleteItem(idx) {
+        if (!confirm("このアイテムを削除しますか？")) return;
+        Store.db[Store.currentSeriesId].items.splice(idx, 1);
+        await Store.save();
+        Render.itemList();
+    },
+
+    async deleteAllItems() {
+        if (!confirm("このシリーズの全アイテムを削除しますか？")) return;
+        Store.db[Store.currentSeriesId].items = [];
+        await Store.save();
+        Render.itemList();
+    },
+
+    stepQty(char, delta) {
+        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
+        let current = Store.tempStocks[char].own + Store.tempStocks[char].trade;
+        let next = Math.max(0, current + delta);
+        Store.tempStocks[char].own = next; 
+        Store.tempStocks[char].trade = 0; 
+        Render.editor();
+    },
+
+    updateQty(char, val) {
+        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
+        Store.tempStocks[char].own = Math.max(0, parseInt(val) || 0);
+        Store.tempStocks[char].trade = 0;
+        Render.editor();
+    },
+
+    toggleInf(char) {
+        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
+        Store.tempStocks[char].infinite = !Store.tempStocks[char].infinite;
+        Render.editor();
+    },
+
+    applyPreset(p) {
+        document.getElementById('editItemType').value = p.name;
+        document.getElementById('editCharSetName').value = p.charSet;
+        App.changeCharSet(p.charSet);
+        Store.tempStocks = {};
+        p.targets.forEach(c => {
+            Store.tempStocks[c] = { own: 1, trade: 0, infinite: false };
+        });
+        Render.editor();
+        Utils.showToast("プリセットを適用しました");
+    },
+
+    async saveSettings() {
+        Store.tradeConfig.prefix = document.getElementById('tradePrefixInput').value;
+        Store.tradeConfig.suffix = document.getElementById('tradeSuffixInput').value;
+        Store.tradeConfig.showInf = document.getElementById('tradeShowInfMark').checked;
+
+        const charLines = document.getElementById('charSettingsInput').value.split('\n');
+        const newSets = {};
+        charLines.forEach(l => {
+            const [name, list] = l.split(':');
+            if (name && list) newSets[name.trim()] = list.split(',').map(n => n.trim());
+        });
+        if (Object.keys(newSets).length > 0) Store.charSets = newSets;
+
+        const presetLines = document.getElementById('presetSettingsInput').value.split('\n');
+        Store.presets = presetLines.map(l => {
+            const [name, set, targs] = l.split(',');
+            if (!name || !set || !targs) return null;
+            return { name: name.trim(), charSet: set.trim(), targets: targs.split('|').map(n => n.trim()) };
+        }).filter(p => p);
+
+        Store.templates = document.getElementById('tempSettingsInput').value.split(',').map(t => t.trim()).filter(t => t);
+
+        await Store.save();
+        Utils.showToast("設定を保存しました");
+        location.reload();
+    },
+
     jumpToEditorFromMissing(sId, itemIdx, charName) {
         Store.currentSeriesId = sId;
         App.openItemEditor(itemIdx, true);
@@ -1417,6 +1403,87 @@ const App = {
                 }
             }
         }, 300);
+    },
+
+    filterByTag(t) {
+        document.getElementById('searchBar').value = t;
+        Render.seriesList();
+        window.scrollTo({top:0, behavior:'smooth'});
+    },
+
+    bulkToggleTargets(isSelect) {
+        Store.activeCharList.forEach(char => {
+            if (isSelect) {
+                if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 1, trade: 0, infinite: false };
+                else if (Store.tempStocks[char].own === 0) Store.tempStocks[char].own = 1;
+            } else {
+                if (Store.tempStocks[char]) {
+                    Store.tempStocks[char].own = 0;
+                    Store.tempStocks[char].trade = 0;
+                    Store.tempStocks[char].infinite = false;
+                }
+            }
+        });
+        Render.editor();
+    },
+
+    bulkIncrementOwn() {
+        Store.activeCharList.forEach(char => {
+            if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 1, trade: 0, infinite: false };
+            else Store.tempStocks[char].own++;
+        });
+        Render.editor();
+    },
+
+    bulkResetCounts() {
+        if (!confirm("全ての個数を0にしますか？")) return;
+        Store.activeCharList.forEach(char => {
+            if (Store.tempStocks[char]) {
+                Store.tempStocks[char].own = 0;
+                Store.tempStocks[char].trade = 0;
+            }
+        });
+        Render.editor();
+    },
+
+    exportBackup() {
+        const data = {
+            db: Store.db,
+            order: Store.order,
+            charSets: Store.charSets,
+            templates: Store.templates,
+            presets: Store.presets,
+            tradeConfig: Store.tradeConfig
+        };
+        const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `collection_archive_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+    },
+
+    async importBackup(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            try {
+                const data = JSON.parse(event.target.result);
+                Store.db = data.db || {};
+                Store.order = data.order || [];
+                Store.charSets = data.charSets || {};
+                Store.templates = data.templates || [];
+                Store.presets = data.presets || [];
+                Store.tradeConfig = data.tradeConfig || {};
+                await Store.save();
+                alert("読み込みが完了しました");
+                location.reload();
+            } catch (err) {
+                alert("バックアップファイルの形式が正しくありません");
+            }
+        };
+        reader.readAsText(file);
     }
 };
 
@@ -1432,12 +1499,11 @@ window.onpopstate = function(e) {
             Store.editorFromMissing = false;
             Render.missingList();
         }
-    } else if (detail.style.display === 'block' && state.view !== 'detail') {
+    } else if (detail.style.display === 'block') {
         detail.style.display = 'none';
         Render.seriesList();
     }
 };
-
 </script>
 </body>
 </html>
