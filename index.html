@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>COLLECTION ARCHIVE v4.0.0 Pro</title>
+    <title>COLLECTION ARCHIVE</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#c5a059">
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <style>
+        /* =========================================
+           1. Variables & Reset
+           ========================================= */
         :root {
             --bg-color: #fefaf9;
             --card-bg: #ffffff;
@@ -23,12 +26,134 @@
             --trade-text: #607d8b;
             --danger: #e53935;
             --safe-bottom: env(safe-area-inset-bottom);
+            --safe-top: env(safe-area-inset-top);
         }
 
-        /* キャラクターチップ & 開封モード用カラー定義 */
-        .char-chip { font-size: 0.75rem; padding: 4px 10px; border-radius: 8px; margin-right: 6px; margin-bottom: 6px; display: inline-block; font-weight: bold; border: 1px solid rgba(0,0,0,0.03); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { overflow-x: hidden; width: 100%; position: relative; overscroll-behavior-y: none; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: calc(120px + var(--safe-bottom));
+            -webkit-font-smoothing: antialiased;
+            touch-action: manipulation;
+        }
+        button { cursor: pointer; outline: none; font-family: inherit; }
+        input, select, textarea { outline: none; font-family: inherit; }
+
+        /* =========================================
+           2. Layout & Containers
+           ========================================= */
+        .container { padding: 15px; max-width: 600px; margin: auto; }
+        .full-view {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 200; overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: white; width: 95%; max-width: 450px; padding: 15px;
+            border-radius: 20px; max-height: 95vh; overflow-y: auto;
+        }
+
+        /* =========================================
+           3. Headers & Navigation
+           ========================================= */
+        header {
+            background: var(--card-bg); padding: var(--safe-top) 15px 15px;
+            text-align: center; border-bottom: 1px solid var(--gold-light);
+            position: sticky; top: 0; z-index: 100;
+        }
+        header h1 {
+            margin: 15px 0 0; font-size: 0.85rem; letter-spacing: 4px;
+            color: var(--gold); font-weight: 600;
+        }
+        .header-btn-right {
+            position: absolute; right: 15px; top: calc(15px + var(--safe-top));
+            background: none; border: none; font-size: 1.4rem; color: var(--gold);
+        }
+        .nav-tabs {
+            display: flex; background: var(--card-bg); position: sticky;
+            top: 58px; z-index: 90; border-bottom: 1px solid var(--border-color);
+        }
+        .nav-tab {
+            flex: 1; padding: 15px; text-align: center; font-size: 0.8rem;
+            color: var(--text-sub); cursor: pointer; letter-spacing: 2px; transition: 0.2s;
+        }
+        .nav-tab.active {
+            color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold;
+        }
+        .view-header {
+            background: var(--card-bg); padding: var(--safe-top) 15px 15px;
+            display: flex; align-items: center; border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 210; height: 50px;
+        }
+        .view-header-title {
+            flex: 1; text-align: center; font-weight: bold; color: var(--text-main);
+            font-size: 0.9rem; white-space: nowrap; overflow: hidden;
+            text-overflow: ellipsis; padding: 0 10px;
+        }
+
+        /* =========================================
+           4. Components: Cards & Swipe
+           ========================================= */
+        .swipe-container {
+            position: relative; margin-bottom: 15px; overflow: hidden;
+            border-radius: 20px; touch-action: pan-y; background: transparent;
+        }
+        .swipe-container.dragging { opacity: 0.5; }
+        .card {
+            background: var(--card-bg); padding: 20px;
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08);
+            border: 1px solid rgba(197, 160, 89, 0.1);
+            position: relative; z-index: 2; width: 100%; border-radius: 20px;
+            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+            will-change: transform; touch-action: pan-y;
+        }
+        .card.swiping { transition: none; }
+        .delete-btn-overlay {
+            position: absolute; top: 0; right: 0; width: 100px; height: 100%;
+            background: var(--danger); color: white; display: flex;
+            align-items: center; justify-content: center; font-weight: bold;
+            font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0;
+        }
+
+        /* =========================================
+           5. Components: Chips & Status
+           ========================================= */
+        .char-chip {
+            font-size: 0.75rem; padding: 4px 10px; border-radius: 8px;
+            margin-right: 6px; margin-bottom: 6px; display: inline-block;
+            font-weight: bold; border: 1px solid rgba(0,0,0,0.03);
+        }
         .char-chip.is-infinite-collected { opacity: 0.4; transform: scale(0.9); }
-        
+        .tag-chip {
+            font-size: 0.65rem; background: var(--gold-light); color: var(--text-main);
+            padding: 4px 10px; border-radius: 8px; margin-right: 6px;
+            font-weight: bold; cursor: pointer; display: inline-block;
+            transition: 0.2s;
+        }
+        .tag-chip:active { opacity: 0.6; }
+        .status-tag {
+            position: absolute; top: 0; right: 0; font-size: 0.65rem;
+            padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold;
+        }
+        .st-comp { background: #fce4ec; color: var(--dark-pink); }
+        .st-not { background: #f5f5f5; color: #999; }
+        .st-none { background: transparent; color: #ddd; border: 1px solid #eee; }
+        .preset-chip {
+            display: inline-block; background: var(--gold-light); color: var(--gold);
+            padding: 8px 12px; border-radius: 12px; font-size: 0.75rem;
+            font-weight: bold; margin: 4px; cursor: pointer;
+        }
+
+        /* Character Colors */
         .c-default { background: #eee; color: #666; }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
         .c-是国 { background: #000000 !important; color: #ffffff !important; }
@@ -45,149 +170,243 @@
         .c-不動 { background: #ffe082 !important; color: #ff8f00 !important; }
         .c-殿 { background: #f1f8e9 !important; color: #689f38 !important; border: 1px solid #dcedc8 !important; }
 
-        .tag-chip { font-size: 0.65rem; background: var(--gold-light); color: var(--text-main); padding: 4px 10px; border-radius: 8px; margin-right: 6px; font-weight: bold; cursor: pointer; display: inline-block; border: none; transition: 0.2s; }
-        .tag-chip:active { opacity: 0.6; }
-
-        html, body { overflow-x: hidden; width: 100%; position: relative; overscroll-behavior-y: none; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding-bottom: calc(120px + var(--safe-bottom)); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
-
-        header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; text-align: center; border-bottom: 1px solid var(--gold-light); position: sticky; top: 0; z-index: 100; }
-        header h1 { margin: 15px 0 0; font-size: 0.85rem; letter-spacing: 4px; color: var(--gold); font-weight: 600; }
-
-        .nav-tabs { display: flex; background: var(--card-bg); position: sticky; top: 58px; z-index: 90; border-bottom: 1px solid var(--border-color); }
-        .nav-tab { flex: 1; padding: 15px; text-align: center; font-size: 0.8rem; color: var(--text-sub); cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .nav-tab.active { color: var(--gold); border-bottom: 3px solid var(--gold); font-weight: bold; }
-
-        .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box; }
-        
-        .swipe-container { position: relative; margin-bottom: 15px; overflow: hidden; border-radius: 20px; touch-action: pan-y; background: transparent; }
-        .swipe-container.dragging { opacity: 0.5; }
-        
-        .card { 
-            background: var(--card-bg); padding: 20px; box-shadow: 0 4px 12px rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.1); position: relative; z-index: 2; 
-            box-sizing: border-box; width: 100%; border-radius: 20px; transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); will-change: transform; touch-action: pan-y;
+        /* =========================================
+           6. Components: Inventory Grid
+           ========================================= */
+        .inventory-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+            margin-top: 12px; cursor: pointer;
         }
-        
-        .card.swiping { transition: none; }
-
-        .delete-btn-overlay { position: absolute; top: 0; right: 0; width: 100px; height: 100%; background: var(--danger); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0; }
-        
-        #searchBar { border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; background: #fff; font-size: 16px; width: 100%; box-sizing: border-box; outline: none; }
-        .status-tag { position: absolute; top: 0; right: 0; font-size: 0.65rem; padding: 4px 12px; border-bottom-left-radius: 15px; font-weight: bold; }
-        .st-comp { background: #fce4ec; color: var(--dark-pink); }
-        .st-not { background: #f5f5f5; color: #999; }
-        .st-none { background: transparent; color: #ddd; border: 1px solid #eee; }
-
-        .inventory-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; cursor: pointer; }
-        .inv-box { background: #fafafa; border: 1px solid #f0f0f0; border-radius: 12px; padding: 8px 4px; text-align: center; min-height: 70px; display: flex; flex-direction: column; pointer-events: none; }
-        .inv-label { font-size: 0.6rem; font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block; }
-        .inv-content { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; flex: 1; align-items: center; }
-        .inv-content .char-chip { font-size: 0.6rem; padding: 2px 5px; margin-right: 2px; margin-bottom: 2px; }
-        
-        .inv-summary-row { display: flex; justify-content: space-around; margin-top: 8px; padding: 6px 10px; background: #fdfaf5; border-radius: 10px; border: 1px dashed var(--gold-light); }
+        .inv-box {
+            background: #fafafa; border: 1px solid #f0f0f0; border-radius: 12px;
+            padding: 8px 4px; text-align: center; min-height: 70px;
+            display: flex; flex-direction: column; pointer-events: none;
+        }
+        .inv-label {
+            font-size: 0.6rem; font-weight: bold; color: var(--gold); margin-bottom: 6px; display: block;
+        }
+        .inv-content {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 2px;
+            flex: 1; align-items: center;
+        }
+        .inv-content .char-chip {
+            font-size: 0.6rem; padding: 2px 5px; margin-right: 2px; margin-bottom: 2px;
+        }
+        .inv-summary-row {
+            display: flex; justify-content: space-around; margin-top: 8px;
+            padding: 6px 10px; background: #fdfaf5; border-radius: 10px;
+            border: 1px dashed var(--gold-light);
+        }
         .summary-item { font-size: 0.65rem; color: var(--text-main); font-weight: bold; }
         .summary-item span { color: var(--gold); font-size: 0.75rem; margin-left: 2px; }
+        .trade-text-small {
+            font-size: 0.65rem; color: var(--trade-text); word-break: break-all;
+            font-weight: bold; line-height: 1.2;
+        }
+        .inf-status-container {
+            display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex: 1; margin-right: 10px;
+        }
+        .inf-status-chip {
+            font-size: 0.6rem; padding: 2px 6px; border-radius: 6px;
+            font-weight: bold; display: flex; align-items: center; gap: 3px;
+        }
+        .inf-status-chip span { font-size: 0.7rem; opacity: 0.8; }
 
-        .trade-text-small { font-size: 0.65rem; color: var(--trade-text); word-break: break-all; font-weight: bold; line-height: 1.2; }
-        .item-card { transition: background 0.2s; }
-
-        .full-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 200; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        .view-header { background: var(--card-bg); padding: env(safe-area-inset-top) 15px 15px; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 210; height: 50px; }
-        
-        .editor-row { display: grid; grid-template-columns: 80px 1fr; gap: 10px; align-items: center; padding: 15px; border-radius: 16px; margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color); }
-        .btn-qty { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gold-light); background: #fff; font-size: 1.2rem; color: var(--gold); display: flex; align-items: center; justify-content: center; }
-        
-        .qty-display { width: 40px; border: none; border-bottom: 1px solid var(--gold-light); background: transparent; text-align: center; font-size: 1rem; outline: none; padding: 2px 0; -moz-appearance: textfield; transition: 0.2s; }
+        /* =========================================
+           7. Components: Editor
+           ========================================= */
+        .editor-row {
+            display: grid; grid-template-columns: 80px 1fr; gap: 10px;
+            align-items: center; padding: 15px; border-radius: 16px;
+            margin-bottom: 10px; background: #fff; border: 1px solid var(--border-color);
+        }
+        .btn-qty {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 1px solid var(--gold-light); background: #fff;
+            font-size: 1.2rem; color: var(--gold); display: flex;
+            align-items: center; justify-content: center;
+        }
+        .qty-display {
+            width: 40px; border: none; border-bottom: 1px solid var(--gold-light);
+            background: transparent; text-align: center; font-size: 1rem;
+            padding: 2px 0; -moz-appearance: textfield; transition: 0.2s;
+        }
         .qty-display.qty-zero { color: #ccc; font-weight: normal; border-bottom-color: #eee; }
         .qty-display.qty-has { color: var(--gold); font-weight: 800; border-bottom-color: var(--gold); }
         .qty-display::-webkit-inner-spin-button, .qty-display::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-
-        .inf-btn { background: none; border: none; font-size: 1.1rem; color: #ddd; cursor: pointer; padding: 0; line-height: 1; transition: 0.2s; }
+        .inf-btn {
+            background: none; border: none; font-size: 1.1rem; color: #ddd;
+            cursor: pointer; padding: 0; line-height: 1; transition: 0.2s;
+        }
         .inf-btn.active { color: var(--gold); }
+        .editor-bulk-actions {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; padding: 0 5px;
+        }
+        .bulk-group-left { display: flex; gap: 8px; flex-wrap: wrap; }
+        .bulk-btn {
+            background: none; border: 1px solid var(--gold-light);
+            color: var(--gold); font-size: 0.65rem; padding: 5px 10px;
+            border-radius: 8px; font-weight: bold;
+        }
+        .bulk-btn-danger { color: var(--danger); border-color: #ffcdd2; }
+        .history-banner {
+            background: #fff9f0; border: 1px dashed var(--gold); padding: 10px;
+            border-radius: 12px; margin-bottom: 15px; display: flex;
+            justify-content: space-between; align-items: center;
+        }
 
-        .unboxing-panel { display: grid; grid-template-columns: 1fr 1fr; padding: 0; border-radius: 12px; position: relative; font-weight: bold; font-size: 0.9rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); user-select: none; -webkit-user-select: none; touch-action: none; height: 54px; overflow: visible; margin-bottom: 6px; background: #eee; }
-        .ub-area { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transition: all 0.1s; touch-action: none; -webkit-touch-callout: none; z-index: 1; }
+        /* =========================================
+           8. Components: Unboxing
+           ========================================= */
+        .unboxing-panel {
+            display: grid; grid-template-columns: 1fr 1fr; padding: 0;
+            border-radius: 12px; position: relative; font-weight: bold;
+            font-size: 0.9rem; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            user-select: none; -webkit-user-select: none; touch-action: none;
+            height: 54px; overflow: visible; margin-bottom: 6px; background: #eee;
+        }
+        .ub-area {
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; position: relative; transition: all 0.1s;
+            touch-action: none; -webkit-touch-callout: none; z-index: 1;
+        }
         .ub-area-left { border-right: 1px solid rgba(0,0,0,0.05); border-radius: 12px 0 0 12px; }
         .ub-area-right { border-radius: 0 12px 12px 0; }
-        
-        .ub-area:active { background: rgba(0,0,0,0.1); transform: scale(0.96); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); z-index: 2; }
-        .ub-char-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 1px 6px; border-radius: 6px; font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none; }
-
-        .unboxing-count-badge { min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; margin-bottom: 2px; font-weight: 800; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+        .ub-area:active {
+            background: rgba(0,0,0,0.1); transform: scale(0.96);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); z-index: 2;
+        }
+        .ub-char-label {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 1px 6px; border-radius: 6px;
+            font-size: 0.6rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 10; white-space: nowrap; color: var(--text-main); pointer-events: none;
+        }
+        .unboxing-count-badge {
+            min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px;
+            font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 2px; font-weight: 800; transition: all 0.15s; pointer-events: none;
+        }
         .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none; }
         .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
 
-        .fab { position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px; width: 64px; height: 64px; border-radius: 50%; background: var(--gold); color: white; border: none; font-size: 2rem; box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4); z-index: 150; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 95%; max-width: 450px; padding: 15px; border-radius: 20px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
-
-        input, select, textarea { border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; font-size: 16px !important; background: #fff; color: var(--text-main); width: 100%; box-sizing: border-box; }
-        .primary-btn { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--gold); color: white; font-weight: bold; font-size: 1rem; margin-top: 10px; }
-        .danger-btn { color: var(--danger); background: none; border: none; font-size: 0.8rem; }
-        .secondary-btn { width: 100%; padding: 12px; border: 1px solid var(--gold); border-radius: 14px; background: white; color: var(--gold); font-weight: bold; font-size: 0.9rem; margin-top: 10px; cursor: pointer; }
-
-        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;}
-        .editor-bulk-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 5px; }
-        .bulk-group-left { display: flex; gap: 8px; flex-wrap: wrap; }
-        .bulk-btn { background: none; border: 1px solid var(--gold-light); color: var(--gold); font-size: 0.65rem; padding: 5px 10px; border-radius: 8px; font-weight: bold; }
-        .bulk-btn-danger { color: var(--danger); border-color: #ffcdd2; }
-        
-        .series-comp-mark { color: var(--gold); font-size: 0.9rem; margin-left: 8px; vertical-align: middle; }
-        .sort-controls { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
-        .sort-btn { white-space: nowrap; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--gold-light); background: #fff; color: var(--gold); font-size: 0.7rem; font-weight: bold; }
-        .sort-btn.active { background: var(--gold); color: #fff; }
-        .handle { color: var(--gold-light); cursor: grab; padding: 10px; font-size: 1.2rem; display: none; }
-        .sort-custom .handle { display: block; }
-        .fav-btn { background: none; border: none; font-size: 1.2rem; color: #ddd; padding: 0 5px; transition: 0.2s; }
-        .fav-btn.active { color: #fbc02d; }
-        .inf-status-container { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex: 1; margin-right: 10px; }
-        .inf-status-chip { font-size: 0.6rem; padding: 2px 6px; border-radius: 6px; font-weight: bold; display: flex; align-items: center; gap: 3px; }
-        .inf-status-chip span { font-size: 0.7rem; opacity: 0.8; }
-
-        /* 追加スタイル */
-        .preset-chip { display: inline-block; background: var(--gold-light); color: var(--gold); padding: 8px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; margin: 4px; cursor: pointer; }
-        .history-banner { background: #fff9f0; border: 1px dashed var(--gold); padding: 10px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-
+        /* =========================================
+           9. UI Elements (Inputs, Buttons, FAB)
+           ========================================= */
+        input[type="text"], input[type="month"], select {
+            border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 14px; font-size: 16px !important; background: #fff;
+            color: var(--text-main); width: 100%;
+        }
+        .primary-btn {
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            background: var(--gold); color: white; font-weight: bold;
+            font-size: 1rem; margin-top: 10px;
+        }
+        .danger-btn {
+            color: var(--danger); background: none; border: none; font-size: 0.8rem;
+        }
+        .secondary-btn {
+            width: 100%; padding: 12px; border: 1px solid var(--gold);
+            border-radius: 14px; background: white; color: var(--gold);
+            font-weight: bold; font-size: 0.9rem; margin-top: 10px;
+        }
+        .fab {
+            position: fixed; bottom: calc(30px + var(--safe-bottom)); right: 20px;
+            width: 64px; height: 64px; border-radius: 50%; background: var(--gold);
+            color: white; border: none; font-size: 2rem;
+            box-shadow: 0 8px 24px rgba(197, 160, 89, 0.4); z-index: 150;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        #toast {
+            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.8); color: white; padding: 12px 24px;
+            border-radius: 25px; font-size: 0.85rem; z-index: 2000; display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none;
+        }
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* =========================================
+           10. Sorting & Filtering
+           ========================================= */
+        .sort-controls {
+            display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto;
+            padding-bottom: 5px; -webkit-overflow-scrolling: touch;
+        }
+        .sort-btn {
+            white-space: nowrap; padding: 6px 12px; border-radius: 20px;
+            border: 1px solid var(--gold-light); background: #fff;
+            color: var(--gold); font-size: 0.7rem; font-weight: bold;
+        }
+        .sort-btn.active { background: var(--gold); color: #fff; }
+        .handle {
+            color: var(--gold-light); cursor: grab; padding: 10px;
+            font-size: 1.2rem; display: none;
+        }
+        .sort-custom .handle { display: block; }
+        .fav-btn {
+            background: none; border: none; font-size: 1.2rem;
+            color: #ddd; padding: 0 5px; transition: 0.2s;
+        }
+        .fav-btn.active { color: #fbc02d; }
+        .series-comp-mark {
+            color: var(--gold); font-size: 0.9rem; margin-left: 8px; vertical-align: middle;
+        }
+        
+        /* Utility */
+        .flex { display: flex; }
+        .align-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-10 { gap: 10px; }
+        .mb-15 { margin-bottom: 15px; }
+        .text-bold { font-weight: bold; }
+        .text-gold { color: var(--gold); }
+        .label-sm { font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px; display: block; }
     </style>
 </head>
-<body onload="init()">
+<body onload="App.init()">
 
-<div id="splash-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color:var(--bg-color); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; transition: opacity 0.5s ease;">
+<div id="splash-screen">
     <div style="color:var(--gold); font-size:1rem; letter-spacing:4px; font-weight:600; margin-bottom:25px;">COLLECTION ARCHIVE</div>
     <div style="width:24px; height:24px; border:2px solid var(--gold-light); border-top:2px solid var(--gold); border-radius:50%; animation: spin 0.8s linear infinite;"></div>
 </div>
 
 <header>
-    <button onclick="toggleSettings(true)" style="position:absolute; right:15px; top:calc(15px + env(safe-area-inset-top)); background:none; border:none; font-size:1.4rem; color:var(--gold);">⚙</button>
-    <h1>COLLECTION ARCHIVE v4.0.0</h1>
+    <button onclick="App.toggleSettings(true)" class="header-btn-right">⚙</button>
+    <h1>COLLECTION ARCHIVE v1.0</h1>
 </header>
 
 <div class="nav-tabs">
-    <div class="nav-tab active" id="tab-list" onclick="switchMainTab('list')">SERIES</div>
-    <div class="nav-tab" id="tab-missing" onclick="switchMainTab('missing')">MISSING</div>
+    <div class="nav-tab active" id="tab-list" onclick="App.switchMainTab('list')">SERIES</div>
+    <div class="nav-tab" id="tab-missing" onclick="App.switchMainTab('missing')">MISSING</div>
 </div>
 
 <div id="seriesView" class="container">
-    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
-        <input type="text" id="searchBar" placeholder="シリーズ・タグを検索..." oninput="renderSeriesList()" style="flex:1;">
-        <button id="btnToggleDate" onclick="toggleDateFilter()" style="background:var(--card-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold);">📅</button>
+    <div class="flex align-center gap-10 mb-15">
+        <input type="text" id="searchBar" placeholder="シリーズ・タグを検索..." oninput="Render.seriesList()" style="flex:1;">
+        <button id="btnToggleDate" onclick="App.toggleDateFilter()" style="background:var(--card-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold);">📅</button>
     </div>
 
     <div class="sort-controls">
-        <button class="sort-btn active" id="sort-new" onclick="setSortMode('new')">登録順</button>
-        <button class="sort-btn" id="sort-date" onclick="setSortMode('date')">日付順</button>
-        <button class="sort-btn" id="sort-custom" onclick="setSortMode('custom')">カスタム順</button>
+        <button class="sort-btn active" id="sort-new" onclick="App.setSortMode('new')">登録順</button>
+        <button class="sort-btn" id="sort-date" onclick="App.setSortMode('date')">日付順</button>
+        <button class="sort-btn" id="sort-custom" onclick="App.setSortMode('custom')">カスタム順</button>
     </div>
 
     <div id="dateFilterPanel" style="display:none; background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light);">
-        <p style="font-size:0.7rem; font-weight:bold; color:var(--gold); margin:0 0 10px;">表示期間を指定</p>
-        <div style="display:flex; align-items:center; gap:10px;">
-            <input type="month" id="filterStart" onchange="renderSeriesList()" style="padding:8px; font-size:0.85rem;">
+        <p class="label-sm">表示期間を指定</p>
+        <div class="flex align-center gap-10">
+            <input type="month" id="filterStart" onchange="Render.seriesList()" style="padding:8px; font-size:0.85rem;">
             <span style="color:var(--text-sub)">〜</span>
-            <input type="month" id="filterEnd" onchange="renderSeriesList()" style="padding:8px; font-size:0.85rem;">
-            <button onclick="clearDateFilter()" style="background:none; border:none; color:var(--danger); font-size:0.75rem; min-width:50px;">クリア</button>
+            <input type="month" id="filterEnd" onchange="Render.seriesList()" style="padding:8px; font-size:0.85rem;">
+            <button onclick="App.clearDateFilter()" style="background:none; border:none; color:var(--danger); font-size:0.75rem; min-width:50px;">クリア</button>
         </div>
     </div>
     <div id="seriesListContainer"></div>
@@ -199,36 +418,36 @@
 
 <div id="detailView" class="full-view">
     <div class="view-header">
-        <button onclick="closeDetail()" style="background:none; border:none; font-size:1.6rem; color:var(--gold); padding: 0 10px;">✕</button>
-        <div id="detailHeaderTitle" style="flex:1; text-align:center; font-weight:bold; color:var(--text-main); font-size:0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px;"></div>
-        <button onclick="deleteAllItems()" class="danger-btn">全削除</button>
+        <button onclick="App.closeDetail()" style="background:none; border:none; font-size:1.6rem; color:var(--gold); padding: 0 10px;">✕</button>
+        <div id="detailHeaderTitle" class="view-header-title"></div>
+        <button onclick="Actions.deleteAllItems()" class="danger-btn">全削除</button>
     </div>
     <div id="itemListContainer" class="container"></div>
-    <button class="fab" onclick="openItemEditor()" style="background:var(--dark-pink);">＋</button>
+    <button class="fab" onclick="App.openItemEditor()" style="background:var(--dark-pink);">＋</button>
 </div>
 
 <div id="editorView" class="full-view" style="z-index:300;">
     <div class="view-header">
-        <button id="editorBackBtn" onclick="closeEditor()" style="background:none; border:none; color:var(--text-sub); font-size: 1rem;">戻る</button>
-        <div style="flex:1; text-align:center; font-weight:bold; font-size:0.9rem;">アイテム編集</div>
-        <button onclick="saveItem()" style="background:none; border:none; color:var(--dark-pink); font-weight:bold; font-size: 1rem;">保存</button>
+        <button id="editorBackBtn" onclick="App.closeEditor()" style="background:none; border:none; color:var(--text-sub); font-size: 1rem;">戻る</button>
+        <div class="view-header-title">アイテム編集</div>
+        <button onclick="Actions.saveItem()" style="background:none; border:none; color:var(--dark-pink); font-weight:bold; font-size: 1rem;">保存</button>
     </div>
     <div class="container">
         <div id="historyBanner" class="history-banner" style="display:none;">
             <span style="font-size:0.7rem; color:var(--gold); font-weight:bold;">前回の設定を復元できます</span>
-            <button onclick="applyHistory()" style="background:var(--gold); color:white; border:none; padding:5px 10px; border-radius:8px; font-size:0.65rem; font-weight:bold;">履歴から作成</button>
+            <button onclick="App.applyHistory()" style="background:var(--gold); color:white; border:none; padding:5px 10px; border-radius:8px; font-size:0.65rem; font-weight:bold;">履歴から作成</button>
         </div>
         
-        <div id="presetArea" style="margin-bottom:15px; display:none;">
-            <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">プリセットから選択</p>
+        <div id="presetArea" class="mb-15" style="display:none;">
+            <p class="label-sm">プリセットから選択</p>
             <div id="presetChips"></div>
         </div>
 
-        <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">アイテム名</p>
-        <input type="text" id="editItemType" placeholder="例: 缶バッジ" style="margin-bottom:15px;">
-        <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">キャラセット</p>
-        <select id="editCharSetName" onchange="changeCharSet(this.value)" style="margin-bottom:15px;"></select>
-        <p style="font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px;">ステータス</p>
+        <p class="label-sm">アイテム名</p>
+        <input type="text" id="editItemType" placeholder="例: 缶バッジ" class="mb-15">
+        <p class="label-sm">キャラセット</p>
+        <select id="editCharSetName" onchange="App.changeCharSet(this.value)" class="mb-15"></select>
+        <p class="label-sm">ステータス</p>
         <select id="editItemStatus" style="margin-bottom:20px;">
             <option value="not">未コンプ</option>
             <option value="comp">コンプ済</option>
@@ -236,11 +455,11 @@
         </select>
         <div class="editor-bulk-actions">
             <div class="bulk-group-left">
-                <button class="bulk-btn" onclick="bulkToggleTargets(true)">ALL SELECT</button>
-                <button class="bulk-btn" onclick="bulkToggleTargets(false)">CANCEL</button>
-                <button class="bulk-btn" onclick="bulkIncrementOwn()">ALL +1</button>
+                <button class="bulk-btn" onclick="Actions.bulkToggleTargets(true)">ALL SELECT</button>
+                <button class="bulk-btn" onclick="Actions.bulkToggleTargets(false)">CANCEL</button>
+                <button class="bulk-btn" onclick="Actions.bulkIncrementOwn()">ALL +1</button>
             </div>
-            <button class="bulk-btn bulk-btn-danger" onclick="bulkResetCounts()">RESET ALL</button>
+            <button class="bulk-btn bulk-btn-danger" onclick="Actions.bulkResetCounts()">RESET ALL</button>
         </div>
         <div id="editorGrid"></div>
     </div>
@@ -249,170 +468,170 @@
 <div id="seriesModal" class="modal-overlay">
     <div class="modal-content">
         <h3 style="margin-top:0; color:var(--gold); font-size:1.1rem; text-align:center;">NEW SERIES</h3>
-        <input type="text" id="msTitle" placeholder="シリーズ名" style="margin-bottom:15px;">
-        <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <input type="text" id="msTitle" placeholder="シリーズ名" class="mb-15">
+        <div class="flex gap-10 mb-15">
             <input type="month" id="msDate" style="flex:1.2;">
             <input type="text" id="msTags" placeholder="タグ" style="flex:1;">
         </div>
         <label style="font-size: 0.9rem; color: var(--text-main); display:flex; align-items:center; gap:8px; margin-bottom:20px;">
             <input type="checkbox" id="msUseTemplate" checked style="width:20px; height:20px;"> テンプレートを適用
         </label>
-        <button class="primary-btn" onclick="saveSeriesModal()">登録する</button>
-        <button onclick="closeSeriesModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--text-sub);">キャンセル</button>
+        <button class="primary-btn" onclick="Actions.saveSeriesModal()">登録する</button>
+        <button onclick="App.closeSeriesModal()" style="width:100%; background:none; border:none; margin-top:15px; color:var(--text-sub);">キャンセル</button>
     </div>
 </div>
 
 <div id="unboxingModal" class="modal-overlay">
     <div class="modal-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <div id="unboxingTitle" style="color:var(--gold); font-size:0.95rem; font-weight:bold;"></div>
+        <div class="flex justify-between align-center mb-15">
+            <div id="unboxingTitle" class="text-gold text-bold" style="font-size:0.95rem;"></div>
             <p style="font-size: 0.6rem; color: var(--text-sub); margin: 0;">左:保管 / 右:譲渡<br>長押しでマイナス</p>
         </div>
         <div id="unboxingGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;"></div>
         <div id="unboxingTotalCount" style="text-align:center; margin-top:12px; font-size:0.8rem; color:var(--gold); background:var(--bg-color); padding:8px; border-radius:12px; border:1px solid var(--gold-light);"></div>
-        <button onclick="closeUnboxing()" class="primary-btn">完了</button>
+        <button onclick="App.closeUnboxing()" class="primary-btn">完了</button>
     </div>
 </div>
 
-<div id="settingsOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:500;" onclick="toggleSettings(false)"></div>
-<div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box; overflow-y: auto; padding-top: env(safe-area-inset-top);">
+<div id="settingsOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:500;" onclick="App.toggleSettings(false)"></div>
+<div id="settingsPanel" style="position:fixed; top:0; right:-85%; width:85%; height:100%; background:white; z-index:510; transition:0.3s; padding:25px; box-sizing:border-box; overflow-y: auto; padding-top: var(--safe-top);">
     <h3 style="color:var(--gold); font-size:1.1rem; border-bottom:1px solid var(--gold-light); padding-bottom:10px;">SETTINGS</h3>
     
-    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">募集文カスタマイズ</label>
+    <label class="label-sm" style="margin-top:20px;">募集文カスタマイズ</label>
     <input type="text" id="tradePrefixInput" placeholder="【交換】" style="margin-top:5px; font-size: 0.8rem !important; margin-bottom:5px;">
     <input type="text" id="tradeSuffixInput" placeholder="郵送希望です。検索からお気軽にどうぞ。" style="font-size: 0.8rem !important; margin-bottom:10px;">
     <label style="font-size:0.7rem; color:var(--text-sub); display:flex; align-items:center; gap:5px; margin-bottom:15px;">
         <input type="checkbox" id="tradeShowInfMark" style="width:16px; height:16px;"> 無限回収に(∞)を表示する
     </label>
 
-    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">キャラクターセット（セット名:名,名...）</label>
-    <textarea id="charSettingsInput" rows="5" style="margin-top:5px; font-size: 0.75rem !important;"></textarea>
+    <label class="label-sm" style="margin-top:20px;">キャラクターセット（セット名:名,名...）</label>
+    <textarea id="charSettingsInput" rows="5" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; font-size: 0.75rem !important; padding:10px;"></textarea>
     
-    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">プリセット（アイテム名,セット名,対象キャラ1|対象キャラ2...）</label>
-    <textarea id="presetSettingsInput" rows="5" style="margin-top:5px; font-size: 0.75rem !important;" placeholder="缶バッジ,デフォルト,北門|是国|金城"></textarea>
+    <label class="label-sm" style="margin-top:20px;">プリセット（アイテム名,セット名,対象キャラ1|対象キャラ2...）</label>
+    <textarea id="presetSettingsInput" rows="5" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; font-size: 0.75rem !important; padding:10px;" placeholder="缶バッジ,デフォルト,北門|是国|金城"></textarea>
 
-    <label style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-top:20px; display:block;">新規登録テンプレート</label>
-    <textarea id="tempSettingsInput" rows="3" style="margin-top:5px;"></textarea>
+    <label class="label-sm" style="margin-top:20px;">新規登録テンプレート</label>
+    <textarea id="tempSettingsInput" rows="3" style="margin-top:5px; border:1px solid var(--border-color); border-radius:12px; width:100%; padding:10px;"></textarea>
     
-    <button class="primary-btn" onclick="saveSettings()" style="margin-top:30px;">設定を保存して更新</button>
+    <button class="primary-btn" onclick="Actions.saveSettings()" style="margin-top:30px;">設定を保存して更新</button>
     <div style="margin-top:40px; border-top:1px solid var(--border-color); padding-top:20px;">
-        <button class="secondary-btn" onclick="exportBackup()">バックアップを書き出し</button>
+        <button class="secondary-btn" onclick="Actions.exportBackup()">バックアップを書き出し</button>
         <button class="secondary-btn" onclick="document.getElementById('importFile').click()">バックアップを読み込み</button>
-        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
+        <input type="file" id="importFile" style="display:none" accept=".json" onchange="Actions.importBackup(event)">
     </div>
 </div>
 
 <div id="toast"></div>
-<button class="fab" id="mainFab" onclick="openSeriesModal()">＋</button>
+<button class="fab" id="mainFab" onclick="App.openSeriesModal()">＋</button>
 
 <script>
-    const DEFAULT_CHARS = ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"];
-    let CHAR_SETS = JSON.parse(localStorage.getItem('gap_char_sets')) || { "デフォルト": DEFAULT_CHARS };
-    let TEMPLATES = JSON.parse(localStorage.getItem('gap_temps')) || ["缶バッジ", "アクスタ", "ブロマイド"];
-    let PRESETS = JSON.parse(localStorage.getItem('gap_presets')) || [];
-    let TRADE_CONFIG = JSON.parse(localStorage.getItem('gap_trade_config')) || { prefix: "", suffix: "", showInf: true };
-    let DB = JSON.parse(localStorage.getItem('gap_db')) || {};
-    let ORDER = JSON.parse(localStorage.getItem('gap_order')) || [];
-    let SORT_MODE = localStorage.getItem('gap_sort_mode') || 'new';
-    let LAST_ITEM = JSON.parse(localStorage.getItem('gap_last_item')) || null;
-    let currentSeriesId = null;
-    let currentItemIdx = null;
-    let touchStartX = 0;
-    let tempStocks = {};
-    let activeCharList = [];
-    let dragSrcId = null;
-    let isTicking = false;
-    let editorFromMissing = false;
+/**
+ * COLLECTION ARCHIVE v1.0
+ * Refactored Version
+ */
 
-    function init() {
-        renderSeriesList();
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            if (splash) {
-                splash.style.opacity = '0';
-                setTimeout(() => splash.remove(), 500);
-            }
-        }, 600);
+// =========================================
+// 1. Constants & Configuration
+// =========================================
+const CONSTANTS = {
+    KEYS: {
+        DB: 'gap_db',
+        ORDER: 'gap_order',
+        SETS: 'gap_char_sets',
+        TEMPLATES: 'gap_temps',
+        PRESETS: 'gap_presets',
+        TRADE: 'gap_trade_config',
+        SORT: 'gap_sort_mode',
+        LAST_ITEM: 'gap_last_item'
+    },
+    DEFAULT_CHARS: ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"],
+    DEFAULT_TEMPLATES: ["缶バッジ", "アクスタ", "ブロマイド"],
+};
+
+// =========================================
+// 2. State Management (Store)
+// =========================================
+const Store = {
+    db: {},
+    order: [],
+    charSets: {},
+    templates: [],
+    presets: [],
+    tradeConfig: { prefix: "", suffix: "", showInf: true },
+    sortMode: 'new',
+    lastItem: null,
+
+    // Temp State
+    currentSeriesId: null,
+    currentItemIdx: null,
+    activeCharList: [],
+    tempStocks: {},
+    editorFromMissing: false,
+
+    init() {
+        this.db = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.DB)) || {};
+        this.order = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.ORDER)) || [];
+        this.charSets = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.SETS)) || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
+        this.templates = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TEMPLATES)) || CONSTANTS.DEFAULT_TEMPLATES;
+        this.presets = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.PRESETS)) || [];
+        this.tradeConfig = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TRADE)) || { prefix: "", suffix: "", showInf: true };
+        this.sortMode = localStorage.getItem(CONSTANTS.KEYS.SORT) || 'new';
+        this.lastItem = JSON.parse(localStorage.getItem(CONSTANTS.KEYS.LAST_ITEM)) || null;
+    },
+
+    save() {
+        localStorage.setItem(CONSTANTS.KEYS.DB, JSON.stringify(this.db));
+        localStorage.setItem(CONSTANTS.KEYS.ORDER, JSON.stringify(this.order));
+        localStorage.setItem(CONSTANTS.KEYS.SETS, JSON.stringify(this.charSets));
+        localStorage.setItem(CONSTANTS.KEYS.TRADE, JSON.stringify(this.tradeConfig));
+        localStorage.setItem(CONSTANTS.KEYS.SORT, this.sortMode);
+        localStorage.setItem(CONSTANTS.KEYS.PRESETS, JSON.stringify(this.presets));
+    },
+
+    saveLastItem() {
+        localStorage.setItem(CONSTANTS.KEYS.LAST_ITEM, JSON.stringify(this.lastItem));
     }
+};
 
-    function save() {
-        localStorage.setItem('gap_db', JSON.stringify(DB));
-        localStorage.setItem('gap_order', JSON.stringify(ORDER));
-        localStorage.setItem('gap_char_sets', JSON.stringify(CHAR_SETS));
-        localStorage.setItem('gap_trade_config', JSON.stringify(TRADE_CONFIG));
-        localStorage.setItem('gap_sort_mode', SORT_MODE);
-        localStorage.setItem('gap_presets', JSON.stringify(PRESETS));
-    }
-
-    function showToast(msg) {
+// =========================================
+// 3. Utilities
+// =========================================
+const Utils = {
+    showToast(msg) {
         const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.style.display = 'block';
+        t.textContent = msg; t.style.display = 'block';
         setTimeout(() => t.style.display = 'none', 2000);
-    }
+    },
+    
+    autoDetermineStatus(item) {
+        if (item.status === "none") return "none";
+        const targets = item.targets || [];
+        if (targets.length === 0) return item.status;
+        const isAllCollected = targets.every(char => {
+            const s = item.stocks[char] || { own: 0, trade: 0, infinite: false };
+            if (s.infinite) return false;
+            return (s.own + s.trade) >= 1;
+        });
+        return isAllCollected ? "comp" : "not";
+    },
 
-    function switchMainTab(tab) {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(`tab-${tab}`).classList.add('active');
-        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
-        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
-        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
-        if(tab === 'missing') renderMissingList();
-    }
-
-    function setSortMode(mode) {
-        SORT_MODE = mode;
-        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`sort-${mode}`).classList.add('active');
-        save();
-        renderSeriesList();
-    }
-
-    function toggleFavorite(id, e) {
-        e.stopPropagation();
-        DB[id].fav = !DB[id].fav;
-        save();
-        renderSeriesList();
-    }
-
-    function handleDragStart(e, id) {
-        if(SORT_MODE !== 'custom') return;
-        dragSrcId = id;
-        e.target.classList.add('dragging');
-    }
-
-    function handleDragOver(e) {
-        e.preventDefault();
-    }
-
-    function handleDrop(e, targetId) {
-        e.preventDefault();
-        if(!dragSrcId || dragSrcId === targetId) return;
-        let newOrder = [...ORDER];
-        const srcIdx = newOrder.indexOf(dragSrcId);
-        const targetIdx = newOrder.indexOf(targetId);
-        newOrder.splice(srcIdx, 1);
-        newOrder.splice(targetIdx, 0, dragSrcId);
-        ORDER = newOrder;
-        save();
-        renderSeriesList();
-    }
-
-    function attachSwipeEvents(element, onDelete) {
-        let startX = 0;
-        let isSwiping = false;
+    // Swipe & Drag Helpers
+    attachSwipe(element, actionCallback, isCustomSort) {
+        let startX = 0, isSwiping = false, isTicking = false;
+        
         element.addEventListener('touchstart', (e) => {
-            if (SORT_MODE === 'custom') return;
+            if (Store.sortMode === 'custom' && isCustomSort) return;
             const rect = element.getBoundingClientRect();
             const touchX = e.touches[0].clientX;
-            const startThreshold = rect.right - (rect.width * 0.25);
-            if (touchX < startThreshold) { isSwiping = false; return; }
+            // Only trigger if swipe starts from right side
+            if (touchX < rect.right - (rect.width * 0.25)) { isSwiping = false; return; }
             startX = touchX;
             isSwiping = true;
             element.classList.add('swiping');
         }, {passive: true});
+
         element.addEventListener('touchmove', (e) => {
-            if (!isSwiping || SORT_MODE === 'custom') return;
+            if (!isSwiping || (Store.sortMode === 'custom' && isCustomSort)) return;
             let currentX = e.touches[0].clientX - startX;
             if (currentX < 0) {
                 if (currentX < -120) currentX = -120;
@@ -425,8 +644,9 @@
                 }
             }
         }, {passive: true});
+
         element.addEventListener('touchend', (e) => {
-            if (!isSwiping || SORT_MODE === 'custom') return;
+            if (!isSwiping || (Store.sortMode === 'custom' && isCustomSort)) return;
             isSwiping = false;
             element.classList.remove('swiping');
             const finalX = e.changedTouches[0].clientX - startX;
@@ -436,491 +656,788 @@
                 element.style.transform = 'translateX(0)';
             }
         }, {passive: true});
+
+        const originalOnClick = element.onclick;
+        element.onclick = (e) => {
+            if (element.style.transform === 'translateX(-100px)') {
+                element.style.transform = 'translateX(0)';
+                e.stopPropagation();
+            } else if (originalOnClick) { originalOnClick(e); }
+        };
+
+        // Attach delete action to the background layer button, not here
     }
+};
 
-    function renderSeriesList() {
+// =========================================
+// 4. Rendering Logic (View)
+// =========================================
+const Render = {
+    seriesList() {
         const container = document.getElementById('seriesListContainer');
-        const q = document.getElementById('searchBar').value.toLowerCase();
-        const fStart = document.getElementById('filterStart').value;
-        const fEnd = document.getElementById('filterEnd').value;
+        container.innerHTML = "";
+        const term = document.getElementById('searchBar').value.toLowerCase();
+        const start = document.getElementById('filterStart').value;
+        const end = document.getElementById('filterEnd').value;
         
-        container.innerHTML = '';
-        let list = ORDER.map(id => ({id, ...DB[id]}));
+        container.className = Store.sortMode === 'custom' ? 'sort-custom' : '';
+        let displayOrder = [...Store.order];
 
-        if (SORT_MODE === 'new') list.reverse();
-        else if (SORT_MODE === 'date') {
-            list.sort((a,b) => (b.date || "").localeCompare(a.date || "") || (ORDER.indexOf(b.id) - ORDER.indexOf(a.id)));
+        if (Store.sortMode === 'date') {
+            displayOrder.sort((a, b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
         }
+        // Always fav on top unless custom (fav sort logic from original)
+        displayOrder.sort((a, b) => (Store.db[b].fav ? 1 : 0) - (Store.db[a].fav ? 1 : 0));
 
-        list.forEach(s => {
-            const dateMatch = (!fStart || s.date >= fStart) && (!fEnd || s.date <= fEnd);
-            const tagMatch = s.tags.some(t => t.toLowerCase().includes(q));
-            if ((s.title.toLowerCase().includes(q) || tagMatch) && dateMatch) {
-                const isAllComp = s.items.length > 0 && s.items.every(it => {
-                    if(it.status === 'none') return true;
-                    if(it.status === 'comp') return true;
-                    // コンプ判定の修正: 無限回収かつ1つ以上所持している場合もコンプリートとみなす
-                    return it.list.filter(li => li.target).every(li => li.own > 0 || (li.isInf && li.own > 0));
-                });
+        displayOrder.forEach((id) => {
+            const s = Store.db[id];
+            if (!s) return;
+            
+            // Filter Logic
+            const titleMatch = s.title.toLowerCase().includes(term);
+            const tagsMatch = s.tags ? s.tags.toLowerCase().includes(term) : false;
+            let dateMatch = true;
+            if (start || end) {
+                if (!s.date) dateMatch = false;
+                else {
+                    if (start && s.date < start) dateMatch = false;
+                    if (end && s.date > end) dateMatch = false;
+                }
+            }
 
-                const swipeContainer = document.createElement('div');
-                swipeContainer.className = 'swipe-container';
-                if(SORT_MODE === 'custom') {
-                    swipeContainer.draggable = true;
-                    swipeContainer.ondragstart = (e) => handleDragStart(e, s.id);
-                    swipeContainer.ondragover = handleDragOver;
-                    swipeContainer.ondrop = (e) => handleDrop(e, s.id);
-                    swipeContainer.ondragend = (e) => e.target.classList.remove('dragging');
+            if ((titleMatch || tagsMatch) && dateMatch) {
+                const items = s.items || [];
+                const isSeriesComp = items.length > 0 && items.every(it => it.status === 'comp' || it.status === 'none');
+                const compMark = isSeriesComp ? '<span class="series-comp-mark">✦</span>' : '';
+                const favActive = s.fav ? 'active' : '';
+
+                const swipeWrapper = document.createElement('div');
+                swipeWrapper.className = 'swipe-container';
+                if (Store.sortMode === 'custom') {
+                    swipeWrapper.draggable = true;
+                    swipeWrapper.ondragstart = (e) => Actions.handleDragStart(e, id);
+                    swipeWrapper.ondragover = Actions.handleDragOver;
+                    swipeWrapper.ondrop = (e) => Actions.handleDrop(e, id);
                 }
 
-                const delOverlay = document.createElement('div');
-                delOverlay.className = 'delete-btn-overlay';
-                delOverlay.textContent = '削除';
-                delOverlay.onclick = () => deleteSeries(s.id);
+                // Delete Button Layer
+                const deleteBtn = document.createElement('div');
+                deleteBtn.className = 'delete-btn-overlay';
+                deleteBtn.textContent = '削除';
+                deleteBtn.onclick = (e) => { e.stopPropagation(); Actions.deleteSeries(id); };
 
+                // Card Layer
                 const card = document.createElement('div');
-                card.className = 'card item-card';
-                card.onclick = () => openDetail(s.id);
-                attachSwipeEvents(card);
-
-                const tagsHtml = s.tags.map(t => `<span class="tag-chip" onclick="event.stopPropagation(); filterByTag('${t}')">#${t}</span>`).join('');
+                card.className = 'card';
                 
+                const tagsHtml = s.tags ? s.tags.split(/[、, ]/).filter(t => t).map(t => 
+                    `<span onclick="event.stopPropagation(); App.filterByTag('${t.trim()}')" class="tag-chip">#${t.trim()}</span>`
+                ).join('') : '';
+
                 card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div style="display:flex; align-items:flex-start;">
+                        <div class="handle">⋮⋮</div>
                         <div style="flex:1;">
-                            <div style="font-size:0.6rem; color:var(--text-sub); margin-bottom:4px; font-weight:bold;">
-                                ${s.date || '日付未設定'} ${isAllComp ? '<span class="series-comp-mark">COMPLETE ✨</span>' : ''}
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <b style="color:var(--text-main); font-size:1rem; flex:1;">${s.title}${compMark}</b>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span style="font-size:0.75rem; color:var(--gold); font-weight:bold;">${s.date || ''}</span>
+                                    <button class="fav-btn ${favActive}" onclick="Actions.toggleFavorite('${id}', event)">★</button>
+                                </div>
                             </div>
-                            <div style="font-size:1rem; font-weight:bold; color:var(--text-main); line-height:1.2;">${s.title}</div>
+                            <div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:4px;">${tagsHtml}</div>
                         </div>
-                        <div style="display:flex; align-items:center;">
-                            <span class="handle">⠿</span>
-                            <button class="fav-btn ${s.fav?'active':''}" onclick="toggleFavorite('${s.id}', event)">${s.fav?'★':'☆'}</button>
-                        </div>
-                    </div>
-                    <div style="margin-top:10px;">${tagsHtml}</div>
-                `;
-                swipeContainer.appendChild(delOverlay);
-                swipeContainer.appendChild(card);
-                container.appendChild(swipeContainer);
+                    </div>`;
+
+                card.onclick = (e) => {
+                    if (e.target.tagName !== 'SPAN' && e.target.tagName !== 'BUTTON') App.openDetail(id);
+                };
+
+                Utils.attachSwipe(card, null, true);
+                
+                swipeWrapper.appendChild(deleteBtn);
+                swipeWrapper.appendChild(card);
+                container.appendChild(swipeWrapper);
             }
         });
-    }
+    },
 
-    function openSeriesModal() {
-        document.getElementById('msTitle').value = '';
-        document.getElementById('msDate').value = '';
-        document.getElementById('msTags').value = '';
-        document.getElementById('tempSettingsInput').value = TEMPLATES.join('\n');
-        document.getElementById('seriesModal').style.display = 'flex';
-    }
-
-    function closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; }
-
-    function saveSeriesModal() {
-        const title = document.getElementById('msTitle').value.trim();
-        if(!title) return;
-        const id = 's' + Date.now();
-        const tags = document.getElementById('msTags').value.split(/[,、\s]+/).filter(t => t);
-        const useTemp = document.getElementById('msUseTemplate').checked;
-        
-        const newItems = [];
-        if(useTemp) {
-            TEMPLATES.forEach(type => {
-                newItems.push({
-                    type, status: 'not', charSet: "デフォルト",
-                    list: DEFAULT_CHARS.map(name => ({name, target:true, own:0, trade:0, isInf:false}))
-                });
-            });
-        }
-
-        DB[id] = { title, date: document.getElementById('msDate').value, tags, items: newItems, fav: false };
-        ORDER.push(id);
-        save();
-        closeSeriesModal();
-        renderSeriesList();
-    }
-
-    function deleteSeries(id) {
-        if(confirm('シリーズを削除しますか？')) {
-            delete DB[id];
-            ORDER = ORDER.filter(oid => oid !== id);
-            save();
-            renderSeriesList();
-        }
-    }
-
-    function openDetail(id) {
-        currentSeriesId = id;
-        document.getElementById('detailHeaderTitle').textContent = DB[id].title;
-        renderItemList();
-        document.getElementById('detailView').style.display = 'block';
-    }
-
-    function closeDetail() {
-        document.getElementById('detailView').style.display = 'none';
-        renderSeriesList();
-    }
-
-    function renderItemList() {
+    itemList() {
         const container = document.getElementById('itemListContainer');
-        container.innerHTML = '';
-        const items = DB[currentSeriesId].items;
+        container.innerHTML = "";
+        const items = Store.db[Store.currentSeriesId].items || [];
+        const seriesTitle = Store.db[Store.currentSeriesId].title;
 
-        items.forEach((it, idx) => {
-            // コンプ判定の修正: 無限回収かつ1つ以上所持している場合もコンプリートとみなす
-            const isComp = it.status === 'comp' || (it.status !== 'none' && it.list.filter(li => li.target).every(li => li.own > 0 || (li.isInf && li.own > 0)));
-            const statusLabel = it.status === 'none' ? '予定なし' : (isComp ? 'COMP' : '未コンプ');
-            const statusClass = it.status === 'none' ? 'st-none' : (isComp ? 'st-comp' : 'st-not');
-            
+        items.forEach((item, idx) => {
+            const swipeWrapper = document.createElement('div');
+            swipeWrapper.className = 'swipe-container';
+            swipeWrapper.style.marginBottom = "15px";
+
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'delete-btn-overlay';
+            deleteBtn.textContent = '削除';
+            deleteBtn.onclick = (e) => { e.stopPropagation(); Actions.deleteItem(idx); };
+
             const card = document.createElement('div');
-            card.className = 'card';
-            card.style.marginBottom = '15px';
-            card.onclick = () => openItemEditor(idx);
+            card.className = 'card item-card';
+            Utils.attachSwipe(card, null, false);
 
-            const tradeIn = it.list.filter(li => li.trade > 0).map(li => `${li.name}${li.trade>1?li.trade:''}`).join(' ');
-            const tradeOut = it.list.filter(li => li.target && li.own === 0).map(li => `${li.name}${li.isInf && TRADE_CONFIG.showInf ? '(∞)':''}`).join(' ');
+            const statusLabel = { "comp": "COMP", "not": "INCOMP", "none": "NONE" }[item.status || "not"];
+            
+            // Stats Calculation
+            let ownChips = [], tradeTextArr = [], tradeNamesArr = [], targetNamesArr = [], infiniteStatusChips = [];
+            let totalOwn = 0, totalTrade = 0;
+            const list = Store.charSets[item.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
+
+            list.forEach(c => {
+                const s = (item.stocks && item.stocks[c]) ? item.stocks[c] : {own:0, trade:0, infinite:false};
+                const isTarget = (item.targets || list).includes(c);
+                totalOwn += s.own;
+                totalTrade += s.trade;
+
+                if (s.own > 0) ownChips.push(`<span class="char-chip c-${c.trim()}">${c}</span>`);
+                if (s.trade > 0) {
+                    tradeTextArr.push(`${c}${s.trade}`);
+                    tradeNamesArr.push(`${c}${s.trade > 1 ? s.trade : ''}`);
+                }
+                if (s.infinite) {
+                    infiniteStatusChips.push(`<span class="inf-status-chip c-${c.trim()}">${c}<span>:${s.own}</span></span>`);
+                }
+                if (isTarget) {
+                    const isMissing = (s.own === 0 && s.trade === 0);
+                    if (isMissing || s.infinite) {
+                        const displayInf = s.infinite && Store.tradeConfig.showInf;
+                        targetNamesArr.push(`${c}${displayInf ? '(∞)' : ''}`);
+                    }
+                }
+            });
+
+            // Trade Text construction
+            const prefix = Store.tradeConfig.prefix ? Store.tradeConfig.prefix + "\n" : "";
+            const suffix = Store.tradeConfig.suffix ? "\n" + Store.tradeConfig.suffix : "";
+            const copyStr = `${prefix}${seriesTitle} ${item.type}\n譲：${tradeNamesArr.join('、') || 'なし'}\n求：${targetNamesArr.join('、') || '完遂'}${suffix}`;
+
+            // Missing chips rendering
+            const missingChips = list.filter(c => 
+                (item.targets || list).includes(c) && 
+                ((item.stocks[c]?.own || 0) + (item.stocks[c]?.trade || 0) === 0 || item.stocks[c]?.infinite)
+            ).map(c => {
+                const isInf = item.stocks[c]?.infinite;
+                const isMissing = !item.stocks[c] || (item.stocks[c].own + item.stocks[c].trade === 0);
+                return `<span class="char-chip c-${c.trim()} ${isMissing ? '' : 'is-infinite-collected'}">${c}</span>`;
+            }).join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>';
 
             card.innerHTML = `
-                <div class="status-tag ${statusClass}">${statusLabel}</div>
-                <div style="font-size:0.8rem; font-weight:bold; color:var(--gold);">${it.type}</div>
-                <div class="inventory-grid" onclick="event.stopPropagation(); openUnboxing(${idx})">
-                    <div class="inv-box"><span class="inv-label">所持</span><div class="inv-content">${it.list.filter(li => li.own > 0).map(li => `<span class="char-chip c-${li.name}">${li.name}${li.own>1?li.own:''}</span>`).join('')}</div></div>
-                    <div class="inv-box"><span class="inv-label">譲渡可</span><div class="inv-content">${it.list.filter(li => li.trade > 0).map(li => `<span class="char-chip c-${li.name}">${li.name}${li.trade>1?li.trade:''}</span>`).join('')}</div></div>
-                    <div class="inv-box"><span class="inv-label">求</span><div class="inv-content">${it.list.filter(li => li.target && li.own === 0).map(li => `<span class="char-chip c-default">${li.name}</span>`).join('')}</div></div>
+                <span class="status-tag st-${item.status || 'not'}">${statusLabel}</span>
+                <div style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; padding-right:60px;">
+                    <div><b style="color:var(--text-main); font-size:1rem;">${item.type}</b></div>
+                    <div style="display:flex; gap:5px;">
+                        <button onclick="Actions.duplicateItem(${idx}, event)" style="background:#f0f0f0; border:none; color:var(--text-main); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">複製</button>
+                        <button onclick="event.stopPropagation(); Actions.copyTradeText(\`${copyStr}\`)" style="background:var(--trade-bg); border:none; color:var(--trade-text); font-size:0.6rem; padding:4px 8px; border-radius:6px; font-weight:bold;">コピー</button>
+                    </div>
+                </div>
+                <div class="inventory-grid" onclick="App.openItemEditor(${idx})">
+                    <div class="inv-box"><span class="inv-label">保管</span><div class="inv-content">${ownChips.join('') || '<span style="color:#ccc; font-size:0.6rem;">－</span>'}</div></div>
+                    <div class="inv-box"><span class="inv-label">譲渡</span><div class="inv-content"><span class="trade-text-small">${tradeTextArr.join('<br>') || '<span style="color:#ccc;">－</span>'}</span></div></div>
+                    <div class="inv-box"><span class="inv-label">不足</span><div class="inv-content">${missingChips}</div></div>
                 </div>
                 <div class="inv-summary-row">
-                    <div class="summary-item">総数<span>${it.list.reduce((a,b)=>a+b.own+b.trade, 0)}</span></div>
-                    <div class="summary-item">保管<span>${it.list.reduce((a,b)=>a+b.own, 0)}</span></div>
-                    <div class="summary-item">譲渡<span>${it.list.reduce((a,b)=>a+b.trade, 0)}</span></div>
+                    <div class="summary-item">保管合計<span>${totalOwn}</span></div>
+                    <div class="summary-item">譲渡合計<span>${totalTrade}</span></div>
+                    <div class="summary-item">総所有数<span>${totalOwn + totalTrade}</span></div>
                 </div>
-                <div style="margin-top:12px; padding-top:10px; border-top:1px solid #f9f0f0;">
-                    <div class="trade-text-small" style="margin-bottom:4px;">譲：${tradeIn || 'なし'}</div>
-                    <div class="trade-text-small" style="color:var(--danger);">求：${tradeOut || 'なし'}</div>
-                    <button onclick="copyTradeText(${idx}, event)" style="margin-top:8px; width:100%; padding:8px; border:1px solid var(--gold-light); border-radius:8px; background:#fff; color:var(--gold); font-size:0.65rem; font-weight:bold;">募集文をコピー</button>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    function openItemEditor(idx = null) {
-        currentItemIdx = idx;
-        const charSetSelect = document.getElementById('editCharSetName');
-        charSetSelect.innerHTML = Object.keys(CHAR_SETS).map(k => `<option value="${k}">${k}</option>`).join('');
-        
-        const presetChips = document.getElementById('presetChips');
-        if(PRESETS.length > 0) {
-            document.getElementById('presetArea').style.display = 'block';
-            presetChips.innerHTML = PRESETS.map((p, i) => `<span class="preset-chip" onclick="applyPreset(${i})">${p.name}</span>`).join('');
-        } else {
-            document.getElementById('presetArea').style.display = 'none';
-        }
-
-        if(idx !== null) {
-            const it = DB[currentSeriesId].items[idx];
-            document.getElementById('editItemType').value = it.type;
-            document.getElementById('editItemStatus').value = it.status;
-            charSetSelect.value = it.charSet || "デフォルト";
-            activeCharList = JSON.parse(JSON.stringify(it.list));
-            document.getElementById('historyBanner').style.display = 'none';
-        } else {
-            document.getElementById('editItemType').value = '';
-            document.getElementById('editItemStatus').value = 'not';
-            charSetSelect.value = "デフォルト";
-            changeCharSet("デフォルト");
-            if(LAST_ITEM) document.getElementById('historyBanner').style.display = 'flex';
-        }
-        renderEditorGrid();
-        document.getElementById('editorView').style.display = 'block';
-    }
-
-    function applyHistory() {
-        if(!LAST_ITEM) return;
-        document.getElementById('editItemType').value = LAST_ITEM.type;
-        document.getElementById('editCharSetName').value = LAST_ITEM.charSet;
-        activeCharList = JSON.parse(JSON.stringify(LAST_ITEM.list)).map(li => ({...li, own:0, trade:0}));
-        renderEditorGrid();
-        showToast("履歴を適用しました");
-    }
-
-    function applyPreset(idx) {
-        const p = PRESETS[idx];
-        document.getElementById('editItemType').value = p.name;
-        document.getElementById('editCharSetName').value = p.charSet;
-        const baseChars = CHAR_SETS[p.charSet] || DEFAULT_CHARS;
-        activeCharList = baseChars.map(name => ({
-            name, target: p.targets.includes(name), own: 0, trade: 0, isInf: false
-        }));
-        renderEditorGrid();
-        showToast("プリセットを適用しました");
-    }
-
-    function changeCharSet(setName) {
-        const names = CHAR_SETS[setName] || DEFAULT_CHARS;
-        activeCharList = names.map(name => ({ name, target: true, own: 0, trade: 0, isInf: false }));
-        renderEditorGrid();
-    }
-
-    function renderEditorGrid() {
-        const grid = document.getElementById('editorGrid');
-        grid.innerHTML = activeCharList.map((li, i) => `
-            <div class="editor-row" style="${!li.target ? 'opacity:0.5; background:#f5f5f5;' : ''}">
-                <div class="char-chip c-${li.name}" style="margin:0; text-align:center; width:60px; font-size:0.65rem;" onclick="toggleTarget(${i})">${li.name}</div>
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:5px;">
-                    <div style="display:flex; align-items:center; gap:5px;">
-                        <button class="btn-qty" onclick="updateQty(${i}, -1)">−</button>
-                        <input type="number" class="qty-display ${li.own>0?'qty-has':'qty-zero'}" value="${li.own}" onchange="activeCharList[${i}].own=parseInt(this.value)||0; renderEditorGrid();">
-                        <button class="btn-qty" onclick="updateQty(${i}, 1)">＋</button>
-                    </div>
-                    <button class="inf-btn ${li.isInf?'active':''}" onclick="li.isInf=!li.isInf; activeCharList[${i}].isInf=li.isInf; renderEditorGrid();">${li.isInf?'∞':'∞'}</button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function toggleTarget(i) {
-        activeCharList[i].target = !activeCharList[i].target;
-        renderEditorGrid();
-    }
-    function updateQty(i, diff) {
-        activeCharList[i].own = Math.max(0, activeCharList[i].own + diff);
-        renderEditorGrid();
-    }
-    function bulkToggleTargets(val) { activeCharList.forEach(li => li.target = val); renderEditorGrid(); }
-    function bulkIncrementOwn() { activeCharList.forEach(li => { if(li.target) li.own++; }); renderEditorGrid(); }
-    function bulkResetCounts() { if(confirm('カウントをリセットしますか？')){ activeCharList.forEach(li => { li.own=0; li.trade=0; }); renderEditorGrid(); } }
-
-    function saveItem() {
-        const type = document.getElementById('editItemType').value.trim() || '未設定';
-        const newItem = {
-            type,
-            status: document.getElementById('editItemStatus').value,
-            charSet: document.getElementById('editCharSetName').value,
-            list: activeCharList
-        };
-        if(currentItemIdx !== null) DB[currentSeriesId].items[currentItemIdx] = newItem;
-        else DB[currentSeriesId].items.push(newItem);
-        
-        LAST_ITEM = JSON.parse(JSON.stringify(newItem));
-        localStorage.setItem('gap_last_item', JSON.stringify(LAST_ITEM));
-        save();
-        closeEditor();
-        renderItemList();
-    }
-
-    function closeEditor() {
-        document.getElementById('editorView').style.display = 'none';
-        if(editorFromMissing) { editorFromMissing = false; renderMissingList(); }
-    }
-
-    function deleteAllItems() {
-        if(confirm('このシリーズ内の全アイテムを削除しますか？')) {
-            DB[currentSeriesId].items = [];
-            save();
-            renderItemList();
-        }
-    }
-
-    function openUnboxing(idx) {
-        currentItemIdx = idx;
-        const it = DB[currentSeriesId].items[idx];
-        document.getElementById('unboxingTitle').textContent = it.type;
-        tempStocks = JSON.parse(JSON.stringify(it.list));
-        renderUnboxingGrid();
-        document.getElementById('unboxingModal').style.display = 'flex';
-    }
-
-    function renderUnboxingGrid() {
-        const grid = document.getElementById('unboxingGrid');
-        grid.innerHTML = tempStocks.map((li, i) => `
-            <div class="unboxing-panel">
-                <div class="ub-char-label">${li.name}${li.isInf?'<span style="color:var(--gold); font-size:0.5rem;">∞</span>':''}</div>
-                <div class="ub-area ub-area-left" onpointerdown="startCount(${i}, 'own', 1, event)" onpointerup="stopCount()" onpointerleave="stopCount()">
-                    <div class="unboxing-count-badge ${li.own>0?'has-count':'is-zero'}">${li.own}</div>
-                    <div style="font-size:0.55rem; opacity:0.6;">保管</div>
-                </div>
-                <div class="ub-area ub-area-right" onpointerdown="startCount(${i}, 'trade', 1, event)" onpointerup="stopCount()" onpointerleave="stopCount()">
-                    <div class="unboxing-count-badge ${li.trade>0?'has-count':'is-zero'}">${li.trade}</div>
-                    <div style="font-size:0.55rem; opacity:0.6;">譲渡</div>
-                </div>
-            </div>
-        `).join('');
-        const total = tempStocks.reduce((a,b)=>a+b.own+b.trade, 0);
-        document.getElementById('unboxingTotalCount').textContent = `合計開封数: ${total}`;
-    }
-
-    let countTimer = null;
-    function startCount(idx, field, diff, e) {
-        e.preventDefault();
-        const start = Date.now();
-        countTimer = setTimeout(() => {
-            tempStocks[idx][field] = Math.max(0, tempStocks[idx][field] - 1);
-            renderUnboxingGrid();
-            countTimer = 'done';
-        }, 600);
-        
-        const endHandler = () => {
-            if(countTimer !== 'done') {
-                clearTimeout(countTimer);
-                tempStocks[idx][field] += diff;
-                renderUnboxingGrid();
-            }
-            window.removeEventListener('pointerup', endHandler);
-        };
-        window.addEventListener('pointerup', endHandler);
-    }
-    function stopCount() { clearTimeout(countTimer); }
-
-    function closeUnboxing() {
-        DB[currentSeriesId].items[currentItemIdx].list = tempStocks;
-        save();
-        document.getElementById('unboxingModal').style.display = 'none';
-        renderItemList();
-    }
-
-    function copyTradeText(idx, e) {
-        e.stopPropagation();
-        const it = DB[currentSeriesId].items[idx];
-        const tradeIn = it.list.filter(li => li.trade > 0).map(li => `${li.name}${li.trade>1?li.trade:''}`).join(' ');
-        const tradeOut = it.list.filter(li => li.target && li.own === 0).map(li => `${li.name}${li.isInf && TRADE_CONFIG.showInf ? '(∞)':''}`).join(' ');
-        
-        const text = `${TRADE_CONFIG.prefix || '【交換】'}\n${DB[currentSeriesId].title} ${it.type}\n\n譲：${tradeIn || 'なし'}\n求：${tradeOut || 'なし'}\n\n${TRADE_CONFIG.suffix || '郵送希望です。検索からお気軽にどうぞ。'}`;
-        navigator.clipboard.writeText(text).then(() => showToast('募集文をコピーしました'));
-    }
-
-    function renderMissingList() {
-        const container = document.getElementById('missingListContainer');
-        container.innerHTML = '';
-        let found = false;
-
-        ORDER.forEach(sid => {
-            const s = DB[sid];
-            const missingInSeries = s.items.filter(it => it.status !== 'none' && it.list.some(li => li.target && li.own === 0));
+                <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div class="inf-status-container">${infiniteStatusChips.join('')}</div>
+                    <span onclick="event.stopPropagation(); App.openUnboxing(${idx})" style="color:var(--dark-pink); font-size:0.7rem; font-weight:bold; background:#fff0f5; padding:6px 12px; border-radius:10px; white-space:nowrap;">✨ 開封モード</span>
+                </div>`;
             
-            if (missingInSeries.length > 0) {
+            swipeWrapper.appendChild(deleteBtn);
+            swipeWrapper.appendChild(card);
+            container.appendChild(swipeWrapper);
+        });
+    },
+
+    editorGrid(targets) {
+        const grid = document.getElementById('editorGrid');
+        grid.innerHTML = "";
+        
+        Store.activeCharList.forEach(c => {
+            if (!Store.tempStocks[c]) Store.tempStocks[c] = { own: 0, trade: 0, infinite: false };
+            const isTarget = targets.includes(c);
+            const { own, trade, infinite } = Store.tempStocks[c];
+
+            const ownClass = own > 0 ? 'qty-has' : 'qty-zero';
+            const tradeClass = trade > 0 ? 'qty-has' : 'qty-zero';
+
+            const row = document.createElement('div');
+            row.className = 'editor-row';
+            row.style.opacity = isTarget ? "1" : "0.5";
+            row.innerHTML = `
+                <div class="c-${c.trim()} char-chip-cell" style="padding:10px; border-radius:10px; text-align:center; font-weight:bold; font-size:0.75rem; position:relative;">
+                    <input type="checkbox" ${isTarget ? 'checked' : ''} onchange="Actions.refreshEditorTargets()" style="width:20px; height:20px; margin-bottom:5px;"><br>${c}
+                    <button class="inf-btn ${infinite ? 'active' : ''}" onclick="Actions.toggleInfinite('${c}')" style="display:block; margin:5px auto 0;">∞</button>
+                </div>
+                <div style="display:flex; justify-content:space-around;">
+                    <div style="text-align:center;">
+                        <span style="font-size:0.6rem; color:var(--text-sub);">保管</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button class="btn-qty" onclick="Actions.updateQty('${c}','own',-1)">-</button>
+                            <input type="number" inputmode="numeric" class="qty-display ${ownClass}" value="${own}" onchange="Actions.directInputQty('${c}','own',this.value)" onclick="this.select()">
+                            <button class="btn-qty" onclick="Actions.updateQty('${c}','own',1)">+</button>
+                        </div>
+                    </div>
+                    <div style="text-align:center;">
+                        <span style="font-size:0.6rem; color:var(--text-sub);">譲渡</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button class="btn-qty" onclick="Actions.updateQty('${c}','trade',-1)">-</button>
+                            <input type="number" inputmode="numeric" class="qty-display ${tradeClass}" value="${trade}" onchange="Actions.directInputQty('${c}','trade',this.value)" onclick="this.select()">
+                            <button class="btn-qty" onclick="Actions.updateQty('${c}','trade',1)">+</button>
+                        </div>
+                    </div>
+                </div>`;
+            grid.appendChild(row);
+        });
+    },
+
+    missingList() {
+        const container = document.getElementById('missingListContainer');
+        container.innerHTML = "";
+        let found = false;
+        let allChars = new Set();
+        Object.values(Store.charSets).forEach(list => list.forEach(c => allChars.add(c)));
+
+        Array.from(allChars).forEach(char => {
+            let list = [];
+            Store.order.forEach(sId => {
+                (Store.db[sId].items || []).forEach((item, itemIdx) => {
+                    const charList = Store.charSets[item.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
+                    if (!charList.includes(char)) return;
+                    if (!(item.targets || charList).includes(char)) return;
+
+                    const s = item.stocks[char] || { own: 0, trade: 0, infinite: false };
+                    const isMissing = (s.own === 0 && s.trade === 0);
+                    if (item.status === 'not' && (isMissing || s.infinite)) {
+                        list.push({
+                            series: Store.db[sId].title,
+                            seriesId: sId,
+                            type: item.type,
+                            itemIdx: itemIdx,
+                            isInf: s.infinite,
+                            isOwn: !isMissing
+                        });
+                    }
+                });
+            });
+
+            if (list.length > 0) {
                 found = true;
                 const group = document.createElement('div');
-                group.style.marginBottom = '25px';
+                group.className = 'card';
+                group.style.marginBottom = "15px";
                 group.innerHTML = `
-                    <div style="font-size:0.7rem; color:var(--gold); font-weight:bold; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
-                        <span style="background:var(--gold); color:white; padding:2px 8px; border-radius:4px;">${s.date || 'DATE'}</span> ${s.title}
+                    <div onclick="const n=this.nextElementSibling; n.style.display=n.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div><span class="char-chip c-${char.trim()}">${char}</span> <span style="font-size:0.8rem; color:var(--text-sub);">Missing: ${list.length}</span></div>
+                        <span style="color:var(--gold-light);">▼</span>
                     </div>
-                    <div style="display:grid; grid-template-columns:1fr; gap:10px;">
-                        ${missingInSeries.map(it => {
-                            const idx = s.items.indexOf(it);
-                            return `
-                            <div class="card" style="padding:15px; border-style:dashed;" onclick="editorFromMissing=true; currentSeriesId='${sid}'; openItemEditor(${idx})">
-                                <div style="font-size:0.75rem; font-weight:bold; color:var(--text-main); margin-bottom:8px;">${it.type}</div>
-                                <div style="display:flex; flex-wrap:wrap; gap:5px;">
-                                    ${it.list.filter(li => li.target && li.own === 0).map(li => `
-                                        <span class="char-chip ${li.isInf ? 'is-infinite-collected' : 'c-default'}" style="font-size:0.65rem; margin:0;">
-                                            ${li.name}${li.isInf?'(∞)':''}
-                                        </span>
-                                    `).join('')}
+                    <div style="display:none; margin-top:10px;">
+                        ${list.map(li => `
+                            <div onclick="App.jumpToEditorFromMissing('${li.seriesId}', ${li.itemIdx}, '${char}')" style="font-size:0.75rem; padding:12px 0; border-top:1px solid #eee; ${li.isOwn ? 'opacity:0.5;' : ''} cursor:pointer;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span><span style="color:var(--gold); font-weight:bold;">${li.series}</span> / ${li.type} ${li.isInf ? '<span style="color:var(--gold); font-size:0.6rem;">(∞)</span>' : ''}</span>
+                                    <span style="color:var(--gold-light); font-size:0.8rem;">✎</span>
                                 </div>
-                                <div style="margin-top:10px; text-align:right; display:flex; justify-content:flex-end; align-items:center;">
-                                    <span><span style="color:var(--gold); font-weight:bold;">${it.charSet}</span> / ${it.type}</span>
-                                    <span style="color:var(--gold-light); font-size:0.8rem; margin-left:8px;">✎</span>
-                                </div>
-                            </div>`;
-                        }).join('')}
-                    </div>`; 
-                container.appendChild(group); 
+                            </div>`).join('')}
+                    </div>`;
+                container.appendChild(group);
             }
         });
-        if(!found) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px;">不足はありません。</div>`;
-    }
-    
-    function toggleDateFilter() { const p = document.getElementById('dateFilterPanel'); p.style.display = p.style.display==='none'?'block':'none'; }
-    function clearDateFilter() { document.getElementById('filterStart').value=""; document.getElementById('filterEnd').value=""; renderSeriesList(); }
-    function filterByTag(t) { document.getElementById('searchBar').value=t; renderSeriesList(); window.scrollTo({top:0, behavior:'smooth'}); }
+        if (!found) container.innerHTML = `<div style="text-align:center; color:var(--text-sub); margin-top:50px;">不足はありません。</div>`;
+    },
 
-    function toggleSettings(show) {
+    unboxingGrid() {
+        const grid = document.getElementById('unboxingGrid');
+        grid.innerHTML = "";
+        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        const list = Store.charSets[item.charSetName || "デフォルト"] || CONSTANTS.DEFAULT_CHARS;
+        let tOwn = 0, tTrade = 0;
+
+        list.forEach(c => {
+            const s = item.stocks[c] || { own: 0, trade: 0, infinite: false };
+            tOwn += s.own; tTrade += s.trade;
+
+            const panel = document.createElement('div');
+            panel.className = `unboxing-panel c-${c.trim()}`;
+            panel.innerHTML = `
+                <div class="ub-char-label">${c}</div>
+                <div class="ub-area ub-area-left"><span class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</span></div>
+                <div class="ub-area ub-area-right"><span class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</span></div>`;
+            
+            // Interaction Handlers (Long press logic)
+            const attachHandler = (area, type) => {
+                let timer;
+                area.onpointerdown = (e) => { e.preventDefault(); timer = setTimeout(() => { Actions.updateUnboxingCount(c, type, -1); timer = null; }, 500); };
+                area.onpointerup = (e) => { e.preventDefault(); if(timer) { clearTimeout(timer); Actions.updateUnboxingCount(c, type, 1); } };
+                area.oncontextmenu = (e) => e.preventDefault();
+            };
+
+            attachHandler(panel.querySelector('.ub-area-left'), 'own');
+            attachHandler(panel.querySelector('.ub-area-right'), 'trade');
+            grid.appendChild(panel);
+        });
+        document.getElementById('unboxingTotalCount').innerHTML = `保管: ${tOwn} / 譲渡: ${tTrade} / 合計: ${tOwn+tTrade}`;
+    }
+};
+
+// =========================================
+// 5. App Actions (Logic)
+// =========================================
+const Actions = {
+    // --- Series ---
+    saveSeriesModal() {
+        const title = document.getElementById('msTitle').value.trim();
+        if(!title) return;
+        const id = "s" + Date.now();
+        const useTemp = document.getElementById('msUseTemplate').checked;
+        let items = [];
+        if(useTemp) Store.templates.forEach(t => items.push({ type: t, stocks: {}, targets: [...CONSTANTS.DEFAULT_CHARS], status: "not", charSetName: "デフォルト" }));
+        
+        Store.db[id] = { 
+            title, 
+            date: document.getElementById('msDate').value, 
+            tags: document.getElementById('msTags').value, 
+            items: items, 
+            fav: false 
+        };
+        Store.order.unshift(id);
+        Store.save();
+        App.closeSeriesModal();
+        App.openDetail(id);
+    },
+    deleteSeries(id) {
+        if(confirm("削除しますか？")) {
+            delete Store.db[id];
+            Store.order = Store.order.filter(oid => oid !== id);
+            Store.save();
+            Render.seriesList();
+        }
+    },
+    toggleFavorite(id, e) {
+        e.stopPropagation();
+        Store.db[id].fav = !Store.db[id].fav;
+        Store.save();
+        Render.seriesList();
+    },
+
+    // --- Items ---
+    saveItem() {
+        const type = document.getElementById('editItemType').value.trim();
+        if (!type) return alert("名前を入力してください");
+        
+        let data = {
+            type,
+            stocks: Store.tempStocks,
+            targets: Actions.getSelectedTargets(),
+            status: document.getElementById('editItemStatus').value,
+            charSetName: document.getElementById('editCharSetName').value
+        };
+        data.status = Utils.autoDetermineStatus(data);
+        
+        // Save History
+        Store.lastItem = { type: data.type, charSetName: data.charSetName, targets: data.targets };
+        Store.saveLastItem();
+
+        if (Store.currentItemIdx === null) Store.db[Store.currentSeriesId].items.push(data);
+        else Store.db[Store.currentSeriesId].items[Store.currentItemIdx] = data;
+
+        Store.save();
+        Utils.showToast("保存しました");
+        history.back();
+        document.getElementById('editorView').style.display = 'none';
+        
+        if (!Store.editorFromMissing) Render.itemList();
+        else { Store.editorFromMissing = false; Render.missingList(); }
+    },
+    deleteItem(idx) {
+        if(confirm("削除しますか？")) {
+            Store.db[Store.currentSeriesId].items.splice(idx,1);
+            Store.save();
+            Render.itemList();
+        }
+    },
+    deleteAllItems() {
+        if(confirm("全削除しますか？")) {
+            Store.db[Store.currentSeriesId].items = [];
+            Store.save();
+            Render.itemList();
+        }
+    },
+    duplicateItem(idx, e) {
+        e.stopPropagation();
+        const base = Store.db[Store.currentSeriesId].items[idx];
+        const newItem = {
+            type: base.type,
+            charSetName: base.charSetName || "デフォルト",
+            targets: JSON.parse(JSON.stringify(base.targets)),
+            stocks: {}, // reset counts
+            status: "not"
+        };
+        Store.db[Store.currentSeriesId].items.push(newItem);
+        Store.save();
+        Render.itemList();
+        Utils.showToast("複製しました");
+    },
+
+    // --- Editor Interaction ---
+    updateQty(char, key, delta) {
+        Store.tempStocks[char][key] = Math.max(0, Store.tempStocks[char][key] + delta);
+        Render.editorGrid(Actions.getSelectedTargets());
+    },
+    directInputQty(char, key, val) {
+        let n = parseInt(val);
+        if(isNaN(n) || n < 0) n = 0;
+        Store.tempStocks[char][key] = n;
+        Render.editorGrid(Actions.getSelectedTargets());
+    },
+    toggleInfinite(char) {
+        Store.tempStocks[char].infinite = !Store.tempStocks[char].infinite;
+        Render.editorGrid(Actions.getSelectedTargets());
+    },
+    getSelectedTargets() {
+        const cbs = document.querySelectorAll('#editorGrid input[type="checkbox"]');
+        let selected = [];
+        cbs.forEach((cb, i) => { if(cb.checked) selected.push(Store.activeCharList[i]); });
+        return selected;
+    },
+    refreshEditorTargets() { Render.editorGrid(Actions.getSelectedTargets()); },
+    bulkToggleTargets(s) { Render.editorGrid(s ? [...Store.activeCharList] : []); },
+    bulkIncrementOwn() {
+        Store.activeCharList.forEach(c => {
+            if(!Store.tempStocks[c]) Store.tempStocks[c] = { own: 0, trade: 0, infinite: false };
+            Store.tempStocks[c].own += 1;
+        });
+        Render.editorGrid(Actions.getSelectedTargets());
+        Utils.showToast("保管を+1しました");
+    },
+    bulkResetCounts() {
+        if(confirm("カウントをすべて削除しますがよろしいですか？")) {
+            Object.keys(Store.tempStocks).forEach(c => { Store.tempStocks[c].own = 0; Store.tempStocks[c].trade = 0; Store.tempStocks[c].infinite = false; });
+            Render.editorGrid(Actions.getSelectedTargets());
+            Utils.showToast("リセットしました");
+        }
+    },
+
+    // --- Unboxing ---
+    updateUnboxingCount(char, type, delta) {
+        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
+        if(!item.stocks[char]) item.stocks[char] = { own: 0, trade: 0, infinite: false };
+        item.stocks[char][type] = Math.max(0, item.stocks[char][type] + delta);
+        
+        const oldStatus = item.status;
+        item.status = Utils.autoDetermineStatus(item);
+        if (oldStatus !== item.status) Utils.showToast(item.status === 'comp' ? "コンプリート！" : "未コンプに戻りました");
+        
+        Store.save();
+        Render.unboxingGrid();
+    },
+
+    // --- Drag & Drop ---
+    dragSrcId: null,
+    handleDragStart(e, id) {
+        if(Store.sortMode !== 'custom') return;
+        Actions.dragSrcId = id;
+        e.target.classList.add('dragging');
+    },
+    handleDragOver(e) { e.preventDefault(); },
+    handleDrop(e, targetId) {
+        e.preventDefault();
+        if(!Actions.dragSrcId || Actions.dragSrcId === targetId) return;
+        let newOrder = [...Store.order];
+        const srcIdx = newOrder.indexOf(Actions.dragSrcId);
+        const targetIdx = newOrder.indexOf(targetId);
+        newOrder.splice(srcIdx, 1);
+        newOrder.splice(targetIdx, 0, Actions.dragSrcId);
+        Store.order = newOrder;
+        Store.save();
+        Render.seriesList();
+    },
+
+    // --- Settings & Utils ---
+    saveSettings() {
+        // Parse Chars
+        const lines = document.getElementById('charSettingsInput').value.split('\n');
+        let newSets = {};
+        lines.forEach(line => {
+            const p = line.split(':');
+            if(p.length >= 2) newSets[p[0].trim()] = p[1].split(',').map(c => c.trim()).filter(c => c);
+        });
+        Store.charSets = Object.keys(newSets).length ? newSets : { "デフォルト": CONSTANTS.DEFAULT_CHARS };
+        
+        // Parse Templates
+        Store.templates = document.getElementById('tempSettingsInput').value.split('\n').map(n=>n.trim()).filter(n=>n);
+        
+        // Parse Presets
+        const pLines = document.getElementById('presetSettingsInput').value.split('\n');
+        let newPresets = [];
+        pLines.forEach(l => {
+            const p = l.split(',');
+            if(p.length >= 3) newPresets.push({ name: p[0].trim(), charSet: p[1].trim(), targets: p[2].split('|').map(c => c.trim()) });
+        });
+        Store.presets = newPresets;
+
+        // Config
+        Store.tradeConfig = {
+            prefix: document.getElementById('tradePrefixInput').value,
+            suffix: document.getElementById('tradeSuffixInput').value,
+            showInf: document.getElementById('tradeShowInfMark').checked
+        };
+        Store.save();
+        location.reload();
+    },
+    exportBackup() {
+        const data = {
+            [CONSTANTS.KEYS.DB]: Store.db,
+            [CONSTANTS.KEYS.ORDER]: Store.order,
+            [CONSTANTS.KEYS.SETS]: Store.charSets,
+            [CONSTANTS.KEYS.TEMPLATES]: Store.templates,
+            [CONSTANTS.KEYS.SORT]: Store.sortMode,
+            [CONSTANTS.KEYS.TRADE]: Store.tradeConfig,
+            [CONSTANTS.KEYS.PRESETS]: Store.presets
+        };
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type:'application/json'}));
+        a.download=`backup.json`;
+        a.click();
+    },
+    importBackup(e) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                if(confirm("上書きしますか？")) {
+                    localStorage.setItem(CONSTANTS.KEYS.DB, JSON.stringify(data[CONSTANTS.KEYS.DB]));
+                    localStorage.setItem(CONSTANTS.KEYS.ORDER, JSON.stringify(data[CONSTANTS.KEYS.ORDER]));
+                    localStorage.setItem(CONSTANTS.KEYS.SETS, JSON.stringify(data[CONSTANTS.KEYS.SETS] || { "デフォルト": CONSTANTS.DEFAULT_CHARS }));
+                    localStorage.setItem(CONSTANTS.KEYS.TRADE, JSON.stringify(data[CONSTANTS.KEYS.TRADE] || { prefix: "", suffix: "", showInf: true }));
+                    localStorage.setItem(CONSTANTS.KEYS.SORT, data[CONSTANTS.KEYS.SORT] || 'new');
+                    localStorage.setItem(CONSTANTS.KEYS.PRESETS, JSON.stringify(data[CONSTANTS.KEYS.PRESETS] || []));
+                    location.reload();
+                }
+            } catch(e) { alert("無効なファイルです"); }
+        };
+        reader.readAsText(e.target.files[0]);
+    },
+    copyTradeText(text) {
+        navigator.clipboard.writeText(text).then(() => Utils.showToast("コピーしました"));
+    }
+};
+
+// =========================================
+// 6. Main App Controller
+// =========================================
+const App = {
+    init() {
+        Store.init();
+        Render.seriesList();
+        
+        // SW Register
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW fail', err));
+        }
+
+        // Hide Splash
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => splash.remove(), 500);
+            }
+        }, 600);
+    },
+
+    // Navigation & Routing
+    switchMainTab(tab) {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
+        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
+        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+        if (tab === 'missing') Render.missingList();
+    },
+
+    openDetail(id) {
+        Store.currentSeriesId = id;
+        document.getElementById('detailHeaderTitle').textContent = Store.db[id].title;
+        document.getElementById('detailView').style.display = 'block';
+        history.pushState({view: 'detail', seriesId: id}, '');
+        Render.itemList();
+    },
+    closeDetail() {
+        document.getElementById('detailView').style.display = 'none';
+        if (history.state && history.state.view === 'detail') history.back();
+        Render.seriesList();
+    },
+
+    openItemEditor(idx = null, fromMissing = false) {
+        Store.currentItemIdx = idx;
+        Store.editorFromMissing = fromMissing;
+        
+        // Restore/Preset UI logic
+        const presetArea = document.getElementById('presetArea');
+        const historyBanner = document.getElementById('historyBanner');
+        
+        historyBanner.style.display = (idx === null && Store.lastItem) ? 'flex' : 'none';
+        
+        if (idx === null && Store.presets.length > 0) {
+            presetArea.style.display = 'block';
+            document.getElementById('presetChips').innerHTML = Store.presets.map((p, i) => 
+                `<span class="preset-chip" onclick="App.applyPreset(${i})">${p.name}</span>`
+            ).join('');
+        } else {
+            presetArea.style.display = 'none';
+        }
+
+        // Populate Fields
+        const setSelect = document.getElementById('editCharSetName');
+        setSelect.innerHTML = Object.keys(Store.charSets).map(n => `<option value="${n}">${n}</option>`).join('');
+        
+        const item = idx !== null ? Store.db[Store.currentSeriesId].items[idx] : 
+            { type: "", stocks: {}, targets: [], status: "not", charSetName: "デフォルト" };
+
+        document.getElementById('editItemType').value = item.type;
+        document.getElementById('editItemStatus').value = item.status || "not";
+        document.getElementById('editCharSetName').value = item.charSetName || "デフォルト";
+        
+        Store.tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
+        Store.activeCharList = Store.charSets[document.getElementById('editCharSetName').value] || CONSTANTS.DEFAULT_CHARS;
+        
+        Render.editorGrid(item.targets && item.targets.length > 0 ? item.targets : [...Store.activeCharList]);
+        
+        document.getElementById('editorView').style.display = 'block';
+        history.pushState({view: 'editor'}, '');
+    },
+    closeEditor() {
+        document.getElementById('editorView').style.display = 'none';
+        if (history.state && history.state.view === 'editor') history.back();
+        if (Store.editorFromMissing) { Store.editorFromMissing = false; Render.missingList(); }
+    },
+
+    // Helper Actions
+    applyHistory() {
+        if (!Store.lastItem) return;
+        document.getElementById('editItemType').value = Store.lastItem.type;
+        document.getElementById('editCharSetName').value = Store.lastItem.charSetName;
+        Store.activeCharList = Store.charSets[Store.lastItem.charSetName] || CONSTANTS.DEFAULT_CHARS;
+        Store.tempStocks = {};
+        Render.editorGrid(Store.lastItem.targets);
+        Utils.showToast("履歴を適用しました");
+    },
+    applyPreset(idx) {
+        const p = Store.presets[idx];
+        document.getElementById('editItemType').value = p.name;
+        document.getElementById('editCharSetName').value = p.charSet;
+        Store.activeCharList = Store.charSets[p.charSet] || CONSTANTS.DEFAULT_CHARS;
+        Store.tempStocks = {};
+        Render.editorGrid(p.targets);
+        Utils.showToast(`プリセット: ${p.name} を適用`);
+    },
+    changeCharSet(setName) {
+        Store.activeCharList = Store.charSets[setName] || CONSTANTS.DEFAULT_CHARS;
+        Render.editorGrid([...Store.activeCharList]);
+    },
+    
+    // Modals
+    openSeriesModal() {
+        document.getElementById('msTitle').value = "";
+        document.getElementById('seriesModal').style.display = 'flex';
+    },
+    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
+    
+    openUnboxing(idx) {
+        Store.currentItemIdx = idx;
+        document.getElementById('unboxingTitle').textContent = Store.db[Store.currentSeriesId].items[idx].type;
+        Render.unboxingGrid();
+        document.getElementById('unboxingModal').style.display = 'flex';
+    },
+    closeUnboxing() {
+        document.getElementById('unboxingModal').style.display = 'none';
+        Render.itemList();
+    },
+
+    toggleSettings(s) {
         const panel = document.getElementById('settingsPanel');
         const overlay = document.getElementById('settingsOverlay');
-        if(show) {
-            document.getElementById('tradePrefixInput').value = TRADE_CONFIG.prefix;
-            document.getElementById('tradeSuffixInput').value = TRADE_CONFIG.suffix;
-            document.getElementById('tradeShowInfMark').checked = TRADE_CONFIG.showInf;
-            document.getElementById('charSettingsInput').value = Object.entries(CHAR_SETS).map(([k,v]) => `${k}:${v.join(',')}`).join('\n');
-            document.getElementById('tempSettingsInput').value = TEMPLATES.join('\n');
-            document.getElementById('presetSettingsInput').value = PRESETS.map(p => `${p.name},${p.charSet},${p.targets.join('|')}`).join('\n');
-            overlay.style.display = 'block';
-            setTimeout(() => panel.style.right = '0', 10);
-        } else {
-            panel.style.right = '-85%';
-            setTimeout(() => overlay.style.display = 'none', 300);
+        overlay.style.display = s ? 'block' : 'none';
+        panel.style.right = s ? '0' : '-85%';
+
+        if(s) {
+            document.getElementById('charSettingsInput').value = Object.keys(Store.charSets).map(n => `${n}:${Store.charSets[n].join(',')}`).join('\n');
+            document.getElementById('tempSettingsInput').value = Store.templates.join('\n');
+            document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix || "";
+            document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix || "";
+            document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf !== false;
+            document.getElementById('presetSettingsInput').value = Store.presets.map(p => `${p.name},${p.charSet},${p.targets.join('|')}`).join('\n');
         }
-    }
+    },
 
-    function saveSettings() {
-        TRADE_CONFIG.prefix = document.getElementById('tradePrefixInput').value;
-        TRADE_CONFIG.suffix = document.getElementById('tradeSuffixInput').value;
-        TRADE_CONFIG.showInf = document.getElementById('tradeShowInfMark').checked;
-        
-        const charLines = document.getElementById('charSettingsInput').value.split('\n').filter(l => l.includes(':'));
-        const newSets = {};
-        charLines.forEach(l => {
-            const [k, v] = l.split(':');
-            newSets[k.trim()] = v.split(',').map(n => n.trim()).filter(n => n);
-        });
-        if(Object.keys(newSets).length > 0) CHAR_SETS = newSets;
+    // Sort & Filter UI
+    setSortMode(mode) {
+        Store.sortMode = mode;
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`sort-${mode}`).classList.add('active');
+        Store.save();
+        Render.seriesList();
+    },
+    toggleDateFilter() {
+        const p = document.getElementById('dateFilterPanel');
+        p.style.display = p.style.display === 'none' ? 'block' : 'none';
+    },
+    clearDateFilter() {
+        document.getElementById('filterStart').value = "";
+        document.getElementById('filterEnd').value = "";
+        Render.seriesList();
+    },
+    filterByTag(t) {
+        document.getElementById('searchBar').value = t;
+        Render.seriesList();
+        window.scrollTo({top:0, behavior:'smooth'});
+    },
 
-        TEMPLATES = document.getElementById('tempSettingsInput').value.split('\n').map(t => t.trim()).filter(t => t);
-        
-        const presetLines = document.getElementById('presetSettingsInput').value.split('\n').filter(l => l.trim());
-        PRESETS = presetLines.map(l => {
-            const [name, charSet, targets] = l.split(',');
-            return { name: name?.trim(), charSet: charSet?.trim(), targets: targets?.split('|').map(t => t.trim()) || [] };
-        }).filter(p => p.name && p.charSet);
-
-        save();
-        toggleSettings(false);
-        renderSeriesList();
-        showToast("設定を保存しました");
-    }
-
-    function exportBackup() {
-        const data = { db: DB, order: ORDER, charSets: CHAR_SETS, config: TRADE_CONFIG, presets: PRESETS };
-        const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `collection_archive_backup_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
-    }
-
-    function importBackup(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (re) => {
-            try {
-                const data = JSON.parse(re.target.result);
-                if(data.db && data.order) {
-                    DB = data.db; ORDER = data.order;
-                    if(data.charSets) CHAR_SETS = data.charSets;
-                    if(data.config) TRADE_CONFIG = data.config;
-                    if(data.presets) PRESETS = data.presets;
-                    save();
-                    renderSeriesList();
-                    showToast("バックアップを読み込みました");
+    // Deep Link Logic
+    jumpToEditorFromMissing(sId, itemIdx, charName) {
+        Store.currentSeriesId = sId;
+        App.openItemEditor(itemIdx, true);
+        setTimeout(() => {
+            const rows = document.querySelectorAll('.editor-row');
+            for(let row of rows) {
+                if(row.innerText.includes(charName)) {
+                    row.scrollIntoView({behavior: 'smooth', block: 'center'});
+                    row.style.outline = "2px solid var(--gold)";
+                    setTimeout(() => row.style.outline = "none", 2000);
+                    break;
                 }
-            } catch(err) { alert("無効なファイルです"); }
-        };
-        reader.readAsText(file);
+            }
+        }, 300);
     }
+};
 
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').then(reg => {
-                console.log('SW registered', reg);
-            }).catch(err => {
-                console.log('SW registration failed', err);
-            });
-        });
+// Browser History Handling
+window.onpopstate = function(e) {
+    const state = e.state || {};
+    const editor = document.getElementById('editorView');
+    const detail = document.getElementById('detailView');
+
+    if (editor.style.display === 'block') {
+        editor.style.display = 'none';
+        if (Store.editorFromMissing) {
+            Store.editorFromMissing = false;
+            Render.missingList();
+        }
+    } else if (detail.style.display === 'block' && state.view !== 'detail') {
+        detail.style.display = 'none';
+        Render.seriesList();
     }
+};
+
 </script>
 </body>
 </html>
