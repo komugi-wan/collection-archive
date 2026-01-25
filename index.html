@@ -9,7 +9,9 @@
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <style>
-        /* CSSセクションは変更ありません（元のデザインを完全維持） */
+        /* =========================================
+           1. Variables & Reset
+           ========================================= */
         :root {
             --bg-color: #fefaf9;
             --card-bg: #ffffff;
@@ -41,6 +43,9 @@
         button { cursor: pointer; outline: none; font-family: inherit; }
         input, select, textarea { outline: none; font-family: inherit; }
 
+        /* =========================================
+           2. Layout & Containers
+           ========================================= */
         .container { padding: 15px; max-width: 600px; margin: auto; }
         .full-view {
             display: none;
@@ -60,6 +65,9 @@
             border-radius: 20px; max-height: 95vh; overflow-y: auto;
         }
 
+        /* =========================================
+           3. Headers & Navigation
+           ========================================= */
         header {
             background: var(--card-bg);
             padding: var(--safe-top) 15px 15px;
@@ -103,6 +111,9 @@
             text-overflow: ellipsis; padding: 0 10px;
         }
 
+        /* =========================================
+           4. Components: Cards & Swipe
+           ========================================= */
         .swipe-container {
             position: relative;
             margin-bottom: 15px; overflow: hidden;
@@ -128,6 +139,9 @@
             font-size: 0.8rem; z-index: 1; border-radius: 0 20px 20px 0;
         }
 
+        /* =========================================
+           5. Components: Chips & Status
+           ========================================= */
         .char-chip {
             font-size: 0.75rem;
             padding: 4px 10px; border-radius: 8px;
@@ -158,6 +172,7 @@
             font-weight: bold; margin: 4px; cursor: pointer;
         }
 
+        /* Character Colors */
         .c-default { background: #eee; color: #666; }
         .c-北門 { background: #ffffff !important; color: #777 !important; border: 1px solid #ddd; }
         .c-是国 { background: #000000 !important; color: #ffffff !important; }
@@ -174,6 +189,9 @@
         .c-不動 { background: #ffe082 !important; color: #ff8f00 !important; }
         .c-殿 { background: #f1f8e9 !important; color: #689f38 !important; border: 1px solid #dcedc8 !important; }
 
+        /* =========================================
+           6. Components: Inventory Grid
+           ========================================= */
         .inventory-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr; gap: 8px;
@@ -222,6 +240,9 @@
         }
         .inf-status-chip span { font-size: 0.7rem; opacity: 0.8; }
 
+        /* =========================================
+           7. Components: Editor
+           ========================================= */
         .editor-row {
             display: grid;
             grid-template-columns: 80px 1fr; gap: 10px;
@@ -270,6 +291,9 @@
             justify-content: space-between; align-items: center;
         }
 
+        /* =========================================
+           8. Components: Unboxing
+           ========================================= */
         .unboxing-panel {
             display: grid;
             grid-template-columns: 1fr 1fr; padding: 0;
@@ -309,6 +333,9 @@
         .unboxing-count-badge.is-zero { background: transparent; color: rgba(0,0,0,0.15); box-shadow: none; }
         .unboxing-count-badge.has-count { background: rgba(255,255,255,0.95); color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
 
+        /* =========================================
+           9. UI Elements (Inputs, Buttons, FAB)
+           ========================================= */
         input[type="text"], input[type="month"], select {
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -356,6 +383,9 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* =========================================
+           10. Sorting & Filtering
+           ========================================= */
         .sort-controls {
             display: flex;
             gap: 8px; margin-bottom: 15px; overflow-x: auto;
@@ -396,7 +426,9 @@
         .label-sm { font-size: 0.7rem; color: var(--gold); font-weight: bold; margin-bottom: 5px; display: block; }
     </style>
 </head>
-<body> <div id="splash-screen">
+<body onload="App.init()">
+
+<div id="splash-screen">
     <div style="color:var(--gold); font-size:1rem; letter-spacing:4px; font-weight:600; margin-bottom:25px;">COLLECTION ARCHIVE</div>
     <div style="width:24px; height:24px; border:2px solid var(--gold-light); border-top:2px solid var(--gold); border-radius:50%; animation: spin 0.8s linear infinite;"></div>
 </div>
@@ -414,8 +446,7 @@
 <div id="seriesView" class="container">
     <div class="flex align-center gap-10 mb-15">
         <input type="text" id="searchBar" placeholder="シリーズ・タグを検索..." oninput="Render.seriesList()" style="flex:1;">
-        <button id="btnToggleDate" onclick="App.toggleDateFilter()" style="background:var(--card-bg);
-            border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold);">📅</button>
+        <button id="btnToggleDate" onclick="App.toggleDateFilter()" style="background:var(--card-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:12px; color:var(--gold);">📅</button>
     </div>
 
     <div class="sort-controls">
@@ -424,8 +455,7 @@
         <button class="sort-btn" id="sort-custom" onclick="App.setSortMode('custom')">カスタム順</button>
     </div>
 
-    <div id="dateFilterPanel" style="display:none;
-        background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light);">
+    <div id="dateFilterPanel" style="display:none; background:var(--card-bg); padding:15px; border-radius:20px; margin-bottom:20px; border:1px solid var(--gold-light);">
         <p class="label-sm">表示期間を指定</p>
         <div class="flex align-center gap-10">
             <input type="month" id="filterStart" onchange="Render.seriesList()" style="padding:8px; font-size:0.85rem;">
@@ -546,87 +576,8 @@
 
 <script>
 /**
- * COLLECTION ARCHIVE v1.1
- * IndexedDB Migration Version
+ * COLLECTION ARCHIVE v1.0 - IndexedDB Migrated Version
  */
-
-// =========================================
-// 0. IndexedDB Wrapper
-// =========================================
-const DB = {
-    name: 'CollectionArchiveDB',
-    version: 1,
-    store: 'app_data',
-    instance: null,
-
-    async init() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.name, this.version);
-            request.onupgradeneeded = (e) => {
-                const db = e.target.result;
-                if (!db.objectStoreNames.contains(this.store)) {
-                    db.createObjectStore(this.store);
-                }
-            };
-            request.onsuccess = async (e) => {
-                this.instance = e.target.result;
-                // マイグレーション実行
-                await this.migrateFromLocalStorage();
-                resolve();
-            };
-            request.onerror = (e) => reject(e);
-        });
-    },
-
-    async migrateFromLocalStorage() {
-        const keys = Object.values(CONSTANTS.KEYS);
-        let hasData = false;
-        
-        // localStorageにデータがあるかチェック
-        for (const key of keys) {
-            if (localStorage.getItem(key)) {
-                hasData = true;
-                break;
-            }
-        }
-
-        if (hasData) {
-            console.log("Migration: localStorage data found. Copying to IndexedDB...");
-            for (const key of keys) {
-                const val = localStorage.getItem(key);
-                if (val !== null) {
-                    try {
-                        const parsed = JSON.parse(val);
-                        await this.set(key, parsed);
-                    } catch(e) {
-                        await this.set(key, val); // JSONでない場合は文字列として保存
-                    }
-                }
-            }
-            // 移行後にlocalStorageをクリア
-            keys.forEach(k => localStorage.removeItem(k));
-            console.log("Migration: Success.");
-        }
-    },
-
-    async get(key, defaultValue = null) {
-        return new Promise((resolve) => {
-            const tx = this.instance.transaction(this.store, 'readonly');
-            const request = tx.objectStore(this.store).get(key);
-            request.onsuccess = () => resolve(request.result !== undefined ? request.result : defaultValue);
-            request.onerror = () => resolve(defaultValue);
-        });
-    },
-
-    async set(key, value) {
-        return new Promise((resolve, reject) => {
-            const tx = this.instance.transaction(this.store, 'readwrite');
-            const request = tx.objectStore(this.store).put(value, key);
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
-        });
-    }
-};
 
 // =========================================
 // 1. Constants & Configuration
@@ -644,10 +595,53 @@ const CONSTANTS = {
     },
     DEFAULT_CHARS: ["北門", "是国", "金城", "阿修", "愛染", "増長", "音済", "王茶利", "野目", "釈村", "唯月", "遙日", "不動", "殿"],
     DEFAULT_TEMPLATES: ["缶バッジ", "アクスタ", "ブロマイド"],
+    IDB_NAME: 'CollectionArchiveDB',
+    IDB_STORE: 'AppSettings'
 };
 
 // =========================================
-// 2. State Management (Store)
+// 2. Native IndexedDB Wrapper
+// =========================================
+class IDB {
+    static open() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(CONSTANTS.IDB_NAME, 1);
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains(CONSTANTS.IDB_STORE)) {
+                    db.createObjectStore(CONSTANTS.IDB_STORE);
+                }
+            };
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    static async get(key) {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(CONSTANTS.IDB_STORE, 'readonly');
+            const store = transaction.objectStore(CONSTANTS.IDB_STORE);
+            const request = store.get(key);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    static async set(key, value) {
+        const db = await this.open();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(CONSTANTS.IDB_STORE, 'readwrite');
+            const store = transaction.objectStore(CONSTANTS.IDB_STORE);
+            const request = store.put(value, key);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    }
+}
+
+// =========================================
+// 3. State Management (Store)
 // =========================================
 const Store = {
     db: {},
@@ -667,33 +661,56 @@ const Store = {
     editorFromMissing: false,
 
     async init() {
-        await DB.init();
-        this.db = await DB.get(CONSTANTS.KEYS.DB, {});
-        this.order = await DB.get(CONSTANTS.KEYS.ORDER, []);
-        this.charSets = await DB.get(CONSTANTS.KEYS.SETS, { "デフォルト": CONSTANTS.DEFAULT_CHARS });
-        this.templates = await DB.get(CONSTANTS.KEYS.TEMPLATES, CONSTANTS.DEFAULT_TEMPLATES);
-        this.presets = await DB.get(CONSTANTS.KEYS.PRESETS, []);
-        this.tradeConfig = await DB.get(CONSTANTS.KEYS.TRADE, { prefix: "", suffix: "", showInf: true });
-        this.sortMode = await DB.get(CONSTANTS.KEYS.SORT, 'new');
-        this.lastItem = await DB.get(CONSTANTS.KEYS.LAST_ITEM, null);
+        // --- Migration Logic ---
+        const legacyData = localStorage.getItem(CONSTANTS.KEYS.DB);
+        if (legacyData) {
+            console.log("Migration: Moving localStorage data to IndexedDB...");
+            const dataToMigrate = {
+                [CONSTANTS.KEYS.DB]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.DB)) || {},
+                [CONSTANTS.KEYS.ORDER]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.ORDER)) || [],
+                [CONSTANTS.KEYS.SETS]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.SETS)) || { "デフォルト": CONSTANTS.DEFAULT_CHARS },
+                [CONSTANTS.KEYS.TEMPLATES]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TEMPLATES)) || CONSTANTS.DEFAULT_TEMPLATES,
+                [CONSTANTS.KEYS.PRESETS]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.PRESETS)) || [],
+                [CONSTANTS.KEYS.TRADE]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.TRADE)) || { prefix: "", suffix: "", showInf: true },
+                [CONSTANTS.KEYS.SORT]: localStorage.getItem(CONSTANTS.KEYS.SORT) || 'new',
+                [CONSTANTS.KEYS.LAST_ITEM]: JSON.parse(localStorage.getItem(CONSTANTS.KEYS.LAST_ITEM)) || null
+            };
+
+            for (const key in dataToMigrate) {
+                await IDB.set(key, dataToMigrate[key]);
+            }
+            localStorage.clear();
+            console.log("Migration: Completed.");
+        }
+
+        // --- Load from IndexedDB ---
+        this.db = await IDB.get(CONSTANTS.KEYS.DB) || {};
+        this.order = await IDB.get(CONSTANTS.KEYS.ORDER) || [];
+        this.charSets = await IDB.get(CONSTANTS.KEYS.SETS) || { "デフォルト": CONSTANTS.DEFAULT_CHARS };
+        this.templates = await IDB.get(CONSTANTS.KEYS.TEMPLATES) || CONSTANTS.DEFAULT_TEMPLATES;
+        this.presets = await IDB.get(CONSTANTS.KEYS.PRESETS) || [];
+        this.tradeConfig = await IDB.get(CONSTANTS.KEYS.TRADE) || { prefix: "", suffix: "", showInf: true };
+        this.sortMode = await IDB.get(CONSTANTS.KEYS.SORT) || 'new';
+        this.lastItem = await IDB.get(CONSTANTS.KEYS.LAST_ITEM) || null;
     },
 
     async save() {
-        await DB.set(CONSTANTS.KEYS.DB, this.db);
-        await DB.set(CONSTANTS.KEYS.ORDER, this.order);
-        await DB.set(CONSTANTS.KEYS.SETS, this.charSets);
-        await DB.set(CONSTANTS.KEYS.TRADE, this.tradeConfig);
-        await DB.set(CONSTANTS.KEYS.SORT, this.sortMode);
-        await DB.set(CONSTANTS.KEYS.PRESETS, this.presets);
+        await IDB.set(CONSTANTS.KEYS.DB, this.db);
+        await IDB.set(CONSTANTS.KEYS.ORDER, this.order);
+        await IDB.set(CONSTANTS.KEYS.SETS, this.charSets);
+        await IDB.set(CONSTANTS.KEYS.TRADE, this.tradeConfig);
+        await IDB.set(CONSTANTS.KEYS.SORT, this.sortMode);
+        await IDB.set(CONSTANTS.KEYS.PRESETS, this.presets);
+        await IDB.set(CONSTANTS.KEYS.TEMPLATES, this.templates);
     },
 
     async saveLastItem() {
-        await DB.set(CONSTANTS.KEYS.LAST_ITEM, this.lastItem);
+        await IDB.set(CONSTANTS.KEYS.LAST_ITEM, this.lastItem);
     }
 };
 
 // =========================================
-// 3. Utilities
+// 4. Utilities
 // =========================================
 const Utils = {
     showToast(msg) {
@@ -713,336 +730,87 @@ const Utils = {
         });
         return isAllCollected ? "comp" : "not";
     },
-
     attachSwipe(element, actionCallback, isCustomSort) {
-        let startX = 0, isSwiping = false, isTicking = false;
+        let startX = 0, isSwiping = false;
         element.addEventListener('touchstart', (e) => {
             if (Store.sortMode === 'custom' && isCustomSort) return;
             const rect = element.getBoundingClientRect();
             const touchX = e.touches[0].clientX;
-            if (touchX < rect.right - 80) return; 
-            startX = touchX;
-            isSwiping = true;
-        }, {passive: true});
-
+            if (touchX < rect.right - (rect.width * 0.25)) { isSwiping = false; return; }
+            startX = touchX; isSwiping = true;
+            element.classList.add('swiping');
+        });
         element.addEventListener('touchmove', (e) => {
-            if (!isSwiping || isTicking) return;
-            const currentX = e.touches[0].clientX;
-            const diff = Math.max(0, startX - currentX);
-            if (diff > 10) {
-                isTicking = true;
-                requestAnimationFrame(() => {
-                    element.style.transform = `translateX(-${Math.min(diff, 100)}px)`;
-                    element.classList.add('swiping');
-                    isTicking = false;
-                });
-            }
-        }, {passive: true});
-
+            if (!isSwiping) return;
+            const diff = e.touches[0].clientX - startX;
+            if (diff < 0) element.style.transform = `translateX(${diff}px)`;
+        });
         element.addEventListener('touchend', (e) => {
             if (!isSwiping) return;
-            isSwiping = false;
-            const currentX = e.changedTouches[0].clientX;
-            if (startX - currentX > 60) {
-                actionCallback();
-            }
-            element.style.transform = '';
+            const diff = e.changedTouches[0].clientX - startX;
             element.classList.remove('swiping');
+            element.style.transform = '';
+            if (diff < -60) actionCallback();
+            isSwiping = false;
         });
     }
 };
 
 // =========================================
-// 4. Rendering Logic
-// =========================================
-const Render = {
-    seriesList() {
-        const container = document.getElementById('seriesListContainer');
-        const q = document.getElementById('searchBar').value.toLowerCase();
-        const startF = document.getElementById('filterStart').value;
-        const endF = document.getElementById('filterEnd').value;
-
-        let displayOrder = [...Store.order];
-        if (Store.sortMode === 'date') {
-            displayOrder.sort((a,b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
-        } else if (Store.sortMode === 'new') {
-            displayOrder.reverse();
-        }
-
-        container.innerHTML = '';
-        displayOrder.forEach(id => {
-            const s = Store.db[id];
-            if (!s) return;
-            const tags = (s.tags || []).join(' ');
-            if (q && !s.title.toLowerCase().includes(q) && !tags.toLowerCase().includes(q)) return;
-            if (startF && s.date && s.date < startF) return;
-            if (endF && s.date && s.date > endF) return;
-
-            const div = document.createElement('div');
-            div.className = 'swipe-container';
-            if (Store.sortMode === 'custom') div.classList.add('sort-custom');
-            
-            const isComp = s.items.length > 0 && s.items.every(i => i.status === 'comp' || i.status === 'none');
-
-            div.innerHTML = `
-                <div class="delete-btn-overlay">DELETE</div>
-                <div class="card" onclick="App.openDetail('${id}')">
-                    <div class="handle">⠿</div>
-                    <div style="font-size:0.6rem; color:var(--text-sub); margin-bottom:4px;">${s.date || '日付未設定'}</div>
-                    <div style="font-size:0.95rem; font-weight:bold; margin-bottom:8px;">
-                        ${s.title} ${isComp ? '<span class="series-comp-mark">✔</span>' : ''}
-                    </div>
-                    <div id="tags-${id}"></div>
-                    <div class="inventory-grid" id="grid-${id}"></div>
-                </div>
-            `;
-            container.appendChild(div);
-
-            const tagsDiv = div.querySelector(`#tags-${id}`);
-            (s.tags || []).forEach(t => {
-                const span = document.createElement('span');
-                span.className = 'tag-chip';
-                span.textContent = `#${t}`;
-                span.onclick = (e) => { e.stopPropagation(); Actions.filterByTag(t); };
-                tagsDiv.appendChild(span);
-            });
-
-            const gridDiv = div.querySelector(`#grid-${id}`);
-            const summary = { total: 0, comp: 0 };
-            s.items.forEach(item => {
-                summary.total++;
-                if (item.status === 'comp') summary.comp++;
-                const box = document.createElement('div');
-                box.className = 'inv-box';
-                const statusClass = `st-${item.status}`;
-                box.innerHTML = `
-                    <span class="status-tag ${statusClass}">${item.status.toUpperCase()}</span>
-                    <span class="inv-label">${item.type}</span>
-                    <div class="inv-content"></div>
-                `;
-                const content = box.querySelector('.inv-content');
-                
-                if (item.status === 'none') {
-                    content.innerHTML = '<span style="color:#eee; font-size:1.2rem;">-</span>';
-                } else {
-                    const sortedChars = (item.targets || []).sort((a,b) => {
-                        const stockA = item.stocks[a] || {own:0, trade:0};
-                        const stockB = item.stocks[b] || {own:0, trade:0};
-                        return (stockB.own + stockB.trade) - (stockA.own + stockA.trade);
-                    });
-                    
-                    sortedChars.slice(0, 5).forEach(char => {
-                        const st = item.stocks[char] || {own:0, trade:0, infinite: false};
-                        if ((st.own + st.trade) > 0 || st.infinite) {
-                            const chip = document.createElement('span');
-                            chip.className = `char-chip c-${char} ${st.infinite ? 'is-infinite-collected' : ''}`;
-                            chip.textContent = char;
-                            content.appendChild(chip);
-                        }
-                    });
-                    if (sortedChars.length > 5) {
-                        content.insertAdjacentHTML('beforeend', `<span style="font-size:0.5rem; color:var(--text-sub);">+${sortedChars.length-5}</span>`);
-                    }
-                }
-                gridDiv.appendChild(box);
-            });
-            Utils.attachSwipe(div.querySelector('.card'), () => Actions.deleteSeries(id), true);
-        });
-    },
-
-    missingList() {
-        const container = document.getElementById('missingListContainer');
-        container.innerHTML = '';
-        let hasData = false;
-
-        const tradeData = [];
-        Store.order.forEach(sId => {
-            const s = Store.db[sId];
-            s.items.forEach((item, idx) => {
-                if (item.status === 'none') return;
-                const need = [];
-                const haveTrade = [];
-                (item.targets || []).forEach(char => {
-                    const st = item.stocks[char] || {own:0, trade:0, infinite:false};
-                    if (st.own === 0 && st.trade === 0 && !st.infinite) need.push(char);
-                    if (st.trade > 0) haveTrade.push({name: char, qty: st.trade});
-                });
-                if (need.length > 0 || haveTrade.length > 0) {
-                    tradeData.push({ sId, sTitle: s.title, item, idx, need, haveTrade });
-                }
-            });
-        });
-
-        tradeData.forEach(data => {
-            hasData = true;
-            const div = document.createElement('div');
-            div.className = 'card mb-15';
-            div.style.padding = '15px';
-            
-            let tradeStr = `${Store.tradeConfig.prefix || '【交換】'}\n${data.sTitle} ${data.item.type}\n`;
-            if (data.haveTrade.length > 0) {
-                tradeStr += `譲：${data.haveTrade.map(x => `${x.name}${x.qty > 1 ? `(${x.qty})` : ''}`).join('、')}\n`;
-            }
-            if (data.need.length > 0) {
-                tradeStr += `求：${data.need.join('、')}\n`;
-            }
-            tradeStr += (Store.tradeConfig.suffix || "郵送希望です。検索からお気軽にどうぞ。");
-
-            div.innerHTML = `
-                <div style="font-size:0.6rem; color:var(--gold); font-weight:bold; margin-bottom:5px;">${data.sTitle}</div>
-                <div class="flex justify-between align-center mb-15">
-                    <div style="font-size:0.85rem; font-weight:bold;">${data.item.type}</div>
-                    <button class="bulk-btn" onclick="Actions.copyToClipboard(\`${tradeStr.replace(/`/g, '\\`')}\`)">募集文コピー</button>
-                </div>
-                <div class="flex gap-10">
-                    <div style="flex:1;">
-                        <p class="label-sm" style="color:var(--danger)">MISSING</p>
-                        <div id="missing-chars-${data.sId}-${data.idx}"></div>
-                    </div>
-                    <div style="flex:1;">
-                        <p class="label-sm" style="color:var(--trade-text)">OFFERING</p>
-                        <div id="offering-chars-${data.sId}-${data.idx}"></div>
-                    </div>
-                </div>
-            `;
-            container.appendChild(div);
-
-            const missDiv = div.querySelector(`#missing-chars-${data.sId}-${data.idx}`);
-            data.need.forEach(c => {
-                const span = document.createElement('span');
-                span.className = `char-chip c-${c}`;
-                span.textContent = c;
-                span.onclick = () => Actions.jumpToEditorFromMissing(data.sId, data.idx, c);
-                missDiv.appendChild(span);
-            });
-
-            const offDiv = div.querySelector(`#offering-chars-${data.sId}-${data.idx}`);
-            data.haveTrade.forEach(obj => {
-                const span = document.createElement('span');
-                span.className = `char-chip c-${obj.name}`;
-                span.innerHTML = `${obj.name} <span>x${obj.qty}</span>`;
-                span.onclick = () => Actions.jumpToEditorFromMissing(data.sId, data.idx, obj.name);
-                offDiv.appendChild(span);
-            });
-        });
-
-        if (!hasData) {
-            container.innerHTML = '<p style="text-align:center; color:var(--text-sub); margin-top:50px; font-size:0.8rem;">不足しているアイテムはありません</p>';
-        }
-    },
-
-    itemList() {
-        const container = document.getElementById('itemListContainer');
-        const s = Store.db[Store.currentSeriesId];
-        container.innerHTML = '';
-        if (!s) return;
-
-        s.items.forEach((item, idx) => {
-            const div = document.createElement('div');
-            div.className = 'swipe-container';
-            const statusClass = `st-${item.status}`;
-            
-            let charHtml = '';
-            if (item.status === 'none') {
-                charHtml = '<p style="color:var(--text-sub); font-size:0.75rem; text-align:center; margin:10px 0;">予定なし</p>';
-            } else {
-                const infChars = [];
-                const ownChars = [];
-                (item.targets || []).forEach(c => {
-                    const st = item.stocks[c] || {own:0, trade:0, infinite:false};
-                    if (st.infinite) infChars.push({name: c, own: st.own, trade: st.trade});
-                    else if (st.own > 0 || st.trade > 0) ownChars.push({name: c, own: st.own, trade: st.trade});
-                });
-
-                charHtml += '<div style="margin-bottom:10px;">';
-                infChars.forEach(obj => {
-                    charHtml += `<span class="char-chip c-${obj.name} is-infinite-collected">${obj.name}${Store.tradeConfig.showInf ? '(∞)' : ''} x${obj.own + obj.trade}</span>`;
-                });
-                ownChars.forEach(obj => {
-                    charHtml += `<span class="char-chip c-${obj.name}">${obj.name} x${obj.own + obj.trade}</span>`;
-                });
-                charHtml += '</div>';
-            }
-
-            div.innerHTML = `
-                <div class="delete-btn-overlay">DELETE</div>
-                <div class="card" onclick="App.openItemEditor(${idx})">
-                    <span class="status-tag ${statusClass}">${item.status.toUpperCase()}</span>
-                    <div style="font-size:0.9rem; font-weight:bold; margin-bottom:10px;">${item.type}</div>
-                    ${charHtml}
-                    <div class="flex gap-10">
-                        <button class="secondary-btn" style="margin-top:0; font-size:0.75rem; padding:8px;" onclick="event.stopPropagation(); App.openUnboxing(${idx})">UNBOXING</button>
-                    </div>
-                </div>
-            `;
-            container.appendChild(div);
-            Utils.attachSwipe(div.querySelector('.card'), () => Actions.deleteItem(idx));
-        });
-    }
-};
-
-// =========================================
-// 5. Actions & Event Handlers
+// 5. Actions (Logic)
 // =========================================
 const Actions = {
     async saveSeriesModal() {
-        const title = document.getElementById('msTitle').value;
-        if (!title) return;
-        const id = 's_' + Date.now();
+        const title = document.getElementById('msTitle').value.trim();
         const date = document.getElementById('msDate').value;
-        const tags = document.getElementById('msTags').value.split(/[,、\s]+/).filter(x => x);
-        const useTemp = document.getElementById('msUseTemplate').checked;
+        const tagsRaw = document.getElementById('msTags').value;
+        const useTemplate = document.getElementById('msUseTemplate').checked;
+        if (!title) return;
 
-        const items = [];
-        if (useTemp) {
-            Store.templates.forEach(t => {
-                items.push({
-                    type: t,
-                    charSetName: "デフォルト",
-                    targets: [...CONSTANTS.DEFAULT_CHARS],
-                    stocks: {},
-                    status: "not"
-                });
-            });
-        }
+        const id = 's' + Date.now();
+        const tags = tagsRaw ? tagsRaw.split(/[,、]/).map(t => t.trim()).filter(t => t) : [];
+        const items = useTemplate ? Store.templates.map(type => ({
+            type, charSet: "デフォルト", status: "not", targets: [], stocks: {}
+        })) : [];
 
-        Store.db[id] = { title, date, tags, items };
-        Store.order.push(id);
+        Store.db[id] = { title, date, tags, items, isFavorite: false };
+        Store.order.unshift(id);
         await Store.save();
         App.closeSeriesModal();
         Render.seriesList();
     },
 
     async deleteSeries(id) {
-        if (!confirm('シリーズを削除しますか？')) return;
+        if (!confirm('このシリーズを削除しますか？')) return;
         delete Store.db[id];
-        Store.order = Store.order.filter(x => x !== id);
+        Store.order = Store.order.filter(oid => oid !== id);
+        await Store.save();
+        Render.seriesList();
+    },
+
+    async toggleFavorite(id, e) {
+        e.stopPropagation();
+        Store.db[id].isFavorite = !Store.db[id].isFavorite;
         await Store.save();
         Render.seriesList();
     },
 
     async saveItem() {
-        const type = document.getElementById('editItemType').value;
-        if (!type) return;
+        const type = document.getElementById('editItemType').value.trim();
         const charSetName = document.getElementById('editCharSetName').value;
         const status = document.getElementById('editItemStatus').value;
+        if (!type) return;
 
-        const targets = [];
-        document.querySelectorAll('.target-check').forEach(chk => {
-            if (chk.checked) targets.push(chk.dataset.char);
-        });
-
-        const item = { type, charSetName, targets, stocks: Store.tempStocks, status };
+        const item = { type, charSet: charSetName, status, targets: [...Store.activeCharList], stocks: { ...Store.tempStocks } };
         item.status = Utils.autoDetermineStatus(item);
 
-        const s = Store.db[Store.currentSeriesId];
+        const series = Store.db[Store.currentSeriesId];
         if (Store.currentItemIdx !== null) {
-            s.items[Store.currentItemIdx] = item;
+            series.items[Store.currentItemIdx] = item;
         } else {
-            s.items.push(item);
+            series.items.push(item);
         }
-
-        Store.lastItem = { type, charSetName, targets };
+        Store.lastItem = { type, charSet: charSetName, targets: [...Store.activeCharList] };
         await Store.save();
         await Store.saveLastItem();
         App.closeEditor();
@@ -1057,72 +825,434 @@ const Actions = {
     },
 
     async deleteAllItems() {
-        if (!confirm('シリーズ内のすべてのアイテムを削除しますか？')) return;
+        if (!confirm('シリーズ内の全アイテムを削除しますか？')) return;
         Store.db[Store.currentSeriesId].items = [];
         await Store.save();
         Render.itemList();
     },
 
     async saveSettings() {
-        const charInput = document.getElementById('charSettingsInput').value;
-        const lines = charInput.split('\n');
+        const tradePrefix = document.getElementById('tradePrefixInput').value;
+        const tradeSuffix = document.getElementById('tradeSuffixInput').value;
+        const tradeShowInf = document.getElementById('tradeShowInfMark').checked;
+        Store.tradeConfig = { prefix: tradePrefix, suffix: tradeSuffix, showInf: tradeShowInf };
+
+        const charRaw = document.getElementById('charSettingsInput').value;
         const newSets = {};
-        lines.forEach(l => {
-            const [name, chars] = l.split(':');
-            if (name && chars) newSets[name.trim()] = chars.split(',').map(c => c.trim());
+        charRaw.split('\n').forEach(line => {
+            const [name, chars] = line.split(':');
+            if (name && chars) newSets[name.trim()] = chars.split(',').map(c => c.trim()).filter(c => c);
         });
-        Store.charSets = newSets;
+        if (Object.keys(newSets).length > 0) Store.charSets = newSets;
 
-        Store.templates = document.getElementById('tempSettingsInput').value.split(/[,、\s\n]+/).filter(x => x);
-        
-        const presetInput = document.getElementById('presetSettingsInput').value;
-        Store.presets = presetInput.split('\n').filter(x => x).map(line => {
-            const [type, setName, targetStr] = line.split(',');
-            return { type: type.trim(), setName: setName.trim(), targets: targetStr ? targetStr.trim().split('|') : [] };
-        });
+        const presetRaw = document.getElementById('presetSettingsInput').value;
+        Store.presets = presetRaw.split('\n').map(line => {
+            const parts = line.split(',');
+            if (parts.length >= 3) return { type: parts[0].trim(), charSet: parts[1].trim(), targetStr: parts[2].trim() };
+            return null;
+        }).filter(p => p);
 
-        Store.tradeConfig.prefix = document.getElementById('tradePrefixInput').value;
-        Store.tradeConfig.suffix = document.getElementById('tradeSuffixInput').value;
-        Store.tradeConfig.showInf = document.getElementById('tradeShowInfMark').checked;
+        const tempRaw = document.getElementById('tempSettingsInput').value;
+        Store.templates = tempRaw.split('\n').map(t => t.trim()).filter(t => t);
 
         await Store.save();
-        Utils.showToast('設定を保存しました');
-        App.toggleSettings(false);
+        location.reload();
+    },
+
+    async setSortMode(mode) {
+        Store.sortMode = mode;
+        await Store.save();
+        document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`sort-${mode}`).classList.add('active');
         Render.seriesList();
     },
 
-    async exportBackup() {
-        const data = { db: Store.db, order: Store.order, charSets: Store.charSets, templates: Store.templates, presets: Store.presets, tradeConfig: Store.tradeConfig };
-        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `archive_backup_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
+    // Unboxing Logic
+    async updateStock(char, field, diff) {
+        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
+        Store.tempStocks[char][field] = Math.max(0, (Store.tempStocks[char][field] || 0) + diff);
+        
+        const series = Store.db[Store.currentSeriesId];
+        series.items[Store.currentItemIdx].stocks = { ...Store.tempStocks };
+        series.items[Store.currentItemIdx].status = Utils.autoDetermineStatus(series.items[Store.currentItemIdx]);
+        
+        await Store.save();
+        Render.unboxingGrid();
+    }
+};
+
+// =========================================
+// 6. Rendering (UI)
+// =========================================
+const Render = {
+    seriesList() {
+        const container = document.getElementById('seriesListContainer');
+        const q = document.getElementById('searchBar').value.toLowerCase();
+        const start = document.getElementById('filterStart').value;
+        const end = document.getElementById('filterEnd').value;
+        container.innerHTML = '';
+
+        let ids = [...Store.order];
+        if (Store.sortMode === 'date') {
+            ids.sort((a, b) => (Store.db[b].date || "").localeCompare(Store.db[a].date || ""));
+        }
+
+        ids.forEach(id => {
+            const s = Store.db[id];
+            if (!s) return;
+            const matchesSearch = s.title.toLowerCase().includes(q) || s.tags.some(t => t.toLowerCase().includes(q));
+            const matchesDate = (!start || s.date >= start) && (!end || s.date <= end);
+            if (!matchesSearch || !matchesDate) return;
+
+            const card = document.createElement('div');
+            card.className = 'swipe-container';
+            const isComp = s.items.length > 0 && s.items.every(i => i.status === 'comp' || i.status === 'none');
+            
+            card.innerHTML = `
+                <div class="delete-btn-overlay">削除</div>
+                <div class="card" onclick="App.openDetail('${id}')">
+                    <div class="flex justify-between align-center mb-15">
+                        <div class="text-bold" style="font-size:0.95rem;">
+                            ${s.title}${isComp ? '<span class="series-comp-mark">✔</span>' : ''}
+                        </div>
+                        <button class="fav-btn ${s.isFavorite ? 'active' : ''}" onclick="Actions.toggleFavorite('${id}', event)">${s.isFavorite ? '★' : '☆'}</button>
+                    </div>
+                    <div class="flex align-center justify-between">
+                        <div>${s.tags.map(t => `<span class="tag-chip" onclick="event.stopPropagation(); App.filterByTag('${t}')">#${t}</span>`).join('')}</div>
+                        <div style="font-size:0.65rem; color:var(--text-sub); font-weight:bold;">${s.date || '---'}</div>
+                    </div>
+                </div>
+            `;
+            Utils.attachSwipe(card.querySelector('.card'), () => Actions.deleteSeries(id));
+            container.appendChild(card);
+        });
     },
 
-    async importBackup(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = async (ev) => {
-            try {
-                const data = JSON.parse(ev.target.result);
-                Store.db = data.db || {};
-                Store.order = data.order || [];
-                Store.charSets = data.charSets || {};
-                Store.templates = data.templates || [];
-                Store.presets = data.presets || [];
-                Store.tradeConfig = data.tradeConfig || { prefix: "", suffix: "", showInf: true };
-                await Store.save();
-                location.reload();
-            } catch (err) { alert('バックアップの読み込みに失敗しました'); }
-        };
-        reader.readAsText(file);
+    itemList() {
+        const container = document.getElementById('itemListContainer');
+        const series = Store.db[Store.currentSeriesId];
+        document.getElementById('detailHeaderTitle').textContent = series.title;
+        container.innerHTML = '';
+
+        series.items.forEach((item, idx) => {
+            const card = document.createElement('div');
+            card.className = 'swipe-container';
+            const statusClass = item.status === 'comp' ? 'st-comp' : (item.status === 'none' ? 'st-none' : 'st-not');
+            const statusText = item.status === 'comp' ? 'COMPLETE' : (item.status === 'none' ? '予定なし' : '未コンプ');
+            
+            let invHtml = '';
+            if (item.targets.length > 0) {
+                const ownList = item.targets.filter(c => (item.stocks[c]?.own || 0) > 0);
+                const tradeList = item.targets.filter(c => (item.stocks[c]?.trade || 0) > 0);
+                invHtml = `
+                    <div class="inventory-grid" onclick="App.openUnboxing(${idx})">
+                        <div class="inv-box"><span class="inv-label">OWN</span><div class="inv-content">${ownList.map(c => `<span class="char-chip c-${c}">${c}</span>`).join('')}</div></div>
+                        <div class="inv-box"><span class="inv-label">TRADE</span><div class="inv-content">${tradeList.map(c => `<span class="char-chip c-${c}">${c}</span>`).join('')}</div></div>
+                        <div class="inv-box"><span class="inv-label">WANT</span><div class="inv-content">${item.targets.filter(c => (item.stocks[c]?.own||0)+(item.stocks[c]?.trade||0) === 0).map(c => `<span class="char-chip c-default">${c}</span>`).join('')}</div></div>
+                    </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="delete-btn-overlay">削除</div>
+                <div class="card" onclick="App.openItemEditor(${idx})">
+                    <span class="status-tag ${statusClass}">${statusText}</span>
+                    <div class="text-bold mb-15" style="font-size:0.85rem; color:var(--gold);">${item.type}</div>
+                    ${invHtml}
+                </div>
+            `;
+            Utils.attachSwipe(card.querySelector('.card'), () => Actions.deleteItem(idx));
+            container.appendChild(card);
+        });
     },
 
-    copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => Utils.showToast('コピーしました'));
+    editorGrid() {
+        const container = document.getElementById('editorGrid');
+        container.innerHTML = '';
+        const currentSet = Store.charSets[document.getElementById('editCharSetName').value] || [];
+        
+        currentSet.forEach(char => {
+            const isTarget = Store.activeCharList.includes(char);
+            const stock = Store.tempStocks[char] || { own: 0, trade: 0, infinite: false };
+            const row = document.createElement('div');
+            row.className = 'editor-row';
+            row.innerHTML = `
+                <div class="char-chip c-${char}" style="margin:0; text-align:center; padding:10px 0; font-size:0.7rem; cursor:pointer; border:${isTarget?'2px solid var(--gold)':'1px solid #eee'}; opacity:${isTarget?1:0.4};" onclick="App.toggleTarget('${char}')">${char}</div>
+                <div class="flex align-center justify-between" style="padding-left:10px;">
+                    <div class="flex align-center gap-10">
+                        <button class="btn-qty" onclick="App.stepQty('${char}', -1)">-</button>
+                        <input type="number" class="qty-display ${stock.own>0?'qty-has':'qty-zero'}" value="${stock.own}" onchange="App.setQty('${char}', this.value)">
+                        <button class="btn-qty" onclick="App.stepQty('${char}', 1)">+</button>
+                    </div>
+                    <button class="inf-btn ${stock.infinite?'active':''}" onclick="App.toggleInfinite('${char}')">∞</button>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    },
+
+    unboxingGrid() {
+        const container = document.getElementById('unboxingGrid');
+        container.innerHTML = '';
+        let total = 0;
+        Store.activeCharList.forEach(char => {
+            const s = Store.tempStocks[char] || { own: 0, trade: 0 };
+            total += (s.own + s.trade);
+            const area = document.createElement('div');
+            area.className = 'unboxing-panel';
+            area.innerHTML = `
+                <div class="ub-char-label c-${char}">${char}</div>
+                <div class="ub-area ub-area-left" id="ub-own-${char}">
+                    <div class="unboxing-count-badge ${s.own>0?'has-count':'is-zero'}">${s.own}</div>
+                </div>
+                <div class="ub-area ub-area-right" id="ub-trade-${char}">
+                    <div class="unboxing-count-badge ${s.trade>0?'has-count':'is-zero'}">${s.trade}</div>
+                </div>
+            `;
+            // Add long press and click listeners
+            const setupArea = (el, field) => {
+                let timer;
+                el.onclick = () => Actions.updateStock(char, field, 1);
+                el.ontouchstart = () => timer = setTimeout(() => Actions.updateStock(char, field, -1), 600);
+                el.ontouchend = () => clearTimeout(timer);
+            };
+            setupArea(area.querySelector('.ub-area-left'), 'own');
+            setupArea(area.querySelector('.ub-area-right'), 'trade');
+            container.appendChild(area);
+        });
+        document.getElementById('unboxingTotalCount').textContent = `合計開封数: ${total} 点`;
+    },
+
+    missingList() {
+        const container = document.getElementById('missingListContainer');
+        container.innerHTML = '';
+        const missingMap = {};
+
+        Object.keys(Store.db).forEach(sId => {
+            Store.db[sId].items.forEach((item, itemIdx) => {
+                if (item.status === 'not') {
+                    item.targets.forEach(char => {
+                        const s = item.stocks[char] || { own: 0, trade: 0 };
+                        if (s.own + s.trade === 0) {
+                            if (!missingMap[char]) missingMap[char] = [];
+                            missingMap[char].push({ sId, sTitle: Store.db[sId].title, itemType: item.type, itemIdx });
+                        }
+                    });
+                }
+            });
+        });
+
+        const sortedChars = Object.keys(missingMap).sort((a, b) => missingMap[b].length - missingMap[a].length);
+        sortedChars.forEach(char => {
+            const section = document.createElement('div');
+            section.className = 'card mb-15';
+            section.style.padding = '15px';
+            section.innerHTML = `
+                <div class="flex align-center mb-15">
+                    <span class="char-chip c-${char}" style="font-size:0.9rem; padding:6px 15px;">${char}</span>
+                    <span class="text-gold text-bold" style="font-size:0.7rem; margin-left:10px;">Missing: ${missingMap[char].length}</span>
+                </div>
+                <div>
+                    ${missingMap[char].map(m => `
+                        <div style="font-size:0.75rem; padding:10px; background:var(--bg-color); border-radius:10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;" onclick="App.jumpToEditorFromMissing('${m.sId}', ${m.itemIdx}, '${char}')">
+                            <div>
+                                <div class="text-bold" style="color:var(--text-main);">${m.sTitle}</div>
+                                <div style="color:var(--text-sub); font-size:0.65rem;">${m.itemType}</div>
+                            </div>
+                            <span style="color:var(--gold);">→</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(section);
+        });
+        if (sortedChars.length === 0) container.innerHTML = '<p style="text-align:center; color:var(--text-sub); padding-top:50px;">不足しているアイテムはありません</p>';
+    }
+};
+
+// =========================================
+// 7. App Controller (UI Events)
+// =========================================
+const App = {
+    async init() {
+        try {
+            await Store.init();
+            this.initSettingsFields();
+            Render.seriesList();
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 500);
+        } catch (e) {
+            console.error("Initialization failed", e);
+            alert("データの読み込みに失敗しました。再読み込みしてください。");
+        }
+    },
+
+    initSettingsFields() {
+        document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix || "";
+        document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix || "";
+        document.getElementById('tradeShowInfMark').checked = Store.tradeConfig.showInf;
+        
+        let charStr = "";
+        for (let set in Store.charSets) charStr += `${set}:${Store.charSets[set].join(',')}\n`;
+        document.getElementById('charSettingsInput').value = charStr.trim();
+
+        let presetStr = "";
+        Store.presets.forEach(p => presetStr += `${p.type},${p.charSet},${p.targetStr}\n`);
+        document.getElementById('presetSettingsInput').value = presetStr.trim();
+
+        document.getElementById('tempSettingsInput').value = Store.templates.join('\n');
+    },
+
+    switchMainTab(tab) {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
+        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
+        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
+        if (tab === 'missing') Render.missingList();
+    },
+
+    // Series Handlers
+    openSeriesModal() { document.getElementById('seriesModal').style.display = 'flex'; },
+    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
+    openDetail(id) {
+        Store.currentSeriesId = id;
+        document.getElementById('detailView').style.display = 'block';
+        Render.itemList();
+        window.history.pushState({view:'detail'}, "");
+    },
+    closeDetail() {
+        document.getElementById('detailView').style.display = 'none';
+        Render.seriesList();
+    },
+
+    // Editor Handlers
+    openItemEditor(idx = null, fromMissing = false) {
+        Store.currentItemIdx = idx;
+        Store.editorFromMissing = fromMissing;
+        const series = Store.db[Store.currentSeriesId];
+        
+        // Reset Editor State
+        const select = document.getElementById('editCharSetName');
+        select.innerHTML = Object.keys(Store.charSets).map(s => `<option value="${s}">${s}</option>`).join('');
+        
+        if (idx !== null) {
+            const item = series.items[idx];
+            document.getElementById('editItemType').value = item.type;
+            document.getElementById('editCharSetName').value = item.charSet;
+            document.getElementById('editItemStatus').value = item.status;
+            Store.activeCharList = [...item.targets];
+            Store.tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
+        } else {
+            document.getElementById('editItemType').value = "";
+            document.getElementById('editCharSetName').value = "デフォルト";
+            document.getElementById('editItemStatus').value = "not";
+            Store.activeCharList = [];
+            Store.tempStocks = {};
+            if (Store.lastItem) document.getElementById('historyBanner').style.display = 'flex';
+        }
+        
+        this.renderPresets();
+        Render.editorGrid();
+        document.getElementById('editorView').style.display = 'block';
+        window.history.pushState({view:'editor'}, "");
+    },
+
+    closeEditor() {
+        document.getElementById('editorView').style.display = 'none';
+        document.getElementById('historyBanner').style.display = 'none';
+        if (Store.editorFromMissing) Render.missingList();
+    },
+
+    applyHistory() {
+        if (!Store.lastItem) return;
+        document.getElementById('editItemType').value = Store.lastItem.type;
+        document.getElementById('editCharSetName').value = Store.lastItem.charSet;
+        Store.activeCharList = [...Store.lastItem.targets];
+        Render.editorGrid();
+        document.getElementById('historyBanner').style.display = 'none';
+    },
+
+    renderPresets() {
+        const area = document.getElementById('presetArea');
+        const chipContainer = document.getElementById('presetChips');
+        if (Store.presets.length === 0) { area.style.display = 'none'; return; }
+        area.style.display = 'block';
+        chipContainer.innerHTML = Store.presets.map(p => `<span class="preset-chip" onclick="App.applyPreset('${p.type}','${p.charSet}','${p.targetStr}')">${p.type}</span>`).join('');
+    },
+
+    applyPreset(type, set, targetStr) {
+        document.getElementById('editItemType').value = type;
+        document.getElementById('editCharSetName').value = set;
+        Store.activeCharList = targetStr.split('|').map(t => t.trim());
+        Render.editorGrid();
+    },
+
+    changeCharSet(setName) {
+        Store.activeCharList = [];
+        Render.editorGrid();
+    },
+
+    toggleTarget(char) {
+        if (Store.activeCharList.includes(char)) {
+            Store.activeCharList = Store.activeCharList.filter(c => c !== char);
+        } else {
+            Store.activeCharList.push(char);
+        }
+        Render.editorGrid();
+    },
+
+    stepQty(char, diff) {
+        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
+        Store.tempStocks[char].own = Math.max(0, (Store.tempStocks[char].own || 0) + diff);
+        Render.editorGrid();
+    },
+
+    setQty(char, val) {
+        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
+        Store.tempStocks[char].own = Math.max(0, parseInt(val) || 0);
+        Render.editorGrid();
+    },
+
+    toggleInfinite(char) {
+        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
+        Store.tempStocks[char].infinite = !Store.tempStocks[char].infinite;
+        Render.editorGrid();
+    },
+
+    // Unboxing
+    openUnboxing(idx) {
+        Store.currentItemIdx = idx;
+        const item = Store.db[Store.currentSeriesId].items[idx];
+        document.getElementById('unboxingTitle').textContent = `${item.type} を開封`;
+        Store.activeCharList = [...item.targets];
+        Store.tempStocks = JSON.parse(JSON.stringify(item.stocks || {}));
+        Render.unboxingGrid();
+        document.getElementById('unboxingModal').style.display = 'flex';
+    },
+
+    closeUnboxing() {
+        document.getElementById('unboxingModal').style.display = 'none';
+        Render.itemList();
+    },
+
+    // UI Misc
+    toggleSettings(open) {
+        const panel = document.getElementById('settingsPanel');
+        const overlay = document.getElementById('settingsOverlay');
+        panel.style.right = open ? '0' : '-85%';
+        overlay.style.display = open ? 'block' : 'none';
+    },
+
+    toggleDateFilter() {
+        const p = document.getElementById('dateFilterPanel');
+        p.style.display = p.style.display === 'none' ? 'block' : 'none';
+    },
+
+    clearDateFilter() {
+        document.getElementById('filterStart').value = "";
+        document.getElementById('filterEnd').value = "";
+        Render.seriesList();
     },
 
     filterByTag(t) {
@@ -1147,278 +1277,78 @@ const Actions = {
         }, 300);
     },
 
-    bulkToggleTargets(val) {
-        document.querySelectorAll('.target-check').forEach(c => c.checked = val);
-    },
-    bulkIncrementOwn() {
-        Store.activeCharList.forEach(c => {
-            if (!Store.tempStocks[c]) Store.tempStocks[c] = { own: 0, trade: 0, infinite: false };
-            Store.tempStocks[c].own++;
-        });
-        App.renderEditorGrid();
-    },
-    bulkResetCounts() {
-        if (!confirm('すべての個数を0にしますか？')) return;
-        Object.keys(Store.tempStocks).forEach(c => {
-            Store.tempStocks[c].own = 0;
-            Store.tempStocks[c].trade = 0;
-        });
-        App.renderEditorGrid();
-    }
-};
-
-// =========================================
-// 6. Application Controller (App)
-// =========================================
-const App = {
-    async init() {
-        // DB初期化待ち
-        await Store.init();
-        
-        this.initSettingsFields();
-        Render.seriesList();
-        
-        // ローディングアニメーションを少し見せるためのディレイ（任意）
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 500);
-        }, 300);
+    // Bulk Actions in Editor
+    async bulkToggleTargets(select) {
+        const currentSet = Store.charSets[document.getElementById('editCharSetName').value] || [];
+        Store.activeCharList = select ? [...currentSet] : [];
+        Render.editorGrid();
     },
 
-    initSettingsFields() {
-        const charInput = document.getElementById('charSettingsInput');
-        charInput.value = Object.entries(Store.charSets).map(([k,v]) => `${k}:${v.join(',')}`).join('\n');
-        document.getElementById('tempSettingsInput').value = Store.templates.join(',');
-        document.getElementById('presetSettingsInput').value = Store.presets.map(p => `${p.type},${p.setName},${p.targets.join('|')}`).join('\n');
-        document.getElementById('tradePrefixInput').value = Store.tradeConfig.prefix || "";
-        document.getElementById('tradeSuffixInput').value = Store.tradeConfig.suffix || "";
-        document.getElementById('tradeShowInfMark').checked = !!Store.tradeConfig.showInf;
-    },
-
-    switchMainTab(tab) {
-        document.getElementById('tab-list').classList.toggle('active', tab === 'list');
-        document.getElementById('tab-missing').classList.toggle('active', tab === 'missing');
-        document.getElementById('seriesView').style.display = tab === 'list' ? 'block' : 'none';
-        document.getElementById('missingView').style.display = tab === 'missing' ? 'block' : 'none';
-        document.getElementById('mainFab').style.display = tab === 'list' ? 'flex' : 'none';
-        if (tab === 'missing') Render.missingList();
-    },
-
-    openSeriesModal() { document.getElementById('seriesModal').style.display = 'flex'; },
-    closeSeriesModal() { document.getElementById('seriesModal').style.display = 'none'; },
-
-    openDetail(id) {
-        Store.currentSeriesId = id;
-        document.getElementById('detailHeaderTitle').textContent = Store.db[id].title;
-        document.getElementById('detailView').style.display = 'block';
-        Render.itemList();
-        window.history.pushState({view: 'detail'}, '');
-    },
-    closeDetail() {
-        document.getElementById('detailView').style.display = 'none';
-        Render.seriesList();
-    },
-
-    openItemEditor(idx = null, fromMissing = false) {
-        Store.currentItemIdx = idx;
-        Store.editorFromMissing = fromMissing;
-        const item = idx !== null ? Store.db[Store.currentSeriesId].items[idx] : null;
-
-        document.getElementById('editItemType').value = item ? item.type : "";
-        document.getElementById('editItemStatus').value = item ? item.status : "not";
-        Store.tempStocks = item ? JSON.parse(JSON.stringify(item.stocks)) : {};
-
-        // キャラセット選択肢
-        const sel = document.getElementById('editCharSetName');
-        sel.innerHTML = '';
-        Object.keys(Store.charSets).forEach(k => {
-            const opt = document.createElement('option');
-            opt.value = k; opt.textContent = k;
-            sel.appendChild(opt);
-        });
-        sel.value = item ? item.charSetName : "デフォルト";
-
-        // プリセット
-        const pArea = document.getElementById('presetArea');
-        const pChips = document.getElementById('presetChips');
-        pChips.innerHTML = '';
-        if (Store.presets.length > 0) {
-            pArea.style.display = 'block';
-            Store.presets.forEach(p => {
-                const span = document.createElement('span');
-                span.className = 'preset-chip';
-                span.textContent = p.type;
-                span.onclick = () => this.applyPreset(p);
-                pChips.appendChild(span);
-            });
-        } else { pArea.style.display = 'none'; }
-
-        document.getElementById('historyBanner').style.display = (!item && Store.lastItem) ? 'flex' : 'none';
-        this.changeCharSet(sel.value, item ? item.targets : null);
-        document.getElementById('editorView').style.display = 'block';
-        window.history.pushState({view: 'editor'}, '');
-    },
-    closeEditor() {
-        document.getElementById('editorView').style.display = 'none';
-    },
-
-    applyPreset(p) {
-        document.getElementById('editItemType').value = p.type;
-        document.getElementById('editCharSetName').value = p.setName;
-        this.changeCharSet(p.setName, p.targets);
-    },
-    applyHistory() {
-        if (!Store.lastItem) return;
-        document.getElementById('editItemType').value = Store.lastItem.type;
-        document.getElementById('editCharSetName').value = Store.lastItem.charSetName;
-        this.changeCharSet(Store.lastItem.charSetName, Store.lastItem.targets);
-        document.getElementById('historyBanner').style.display = 'none';
-    },
-
-    changeCharSet(setName, selectedTargets = null) {
-        Store.activeCharList = Store.charSets[setName] || [];
-        this.renderEditorGrid(selectedTargets);
-    },
-
-    renderEditorGrid(selectedTargets = null) {
-        const grid = document.getElementById('editorGrid');
-        grid.innerHTML = '';
+    async bulkIncrementOwn() {
         Store.activeCharList.forEach(char => {
             if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
-            const st = Store.tempStocks[char];
-            const isChecked = selectedTargets ? selectedTargets.includes(char) : true;
-
-            const row = document.createElement('div');
-            row.className = 'editor-row';
-            row.innerHTML = `
-                <div style="text-align:center;">
-                    <label style="display:block; margin-bottom:8px;">
-                        <input type="checkbox" class="target-check" data-char="${char}" ${isChecked ? 'checked' : ''} style="width:18px; height:18px;">
-                    </label>
-                    <span class="char-chip c-${char}" style="margin:0;">${char}</span>
-                </div>
-                <div>
-                    <div class="flex align-center justify-between mb-15">
-                        <span class="label-sm" style="margin:0;">保管数</span>
-                        <div class="flex align-center gap-10">
-                            <button class="btn-qty" onclick="App.updateQty('${char}', 'own', -1)">-</button>
-                            <input type="number" class="qty-display ${st.own > 0 ? 'qty-has' : 'qty-zero'}" value="${st.own}" onchange="App.updateQty('${char}', 'own', 0, this.value)">
-                            <button class="btn-qty" onclick="App.updateQty('${char}', 'own', 1)">+</button>
-                        </div>
-                    </div>
-                    <div class="flex align-center justify-between">
-                        <span class="label-sm" style="margin:0;">譲渡可能</span>
-                        <div class="flex align-center gap-10">
-                            <button class="inf-btn ${st.infinite ? 'active' : ''}" onclick="App.toggleInf('${char}')">∞</button>
-                            <button class="btn-qty" onclick="App.updateQty('${char}', 'trade', -1)">-</button>
-                            <input type="number" class="qty-display ${st.trade > 0 ? 'qty-has' : 'qty-zero'}" value="${st.trade}" onchange="App.updateQty('${char}', 'trade', 0, this.value)">
-                            <button class="btn-qty" onclick="App.updateQty('${char}', 'trade', 1)">+</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            grid.appendChild(row);
+            Store.tempStocks[char].own = (Store.tempStocks[char].own || 0) + 1;
         });
+        Render.editorGrid();
     },
 
-    updateQty(char, field, delta, exact = null) {
-        if (!Store.tempStocks[char]) Store.tempStocks[char] = { own: 0, trade: 0, infinite: false };
-        if (exact !== null) Store.tempStocks[char][field] = Math.max(0, parseInt(exact) || 0);
-        else Store.tempStocks[char][field] = Math.max(0, Store.tempStocks[char][field] + delta);
-        this.renderEditorGrid();
-    },
-    toggleInf(char) {
-        Store.tempStocks[char].infinite = !Store.tempStocks[char].infinite;
-        this.renderEditorGrid();
-    },
-
-    openUnboxing(idx) {
-        Store.currentItemIdx = idx;
-        const item = Store.db[Store.currentSeriesId].items[idx];
-        document.getElementById('unboxingTitle').textContent = `${item.type} - 開封`;
-        this.renderUnboxingGrid();
-        document.getElementById('unboxingModal').style.display = 'flex';
-    },
-    async closeUnboxing() {
-        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
-        item.status = Utils.autoDetermineStatus(item);
-        await Store.save();
-        document.getElementById('unboxingModal').style.display = 'none';
-        Render.itemList();
-    },
-
-    renderUnboxingGrid() {
-        const grid = document.getElementById('unboxingGrid');
-        const item = Store.db[Store.currentSeriesId].items[Store.currentItemIdx];
-        grid.innerHTML = '';
-        let total = 0;
-
-        (item.targets || []).forEach(char => {
-            const st = item.stocks[char] || { own: 0, trade: 0, infinite: false };
-            total += (st.own + st.trade);
-            const panel = document.createElement('div');
-            panel.className = 'unboxing-panel';
-            panel.innerHTML = `
-                <div class="ub-char-label c-${char}">${char}</div>
-                <div class="ub-area ub-area-left" id="ub-own-${char}">
-                    <div class="unboxing-count-badge ${st.own > 0 ? 'has-count' : 'is-zero'}">${st.own}</div>
-                </div>
-                <div class="ub-area ub-area-right" id="ub-trade-${char}">
-                    <div class="unboxing-count-badge ${st.trade > 0 ? 'has-count' : 'is-zero'}">${st.trade}</div>
-                </div>
-            `;
-            grid.appendChild(panel);
-
-            const handleTap = (field, delta) => {
-                st[field] = Math.max(0, st[field] + delta);
-                this.renderUnboxingGrid();
-            };
-
-            const left = panel.querySelector('.ub-area-left');
-            const right = panel.querySelector('.ub-area-right');
-
-            let timer;
-            const setupEvents = (el, field) => {
-                el.onpointerdown = (e) => {
-                    timer = setTimeout(() => { handleTap(field, -1); timer = null; }, 600);
-                };
-                el.onpointerup = (e) => {
-                    if (timer) { clearTimeout(timer); handleTap(field, 1); }
-                };
-            };
-            setupEvents(left, 'own');
-            setupEvents(right, 'trade');
-        });
-        document.getElementById('unboxingTotalCount').textContent = `合計獲得数: ${total}`;
-    },
-
-    async setSortMode(m) {
-        Store.sortMode = m;
-        document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active', b.id === `sort-${m}`));
-        await Store.save();
-        Render.seriesList();
-    },
-
-    toggleDateFilter() {
-        const p = document.getElementById('dateFilterPanel');
-        p.style.display = p.style.display === 'none' ? 'block' : 'none';
-    },
-    clearDateFilter() {
-        document.getElementById('filterStart').value = '';
-        document.getElementById('filterEnd').value = '';
-        Render.seriesList();
-    },
-
-    toggleSettings(show) {
-        const p = document.getElementById('settingsPanel');
-        const o = document.getElementById('settingsOverlay');
-        p.style.right = show ? '0' : '-85%';
-        o.style.display = show ? 'block' : 'none';
+    async bulkResetCounts() {
+        if (!confirm('全ての数値をリセットしますか？')) return;
+        Store.tempStocks = {};
+        Render.editorGrid();
     }
 };
 
-// ブラウザ履歴管理
+// =========================================
+// 8. Backup & Restore
+// =========================================
+Actions.exportBackup = async function() {
+    const fullData = {
+        db: Store.db,
+        order: Store.order,
+        charSets: Store.charSets,
+        templates: Store.templates,
+        presets: Store.presets,
+        tradeConfig: Store.tradeConfig,
+        sortMode: Store.sortMode
+    };
+    const blob = new Blob([JSON.stringify(fullData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `archive_backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+};
+
+Actions.importBackup = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.db) {
+                Store.db = data.db;
+                Store.order = data.order || Object.keys(data.db);
+                Store.charSets = data.charSets || Store.charSets;
+                Store.templates = data.templates || Store.templates;
+                Store.presets = data.presets || [];
+                Store.tradeConfig = data.tradeConfig || Store.tradeConfig;
+                Store.sortMode = data.sortMode || 'new';
+                await Store.save();
+                alert('バックアップを読み込みました');
+                location.reload();
+            }
+        } catch (err) {
+            alert('ファイルの形式が正しくありません');
+        }
+    };
+    reader.readAsText(file);
+};
+
+// =========================================
+// 9. Browser History Handling
+// =========================================
 window.onpopstate = function(e) {
     const state = e.state || {};
     const editor = document.getElementById('editorView');
@@ -1435,9 +1365,6 @@ window.onpopstate = function(e) {
         Render.seriesList();
     }
 };
-
-// アプリの起動
-App.init();
 
 </script>
 </body>
