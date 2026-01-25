@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>COLLECTION ARCHIVE</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#c5a059">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="splash-screen">
+    <div class="splash-logo">COLLECTION ARCHIVE</div>
+    <div class="spinner"></div>
+</div>
+
+<header>
+    <button id="btn-open-settings" class="header-btn-right">⚙</button>
+    <h1>COLLECTION ARCHIVE v1.0</h1>
+</header>
+
+<nav class="nav-tabs">
+    <div class="nav-tab active" id="tab-list">SERIES</div>
+    <div class="nav-tab" id="tab-missing">MISSING</div>
+</nav>
+
+<main id="seriesView" class="container">
+    <div class="filter-row flex align-center gap-10 mb-15">
+        <input type="text" id="searchBar" placeholder="シリーズ・タグを検索..." style="flex:1;">
+        <button id="btnToggleDate" class="icon-btn">📅</button>
+    </div>
+
+    <div class="sort-controls">
+        <button class="sort-btn active" id="sort-new">登録順</button>
+        <button class="sort-btn" id="sort-date">日付順</button>
+        <button class="sort-btn" id="sort-custom">カスタム順</button>
+    </div>
+
+    <div id="dateFilterPanel" class="date-panel" style="display:none;">
+        <p class="label-sm">表示期間を指定</p>
+        <div class="flex align-center gap-10">
+            <input type="month" id="filterStart">
+            <span class="separator">〜</span>
+            <input type="month" id="filterEnd">
+            <button id="btnClearDate" class="clear-btn">クリア</button>
+        </div>
+    </div>
+    <div id="seriesListContainer"></div>
+</main>
+
+<section id="missingView" class="container" style="display:none;">
+    <div id="missingListContainer"></div>
+</section>
+
+<section id="detailView" class="full-view">
+    <div class="view-header">
+        <button id="btn-close-detail" class="back-x">✕</button>
+        <div id="detailHeaderTitle" class="view-header-title"></div>
+        <button id="btn-delete-all-items" class="danger-btn">全削除</button>
+    </div>
+    <div id="itemListContainer" class="container"></div>
+    <button id="btn-add-item" class="fab accent-fab">＋</button>
+</section>
+
+<section id="editorView" class="full-view" style="z-index:300;">
+    <div class="view-header">
+        <button id="editorBackBtn" class="text-nav-btn">戻る</button>
+        <div class="view-header-title">アイテム編集</div>
+        <button id="btn-save-item" class="save-btn">保存</button>
+    </div>
+    <div class="container">
+        <div id="historyBanner" class="history-banner" style="display:none;">
+            <span class="banner-text">前回の設定を復元できます</span>
+            <button id="btn-apply-history" class="history-btn">履歴から作成</button>
+        </div>
+        
+        <div id="presetArea" class="mb-15" style="display:none;">
+            <p class="label-sm">プリセットから選択</p>
+            <div id="presetChips"></div>
+        </div>
+
+        <p class="label-sm">アイテム名</p>
+        <input type="text" id="editItemType" placeholder="例: 缶バッジ" class="mb-15">
+        
+        <p class="label-sm">キャラセット</p>
+        <select id="editCharSetName" class="mb-15"></select>
+        
+        <p class="label-sm">ステータス</p>
+        <select id="editItemStatus" class="mb-20">
+            <option value="not">未コンプ</option>
+            <option value="comp">コンプ済</option>
+            <option value="none">予定なし</option>
+        </select>
+
+        <div class="editor-bulk-actions">
+            <div class="bulk-group-left">
+                <button id="btn-bulk-select" class="bulk-btn">ALL SELECT</button>
+                <button id="btn-bulk-cancel" class="bulk-btn">CANCEL</button>
+                <button id="btn-bulk-inc" class="bulk-btn">ALL +1</button>
+            </div>
+            <button id="btn-bulk-reset" class="bulk-btn bulk-btn-danger">RESET ALL</button>
+        </div>
+        <div id="editorGrid"></div>
+    </div>
+</section>
+
+<div id="seriesModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 class="modal-title">NEW SERIES</h3>
+        <input type="text" id="msTitle" placeholder="シリーズ名" class="mb-15">
+        <div class="flex gap-10 mb-15">
+            <input type="month" id="msDate" style="flex:1.2;">
+            <input type="text" id="msTags" placeholder="タグ" style="flex:1;">
+        </div>
+        <label class="checkbox-label mb-20">
+            <input type="checkbox" id="msUseTemplate" checked> テンプレートを適用
+        </label>
+        <button id="btn-confirm-series" class="primary-btn">登録する</button>
+        <button id="btn-close-series-modal" class="cancel-link-btn">キャンセル</button>
+    </div>
+</div>
+
+<div id="unboxingModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="flex justify-between align-center mb-15">
+            <div id="unboxingTitle" class="text-gold text-bold"></div>
+            <p class="unboxing-help">左:保管 / 右:譲渡<br>長押しでマイナス</p>
+        </div>
+        <div id="unboxingGrid" class="unboxing-grid-layout"></div>
+        <div id="unboxingTotalCount" class="total-count-display"></div>
+        <button id="btn-close-unboxing" class="primary-btn">完了</button>
+    </div>
+</div>
+
+<div id="settingsOverlay" class="overlay-bg" style="display:none;"></div>
+<div id="settingsPanel" class="side-panel">
+    <h3 class="panel-title">SETTINGS</h3>
+    
+    <label class="label-sm mt-20">募集文カスタマイズ</label>
+    <input type="text" id="tradePrefixInput" placeholder="【交換】" class="setting-input-sm mb-5">
+    <input type="text" id="tradeSuffixInput" placeholder="郵送希望です。" class="setting-input-sm mb-10">
+    
+    <label class="checkbox-label-sm mb-15">
+        <input type="checkbox" id="tradeShowInfMark"> 無限回収に(∞)を表示する
+    </label>
+
+    <label class="label-sm mt-20">キャラクターセット</label>
+    <textarea id="charSettingsInput" rows="5" class="setting-textarea"></textarea>
+
+    <label class="label-sm mt-20">プリセット</label>
+    <textarea id="presetSettingsInput" rows="5" class="setting-textarea" placeholder="缶バッジ,デフォルト,北門|是国"></textarea>
+
+    <label class="label-sm mt-20">新規登録テンプレート</label>
+    <textarea id="tempSettingsInput" rows="3" class="setting-textarea"></textarea>
+
+    <button id="btn-save-settings" class="primary-btn mt-30">設定を保存して更新</button>
+
+    <div class="backup-section mt-40">
+        <button id="btn-export-backup" class="secondary-btn">バックアップを書き出し</button>
+        <button id="btn-import-trigger" class="secondary-btn">バックアップを読み込み</button>
+        <input type="file" id="importFile" style="display:none" accept=".json">
+    </div>
+</div>
+
+<div id="toast"></div>
+<button id="mainFab" class="fab">＋</button>
+
+<script src="app.js"></script>
+</body>
+</html>
