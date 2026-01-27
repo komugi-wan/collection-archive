@@ -1,4 +1,4 @@
-const CACHE_NAME = 'coll-archive-v3.9.3';
+const CACHE_NAME = 'coll-archive-v3.9.31';
 const ASSETS = [
   'index.html',
   'manifest.json',
